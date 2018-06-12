@@ -10,3 +10,6 @@
 /build
 /captures
 .externalNativeBuild
+.idea/markdown-navigator.xml
+.idea/vcs.xml
+app/libs/

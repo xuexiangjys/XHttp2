@@ -1,0 +1,77 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion build_versions.target_sdk
+    buildToolsVersion build_versions.build_tools
+    
+    defaultConfig {
+        applicationId "com.xuexiang.xhttp2demo"
+        minSdkVersion 14
+        targetSdkVersion build_versions.target_sdk
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    if (isNeedPackage.toBoolean()) {
+        signingConfigs {
+            release {
+                storeFile file(app_release.storeFile)
+                storePassword app_release.storePassword
+                keyAlias app_release.keyAlias
+                keyPassword app_release.keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (isNeedPackage.toBoolean()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    if (isNeedPackage.toBoolean()) {
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                if (variant.buildType.name.equals('release')) {
+                    outputFileName = "demo.apk"
+                }
+            }
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation deps.support.app_compat
+    testImplementation deps.junit
+    androidTestImplementation deps.runner
+    androidTestImplementation deps.espresso.core
+    //XUtil
+    implementation 'com.github.xuexiangjys.XUtil:xutil-core:+'
+    //XPage
+    implementation 'com.github.xuexiangjys.XPage:xpage-lib:+'
+    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:+'
+    //butterknife的sdk
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //XHttp
+    implementation project(':xhttp2-lib')
+    //RxJava
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    //OkHttp的依赖包
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    //Gson序列化反序列化的依赖包
+    implementation deps.gson
+}
