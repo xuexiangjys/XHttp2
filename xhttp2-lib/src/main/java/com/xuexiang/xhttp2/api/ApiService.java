@@ -42,71 +42,41 @@ import retrofit2.http.Url;
  * 通用的的api接口
  *
  * @author xuexiang
- * @since 2018/6/20 下午4:43
+ * @since 2018/6/20 下午9:43
  */
 public interface ApiService {
 
-    /**
-     * POST表单请求
-     *
-     * @param url  请求地址
-     * @param maps
-     * @return
-     */
+    //==========================//
+    //         POST请求          //
+    // =========================//
+
     @POST
     @FormUrlEncoded
-    Observable<ResponseBody> post(@Url String url, @FieldMap Map<String, Object> maps);
+    Observable<ResponseBody> post(@Url String url, @FieldMap Map<String, String> maps);
 
-    /**
-     * POST Object请求
-     *
-     * @param url    请求地址
-     * @param object
-     * @return
-     */
     @POST
     Observable<ResponseBody> postBody(@Url String url, @Body Object object);
 
-    /**
-     * POST Json请求
-     *
-     * @param url      请求地址
-     * @param jsonBody
-     * @return
-     */
+    @POST
+    Observable<ResponseBody> postBody(@Url String url, @Body RequestBody body);
+
     @POST
     @Headers({"Content-Type: application/json", "Accept: application/json"})
     Observable<ResponseBody> postJson(@Url String url, @Body RequestBody jsonBody);
 
-    /**
-     * POST RequestBody 请求
-     *
-     * @param url  请求地址
-     * @param body
-     * @return
-     */
-    @POST
-    Observable<ResponseBody> postBody(@Url String url, @Body RequestBody body);
+    //==========================//
+    //         GET请求           //
+    // =========================//
 
-    /**
-     * GET请求
-     *
-     * @param url  请求地址
-     * @param maps
-     * @return
-     */
     @GET
-    Observable<ResponseBody> get(@Url String url, @QueryMap Map<String, Object> maps);
+    Observable<ResponseBody> get(@Url String url, @QueryMap Map<String, String> maps);
 
-    /**
-     * DELETE请求
-     *
-     * @param url  请求地址
-     * @param maps
-     * @return
-     */
+    //==========================//
+    //         DELETE请求        //
+    // =========================//
+
     @DELETE
-    Observable<ResponseBody> delete(@Url String url, @QueryMap Map<String, Object> maps);
+    Observable<ResponseBody> delete(@Url String url, @QueryMap Map<String, String> maps);
 
     @DELETE
     Observable<ResponseBody> deleteBody(@Url String url, @Body Object object);
@@ -118,47 +88,37 @@ public interface ApiService {
     @Headers({"Content-Type: application/json", "Accept: application/json"})
     Observable<ResponseBody> deleteJson(@Url String url, @Body RequestBody jsonBody);
 
-    /**
-     * PUT请求
-     *
-     * @param url  请求地址
-     * @param maps
-     * @return
-     */
-    @PUT
-    Observable<ResponseBody> put(@Url String url, @QueryMap Map<String, Object> maps);
 
-    @POST
+    //==========================//
+    //         PUT请求           //
+    // =========================//
+
+    @PUT
+    Observable<ResponseBody> put(@Url String url, @QueryMap Map<String, String> maps);
+
+    @PUT
     Observable<ResponseBody> putBody(@Url String url, @Body Object object);
 
-    /**
-     * 上传文件
-     *
-     * @param url
-     * @param maps
-     * @return
-     */
+    @PUT
+    Observable<ResponseBody> putBody(@Url String url, @Body RequestBody body);
+
+    @PUT
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    Observable<ResponseBody> putJson(@Url String url, @Body RequestBody jsonBody);
+
+
+    //==========================//
+    //       文件上传下载         //
+    // =========================//
+
     @Multipart
     @POST
     Observable<ResponseBody> uploadFiles(@Url String url, @PartMap Map<String, RequestBody> maps);
 
-    /**
-     * POST 上传文件【目前使用】
-     *
-     * @param path  上传文件路径
-     * @param parts 文件
-     * @return
-     */
     @Multipart
     @POST
-    Observable<ResponseBody> uploadFiles(@Url String path, @Part List<MultipartBody.Part> parts);
+    Observable<ResponseBody> uploadFiles(@Url String url, @Part List<MultipartBody.Part> parts);
 
-    /**
-     * GET 下载文件
-     *
-     * @param fileUrl
-     * @return
-     */
     @Streaming
     @GET
     Observable<ResponseBody> downloadFile(@Url String fileUrl);

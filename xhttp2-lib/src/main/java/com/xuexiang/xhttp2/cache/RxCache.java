@@ -43,7 +43,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.exceptions.Exceptions;
 
 /**
- <p>描述：缓存统一入口类</p>
+ * <p>描述：缓存统一入口类</p>
  * <p>
  * <p>主要实现技术：RxJava+DiskLruCache(jakewharton大神开源的LRU库)</p>
  * <p>
@@ -72,6 +72,8 @@ import io.reactivex.exceptions.Exceptions;
  * 2018/6/20 下午7:26
  */
 public final class RxCache {
+    public static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
+
     private final Context context;
     private final CacheCore cacheCore;                                  //缓存的核心管理类
     private final String cacheKey;                                      //缓存的key
@@ -87,7 +89,7 @@ public final class RxCache {
 
     private RxCache(Builder builder) {
         this.context = builder.context;
-        this.cacheKey = builder.cachekey;
+        this.cacheKey = builder.cacheKey;
         this.cacheTime = builder.cacheTime;
         this.diskDir = builder.diskDir;
         this.appVersion = builder.appVersion;
@@ -106,7 +108,7 @@ public final class RxCache {
      * @param cacheMode 缓存类型
      * @param type      缓存clazz
      */
-    @SuppressWarnings(value={"unchecked", "deprecation"})
+    @SuppressWarnings(value = {"unchecked", "deprecation"})
     public <T> ObservableTransformer<T, CacheResult<T>> transformer(CacheMode cacheMode, final Type type) {
         final IStrategy strategy = loadStrategy(cacheMode);//获取缓存策略
         return new ObservableTransformer<T, CacheResult<T>>() {
@@ -152,8 +154,9 @@ public final class RxCache {
 
     /**
      * 获取缓存
+     *
      * @param type 保存的类型
-     * @param key 缓存key
+     * @param key  缓存key
      */
     public <T> Observable<T> load(final Type type, final String key) {
         return load(type, key, -1);
@@ -274,13 +277,12 @@ public final class RxCache {
     public static final class Builder {
         private static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB
         private static final int MAX_DISK_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
-        public static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
         private int appVersion;
         private long diskMaxSize;
         private File diskDir;
         private IDiskConverter diskConverter;
         private Context context;
-        private String cachekey;
+        private String cacheKey;
         private long cacheTime;
 
         public Builder() {
@@ -296,7 +298,7 @@ public final class RxCache {
             this.diskDir = rxCache.diskDir;
             this.diskConverter = rxCache.diskConverter;
             this.context = rxCache.context;
-            this.cachekey = rxCache.cacheKey;
+            this.cacheKey = rxCache.cacheKey;
             this.cacheTime = rxCache.cacheTime;
         }
 
@@ -338,8 +340,8 @@ public final class RxCache {
             return this;
         }
 
-        public Builder cachekey(String cachekey) {
-            this.cachekey = cachekey;
+        public Builder cachekey(String cacheKey) {
+            this.cacheKey = cacheKey;
             return this;
         }
 
@@ -352,7 +354,7 @@ public final class RxCache {
             if (this.diskDir == null && this.context != null) {
                 this.diskDir = Utils.getDiskCacheDir(this.context, "data-cache");
             }
-            Utils.checkNotNull(this.diskDir, "diskDir==null");
+            Utils.checkNotNull(this.diskDir, "diskDir == null");
             if (!this.diskDir.exists()) {
                 this.diskDir.mkdirs();
             }
