@@ -19,6 +19,11 @@ package com.xuexiang.xhttp2.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * 通用工具类
@@ -34,6 +39,7 @@ public final class Utils {
 
     /**
      * 检查是否为null
+     *
      * @param t
      * @param message
      * @param <T>
@@ -59,5 +65,47 @@ public final class Utils {
             return false;
         NetworkInfo info = manager.getActiveNetworkInfo();
         return null != info && info.isAvailable();
+    }
+
+    /**
+     * 关闭 IO
+     *
+     * @param closeables closeables
+     */
+    public static void closeIO(final Closeable... closeables) {
+        if (closeables == null) return;
+        for (Closeable closeable : closeables) {
+            if (closeable != null) {
+                try {
+                    closeable.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 应用程序缓存原理：
+     * 1.当SD卡存在或者SD卡不可被移除的时候，就调用getExternalCacheDir()方法来获取缓存路径，否则就调用getCacheDir()方法来获取缓存路径<br>
+     * 2.前者是/sdcard/Android/data/<application package>/cache 这个路径<br>
+     * 3.后者获取到的是 /data/data/<application package>/cache 这个路径<br>
+     *
+     * @param uniqueName 缓存目录
+     */
+    public static File getDiskCacheDir(Context context, String uniqueName) {
+        String cachePath;
+        if (isSDCardEnable() && context.getExternalCacheDir() != null) {
+            cachePath = context.getExternalCacheDir().getPath();
+        } else {
+            cachePath = context.getCacheDir().getPath();
+        }
+        return new File(cachePath + File.separator + uniqueName);
+    }
+
+    private static boolean isSDCardEnable() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable();
     }
 }

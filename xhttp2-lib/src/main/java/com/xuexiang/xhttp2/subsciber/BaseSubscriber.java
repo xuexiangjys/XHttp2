@@ -60,7 +60,7 @@ public abstract class BaseSubscriber<T> extends DisposableObserver<T> {
         try {
             if (e instanceof ApiException) {
                 HttpLog.e("--> e instanceof ApiException, message:" + e.getMessage());
-                onError( e);
+                onError((ApiException) e);
             } else {
                 HttpLog.e("--> e !instanceof ApiException, message:" + e.getMessage());
                 onError(ApiExceptionHandler.handleException(e));
@@ -75,13 +75,13 @@ public abstract class BaseSubscriber<T> extends DisposableObserver<T> {
      *
      * @param e 出错信息
      */
-    public abstract void onError(ApiException e);
+    protected abstract void onError(ApiException e);
 
     /**
      * 安全版的{@link #onNext},自动做了try-catch
      *
      * @param t
      */
-    public abstract void onSuccess(T t);
+    protected abstract void onSuccess(T t);
 
 }
