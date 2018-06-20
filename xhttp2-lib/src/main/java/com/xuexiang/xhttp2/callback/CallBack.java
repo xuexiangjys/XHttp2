@@ -16,6 +16,7 @@
 
 package com.xuexiang.xhttp2.callback;
 
+import com.xuexiang.xhttp2.callback.impl.IType;
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.utils.TypeUtils;
 

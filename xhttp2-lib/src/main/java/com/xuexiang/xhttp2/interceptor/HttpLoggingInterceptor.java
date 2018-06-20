@@ -250,7 +250,7 @@ public class HttpLoggingInterceptor implements Interceptor {
         }
     }
 
-    public void onError(Throwable t) {
+    protected void onError(Throwable t) {
         if (isPrintStack) t.printStackTrace();
     }
 }

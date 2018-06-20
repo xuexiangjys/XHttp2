@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2.callback;
+package com.xuexiang.xhttp2.callback.impl;
 
 import java.lang.reflect.Type;
 

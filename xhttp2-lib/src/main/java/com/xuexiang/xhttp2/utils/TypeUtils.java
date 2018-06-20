@@ -20,6 +20,11 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import okhttp3.RequestBody;
 
 /**
  * 类型工具类
@@ -76,7 +81,7 @@ public final class TypeUtils {
         }
     }
 
-    private static Class getClass(Type type, int i) {
+    public static Class getClass(Type type, int i) {
         if (type instanceof ParameterizedType) { // 处理泛型类型
             return getGenericClass((ParameterizedType) type, i);
         } else if (type instanceof TypeVariable) {
@@ -118,6 +123,44 @@ public final class TypeUtils {
             return type;
         }
     }
+
+    /**
+     * find the type by interfaces
+     *
+     * @param cls
+     * @param <R>
+     * @return
+     */
+    public static <R> Type findNeedType(Class<R> cls) {
+        List<Type> typeList = TypeUtils.getAllTypes(cls);
+        if (typeList == null || typeList.isEmpty()) {
+            return RequestBody.class;
+        }
+        return typeList.get(0);
+    }
+
+    /**
+     * 获取类的所有类型[包括泛型类型]
+     * 例如 Map<List<String>, Map<String, Object>> -> [Map, List, String, Map, String, Object]
+     */
+    public static <T> List<Type> getAllTypes(Class<T> cls) {
+        Type genType = cls.getGenericSuperclass();
+        List<Type> needTypes = null;
+        // if Type is T
+        if (genType instanceof ParameterizedType) {
+            needTypes = new ArrayList<>();
+            Type[] parentTypes = ((ParameterizedType) genType).getActualTypeArguments();
+            for (Type childType : parentTypes) {
+                needTypes.add(childType);
+                if (childType instanceof ParameterizedType) {
+                    Type[] childTypes = ((ParameterizedType) childType).getActualTypeArguments();
+                    Collections.addAll(needTypes, childTypes);
+                }
+            }
+        }
+        return needTypes;
+    }
+
 
 
 }
