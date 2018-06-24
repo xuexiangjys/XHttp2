@@ -1,5 +1,6 @@
 package com.xuexiang.xhttp2;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import com.xuexiang.xhttp2.interceptor.HttpLoggingInterceptor;
 import com.xuexiang.xhttp2.logs.HttpLog;
 import com.xuexiang.xhttp2.model.HttpHeaders;
 import com.xuexiang.xhttp2.model.HttpParams;
+import com.xuexiang.xhttp2.utils.RxSchedulers;
 import com.xuexiang.xhttp2.utils.Utils;
 
 import java.io.File;
@@ -25,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Interceptor;
@@ -34,6 +38,20 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 
 /**
+ * <p>描述：网络请求入口类</p>
+ * 主要功能：</br>
+ * 1.全局设置超时时间
+ * 2.支持请求错误重试相关参数，包括重试次数、重试延时时间</br>
+ * 3.支持缓存支持6种缓存模式、时间、大小、缓存目录</br>
+ * 4.支持支持GET、post、delete、put请求</br>
+ * 5.支持支持自定义请求</br>
+ * 6.支持文件上传、下载</br>
+ * 7.支持全局公共请求头</br>
+ * 8.支持全局公共参数</br>
+ * 9.支持OkHttp相关参数，包括拦截器</br>
+ * 10.支持Retrofit相关参数</br>
+ * 11.支持Cookie管理</br>
+ *
  * @author xuexiang
  * @since 2018/6/13 上午12:44
  */
@@ -41,24 +59,29 @@ public final class XHttp {
     private volatile static XHttp sInstance = null;
     private static Application sContext;
 
-    public static final int DEFAULT_MILLISECONDS = 15000;             //默认的超时时间
-    private static final int DEFAULT_RETRY_COUNT = 3;                 //默认重试次数
-    private static final int DEFAULT_RETRY_INCREASE_DELAY = 0;         //默认重试叠加时间
-    private static final int DEFAULT_RETRY_DELAY = 500;               //默认重试延时
+    public static final int DEFAULT_TIMEOUT_MILLISECONDS = 15000;             //默认的超时时间
+    public static final int DEFAULT_RETRY_COUNT = 0;                  //默认重试次数
+    public static final int DEFAULT_RETRY_INCREASE_DELAY = 0;         //默认重试叠加时间
+    public static final int DEFAULT_RETRY_DELAY = 500;                //默认重试延时
     public static final int DEFAULT_CACHE_NEVER_EXPIRE = -1;
 
-    private Cache mCache = null;                                      //OkHttp缓存对象
-    private CacheMode mCacheMode = CacheMode.NO_CACHE;                //缓存类型
-    private long mCacheTime = -1;                                     //缓存时间
-    private File mCacheDirectory;                                     //缓存目录
-    private long mCacheMaxSize;                                       //缓存大小
+    //======url地址=====//
     private String mBaseUrl;                                          //全局BaseUrl
     private String mSubUrl = "";                                      //全局SubUrl,介于BaseUrl和请求url之间
+    //======缓存=====//
+    private Cache mCache = null;                                      //OkHttp缓存对象
+    private CacheMode mCacheMode = CacheMode.NO_CACHE;                //缓存类型
+    private long mCacheTime = DEFAULT_CACHE_NEVER_EXPIRE;             //缓存时间
+    private File mCacheDirectory;                                     //缓存目录
+    private long mCacheMaxSize;                                       //缓存大小
+    //======请求重试=====//
     private int mRetryCount = DEFAULT_RETRY_COUNT;                    //重试次数默认3次
     private int mRetryDelay = DEFAULT_RETRY_DELAY;                    //延迟xxms重试
     private int mRetryIncreaseDelay = DEFAULT_RETRY_INCREASE_DELAY;    //叠加延迟
+    //======全局请求头、参数=====//
     private HttpHeaders mCommonHeaders;                               //全局公共请求头
     private HttpParams mCommonParams;                                 //全局公共请求参数
+    //======Builder=====//
     private OkHttpClient.Builder mOkHttpClientBuilder;                //okHttp请求的客户端
     private Retrofit.Builder mRetrofitBuilder;                        //Retrofit请求Builder
     private RxCache.Builder mRxCacheBuilder;                          //RxCache请求的Builder
@@ -66,17 +89,25 @@ public final class XHttp {
 
     //==================初始化=====================//
 
+    /**
+     * 初始化
+     */
     private XHttp() {
         mOkHttpClientBuilder = new OkHttpClient.Builder();
         mOkHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
-        mOkHttpClientBuilder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        mOkHttpClientBuilder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        mOkHttpClientBuilder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
+        mOkHttpClientBuilder.connectTimeout(DEFAULT_TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
+        mOkHttpClientBuilder.readTimeout(DEFAULT_TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
+        mOkHttpClientBuilder.writeTimeout(DEFAULT_TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
         mRetrofitBuilder = new Retrofit.Builder();
         mRxCacheBuilder = new RxCache.Builder().init(sContext)
                 .diskConverter(new SerializableDiskConverter());      //目前只支持Serializable和Gson缓存其它可以自己扩展
     }
 
+    /**
+     * 获取XHttp实例
+     *
+     * @return
+     */
     public static XHttp getInstance() {
         testInitialize();
         if (sInstance == null) {
@@ -207,7 +238,7 @@ public final class XHttp {
     }
 
     /**
-     * 获取全局baseurl
+     * 获取全局BaseUrl
      */
     public static String getBaseUrl() {
         return getInstance().mBaseUrl;
@@ -425,15 +456,15 @@ public final class XHttp {
     /**
      * 获取全局公共请求参数
      */
-    public HttpParams getCommonParams() {
-        return mCommonParams;
+    public static HttpParams getCommonParams() {
+        return getInstance().mCommonParams;
     }
 
     /**
      * 获取全局公共请求头
      */
-    public HttpHeaders getCommonHeaders() {
-        return mCommonHeaders;
+    public static HttpHeaders getCommonHeaders() {
+        return getInstance().mCommonHeaders;
     }
 
     //==================OkHttpClient设置拦截器、代理、连接池=====================//
@@ -556,6 +587,46 @@ public final class XHttp {
      */
     public static CookieManager getCookieJar() {
         return getInstance().mCookieJar;
+    }
+
+
+    //==================清除缓存=====================//
+
+    /**
+     * 清空缓存
+     */
+    @SuppressLint("CheckResult")
+    public static void clearCache() {
+        getRxCache().clear().compose(RxSchedulers.<Boolean>_io_main())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(@NonNull Boolean aBoolean) throws Exception {
+                        HttpLog.i("clearCache success!!!");
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(@NonNull Throwable throwable) throws Exception {
+                        HttpLog.i("clearCache err!!!");
+                    }
+                });
+    }
+
+    /**
+     * 移除缓存（key）
+     */
+    @SuppressLint("CheckResult")
+    public static void removeCache(String key) {
+        getRxCache().remove(key).compose(RxSchedulers.<Boolean>_io_main()).subscribe(new Consumer<Boolean>() {
+            @Override
+            public void accept(@NonNull Boolean aBoolean) throws Exception {
+                HttpLog.i("removeCache success!!!");
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(@NonNull Throwable throwable) throws Exception {
+                HttpLog.i("removeCache err!!!");
+            }
+        });
     }
 
 }

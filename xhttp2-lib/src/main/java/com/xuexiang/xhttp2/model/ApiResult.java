@@ -24,6 +24,8 @@ package com.xuexiang.xhttp2.model;
  */
 public class ApiResult<T> {
     public final static String CODE = "Code";
+    public final static String MSG = "Msg";
+    public final static String DATA = "Data";
 
     private int Code;
     private String Msg;
