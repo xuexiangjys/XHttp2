@@ -16,17 +16,10 @@
 
 package com.xuexiang.xhttp2.utils;
 
-import com.xuexiang.xhttp2.logs.HttpLog;
+import com.xuexiang.xhttp2.model.SchedulerType;
+import com.xuexiang.xhttp2.transform.HttpSchedulersTransformer;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * <p>描述：线程调度工具</p>
@@ -41,59 +34,38 @@ public class RxSchedulers {
     }
 
     /**
+     * 订阅发生在主线程 （  ->  -> main)
+     * 使用compose操作符
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T> ObservableTransformer<T, T> _main() {
+        return new HttpSchedulersTransformer<>(SchedulerType._main);
+    }
+
+    /**
+     * 订阅发生在io线程 （  ->  -> io)
+     * 使用compose操作符
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T> ObservableTransformer<T, T> _io() {
+        return new HttpSchedulersTransformer<>(SchedulerType._io);
+    }
+
+
+    /**
      * 处理在io线程，订阅发生在主线程（ -> io -> main)
      *
      * @param <T>
      * @return
      */
     public static <T> ObservableTransformer<T, T> _io_main() {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(@NonNull Observable<T> upstream) {
-                return upstream
-                        .subscribeOn(Schedulers.io())
-                        .unsubscribeOn(Schedulers.io())
-                        .doOnSubscribe(new Consumer<Disposable>() {
-                            @Override
-                            public void accept(@NonNull Disposable disposable) throws Exception {
-                                HttpLog.d("+++doOnSubscribe+++" + disposable.isDisposed());
-                            }
-                        })
-                        .doFinally(new Action() {
-                            @Override
-                            public void run() throws Exception {
-                                HttpLog.d("+++doFinally+++");
-                            }
-                        })
-                        .observeOn(AndroidSchedulers.mainThread());
-            }
-        };
+        return new HttpSchedulersTransformer<>(SchedulerType._io_main);
     }
 
-
-    public static <T> ObservableTransformer<T, T> _io_(final boolean isOnMainThread) {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(@NonNull Observable<T> upstream) {
-                return upstream
-                        .subscribeOn(Schedulers.io())
-                        .unsubscribeOn(Schedulers.io())
-                        .doOnSubscribe(new Consumer<Disposable>() {
-                            @Override
-                            public void accept(@NonNull Disposable disposable) throws Exception {
-                                HttpLog.d("+++doOnSubscribe+++" + disposable.isDisposed());
-                            }
-                        })
-                        .doFinally(new Action() {
-                            @Override
-                            public void run() throws Exception {
-                                HttpLog.d("+++doFinally+++");
-                            }
-                        })
-                        .observeOn(AndroidSchedulers.mainThread());
-            }
-        };
-    }
 
     /**
      * 处理在io线程，订阅也发生在io线程（ -> io -> io)
@@ -102,26 +74,7 @@ public class RxSchedulers {
      * @return
      */
     public static <T> ObservableTransformer<T, T> _io_io() {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(@NonNull Observable<T> upstream) {
-                return upstream
-                        .subscribeOn(Schedulers.io())
-                        .unsubscribeOn(Schedulers.io())
-                        .doOnSubscribe(new Consumer<Disposable>() {
-                            @Override
-                            public void accept(@NonNull Disposable disposable) throws Exception {
-                                HttpLog.d("+++doOnSubscribe+++" + disposable.isDisposed());
-                            }
-                        })
-                        .doFinally(new Action() {
-                            @Override
-                            public void run() throws Exception {
-                                HttpLog.d("+++doFinally+++");
-                            }
-                        })
-                        .observeOn(Schedulers.io());
-            }
-        };
+        return new HttpSchedulersTransformer<>(SchedulerType._io_io);
     }
+
 }

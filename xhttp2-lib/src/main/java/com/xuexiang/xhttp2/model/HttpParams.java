@@ -72,49 +72,89 @@ public class HttpParams implements Serializable {
         }
     }
 
+    //===============存放普通键值对参数=====================//
+
+    /**
+     * 存放普通键值对参数
+     *
+     * @param params
+     */
     public void put(Map<String, String> params) {
         if (params == null || params.isEmpty()) return;
         urlParamsMap.putAll(params);
     }
 
+    /**
+     * 存放普通键值对参数
+     *
+     * @param key
+     * @param value
+     */
     public void put(String key, String value) {
         urlParamsMap.put(key, value);
     }
 
+    //===============存放文件键值对参数=====================//
+
+
+    /**
+     * 存放文件键值对参数
+     *
+     * @param key              关键字
+     * @param file             文件
+     * @param responseCallBack 上传进度条回调接口
+     * @param <T>
+     */
     public <T extends File> void put(String key, T file, IProgressResponseCallBack responseCallBack) {
         put(key, file, file.getName(), responseCallBack);
     }
 
+    /**
+     * 存放文件键值对参数
+     *
+     * @param key              关键字
+     * @param file             文件
+     * @param fileName         文件名
+     * @param responseCallBack 上传进度条回调接口
+     * @param <T>
+     */
     public <T extends File> void put(String key, T file, String fileName, IProgressResponseCallBack responseCallBack) {
         put(key, file, fileName, guessMimeType(fileName), responseCallBack);
     }
 
+    /**
+     * 存放文件键值对参数
+     *
+     * @param key              关键字
+     * @param file             文件流
+     * @param fileName         文件名
+     * @param responseCallBack 上传进度条回调接口
+     * @param <T>
+     */
     public <T extends InputStream> void put(String key, T file, String fileName, IProgressResponseCallBack responseCallBack) {
         put(key, file, fileName, guessMimeType(fileName), responseCallBack);
     }
 
+    /**
+     * 存放文件键值对参数
+     *
+     * @param key              关键字
+     * @param bytes            bytes数组
+     * @param fileName         文件名
+     * @param responseCallBack 上传进度条回调接口
+     */
     public void put(String key, byte[] bytes, String fileName, IProgressResponseCallBack responseCallBack) {
         put(key, bytes, fileName, guessMimeType(fileName), responseCallBack);
     }
 
-    public void put(String key, FileWrapper fileWrapper) {
-        if (key != null && fileWrapper != null) {
-            put(key, fileWrapper.file, fileWrapper.fileName, fileWrapper.contentType, fileWrapper.responseCallBack);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> void put(String key, T countent, String fileName, MediaType contentType, IProgressResponseCallBack responseCallBack) {
-        if (key != null) {
-            List<FileWrapper> fileWrappers = fileParamsMap.get(key);
-            if (fileWrappers == null) {
-                fileWrappers = new ArrayList<>();
-                fileParamsMap.put(key, fileWrappers);
-            }
-            fileWrappers.add(new FileWrapper(countent, fileName, contentType, responseCallBack));
-        }
-    }
-
+    /**
+     * 存放多个文件的键值对参数
+     *
+     * @param key              关键字
+     * @param files            文件集合
+     * @param responseCallBack 上传进度条回调接口
+     * @param <T>
+     */
     public <T extends File> void putFileParams(String key, List<T> files, IProgressResponseCallBack responseCallBack) {
         if (key != null && files != null && !files.isEmpty()) {
             for (File file : files) {
@@ -123,20 +163,29 @@ public class HttpParams implements Serializable {
         }
     }
 
-    public void putFileWrapperParams(String key, List<FileWrapper> fileWrappers) {
-        if (key != null && fileWrappers != null && !fileWrappers.isEmpty()) {
-            for (FileWrapper fileWrapper : fileWrappers) {
-                put(key, fileWrapper);
+    //=======================//
+    @SuppressWarnings("unchecked")
+    private <T> void put(String key, T content, String fileName, MediaType contentType, IProgressResponseCallBack responseCallBack) {
+        if (fileParamsMap != null && key != null) {
+            List<FileWrapper> fileWrappers = fileParamsMap.get(key);
+            if (fileWrappers == null) {
+                fileWrappers = new ArrayList<>();
+                fileParamsMap.put(key, fileWrappers);
             }
+            fileWrappers.add(new FileWrapper(content, fileName, contentType, responseCallBack));
         }
     }
 
     public void removeUrl(String key) {
-        urlParamsMap.remove(key);
+        if (urlParamsMap != null) {
+            urlParamsMap.remove(key);
+        }
     }
 
     public void removeFile(String key) {
-        fileParamsMap.remove(key);
+        if (fileParamsMap != null) {
+            fileParamsMap.remove(key);
+        }
     }
 
     public void remove(String key) {
@@ -145,10 +194,20 @@ public class HttpParams implements Serializable {
     }
 
     public void clear() {
-        urlParamsMap.clear();
-        fileParamsMap.clear();
+        if (urlParamsMap != null) {
+            urlParamsMap.clear();
+        }
+        if (fileParamsMap != null) {
+            fileParamsMap.clear();
+        }
     }
 
+    /**
+     * 解析文件的媒体类型
+     *
+     * @param path
+     * @return
+     */
     private MediaType guessMimeType(String path) {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
         path = path.replace("#", "");   //解决文件名中含有#号异常的问题
@@ -183,7 +242,7 @@ public class HttpParams implements Serializable {
 
         @Override
         public String toString() {
-            return "FileWrapper{" + "countent=" + file + ", fileName='" + fileName + ", contentType=" + contentType + ", fileSize=" + fileSize + '}';
+            return "FileWrapper{" + "content=" + file + ", fileName='" + fileName + ", contentType=" + contentType + ", fileSize=" + fileSize + '}';
         }
     }
 

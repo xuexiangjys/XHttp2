@@ -21,6 +21,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 
+import com.xuexiang.xhttp2.XHttp;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -96,7 +98,7 @@ public final class Utils {
      */
     public static File getDiskCacheDir(Context context, String uniqueName) {
         String cachePath;
-        if (isSDCardEnable() && context.getExternalCacheDir() != null) {
+        if (isSDCardExist() && context.getExternalCacheDir() != null) {
             cachePath = context.getExternalCacheDir().getPath();
         } else {
             cachePath = context.getCacheDir().getPath();
@@ -104,8 +106,28 @@ public final class Utils {
         return new File(cachePath + File.separator + uniqueName);
     }
 
-    private static boolean isSDCardEnable() {
+    private static boolean isSDCardExist() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable();
+    }
+
+    /**
+     * 获取磁盘的文件目录
+     *
+     * @return SD卡不存在: /data/data/com.xxx.xxx/files;<br>
+     * 存在: /storage/emulated/0/Android/data/com.xxx.xxx/files;
+     */
+    private static String getDiskFilesDir() {
+        return isSDCardExist() && XHttp.getContext().getExternalFilesDir(null) != null ? XHttp.getContext().getExternalFilesDir(null).getPath() : XHttp.getContext().getFilesDir().getPath();
+    }
+
+    /**
+     * 获取磁盘的自定义文件目录
+     *
+     * @return SD卡不存在: /data/data/com.xxx.xxx/files/fileDir;<br>
+     * 存在: /storage/emulated/0/Android/data/com.xxx.xxx/files/fileDir;
+     */
+    public static String getDiskFilesDir(String fileDir) {
+        return getDiskFilesDir() + File.separator + fileDir;
     }
 }

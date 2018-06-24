@@ -72,8 +72,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
     private String mSubUrl;                                                 //SubUrl,介于BaseUrl和请求url之间
     protected String mUrl;                                                  //请求url
     //====请求行为=====//
-    protected boolean isSyncRequest = false;                                //是否是同步请求
-    protected boolean isOnMainThread = true;                                //响应是否回到主线程
+    protected boolean mIsSyncRequest = false;                                //是否是同步请求
+    protected boolean mIsOnMainThread = true;                                //响应是否回到主线程
     protected boolean mKeepJson = false;                                    //是否返回原始的json格式
     //====请求校验=====//
     private boolean mSign = false;                                          //是否需要签名
@@ -204,7 +204,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
      * @return
      */
     public R syncRequest(boolean syncRequest) {
-        isSyncRequest = syncRequest;
+        mIsSyncRequest = syncRequest;
         return (R) this;
     }
 
@@ -215,7 +215,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
      * @return
      */
     public R onMainThread(boolean onMainThread) {
-        isOnMainThread = onMainThread;
+        mIsOnMainThread = onMainThread;
         return (R) this;
     }
 
@@ -392,16 +392,25 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return (R) this;
     }
 
+    /**
+     * 设置参数
+     */
     public R params(String key, String value) {
         mParams.put(key, value);
         return (R) this;
     }
 
+    /**
+     * 去除参数
+     */
     public R removeParam(String key) {
         mParams.remove(key);
         return (R) this;
     }
 
+    /**
+     * 去除所有参数
+     */
     public R removeAllParams() {
         mParams.clear();
         return (R) this;

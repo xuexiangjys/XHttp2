@@ -16,6 +16,8 @@
 
 package com.xuexiang.xhttp2.callback;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.internal.$Gson$Types;
 import com.xuexiang.xhttp2.cache.model.CacheResult;
 import com.xuexiang.xhttp2.callback.impl.IType;
@@ -36,10 +38,10 @@ import okhttp3.ResponseBody;
  * @author xuexiang
  * @since 2018/6/21 上午12:47
  */
-public abstract class CallBackProxy<T extends ApiResult<R>, R> implements IType<T> {
+public class CallBackProxy<T extends ApiResult<R>, R> implements IType<T> {
     CallBack<R> mCallBack;
 
-    public CallBackProxy(CallBack<R> callBack) {
+    public CallBackProxy(@NonNull CallBack<R> callBack) {
         mCallBack = callBack;
     }
 
@@ -70,5 +72,10 @@ public abstract class CallBackProxy<T extends ApiResult<R>, R> implements IType<
             rawType = ((ParameterizedType) rawType).getRawType();
         }
         return $Gson$Types.newParameterizedTypeWithOwner(null, rawType, typeArguments);
+    }
+
+    @Override
+    public Type getRawType() {
+        return mCallBack.getRawType();
     }
 }

@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2.transform;
+package com.xuexiang.xhttp2.transform.func;
 
-import com.xuexiang.xhttp2.transform.func.HttpResponseThrowableFunc;
+import com.xuexiang.xhttp2.exception.ApiException;
+import com.xuexiang.xhttp2.exception.ServerException;
+import com.xuexiang.xhttp2.model.ApiResult;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
 
 /**
- * 错误转换Transformer
+ * ApiResult<T>转换T
  *
  * @author xuexiang
- * @since 2018/6/21 下午8:34
+ * @since 2018/6/21 下午8:33
  */
-public class HandleErrTransformer<T> implements ObservableTransformer<T, T> {
+public class HttpResultFuc<T> implements Function<ApiResult<T>, T> {
+
     @Override
-    public ObservableSource<T> apply(Observable<T> upstream) {
-        return upstream.onErrorResumeNext(new HttpResponseThrowableFunc<T>());
+    public T apply(@NonNull ApiResult<T> response) throws Exception {
+        if (ApiException.isSuccess(response)) {
+            return response.getData();
+        } else {
+            throw new ServerException(response.getCode(), response.getMsg());
+        }
     }
 }

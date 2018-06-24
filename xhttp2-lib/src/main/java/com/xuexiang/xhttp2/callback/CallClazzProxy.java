@@ -33,7 +33,7 @@ import okhttp3.ResponseBody;
  * @author xuexiang
  * @since 2018/6/21 上午12:29
  */
-public abstract class CallClazzProxy<T extends ApiResult<R>, R> implements IType<T> {
+public class CallClazzProxy<T extends ApiResult<R>, R> implements IType<T> {
     private Type type;
 
     public CallClazzProxy(Type type) {
@@ -58,5 +58,10 @@ public abstract class CallClazzProxy<T extends ApiResult<R>, R> implements IType
             rawType = ((ParameterizedType) rawType).getRawType();
         }
         return $Gson$Types.newParameterizedTypeWithOwner(null, rawType, typeArguments);
+    }
+
+    @Override
+    public Type getRawType() {
+        return null;
     }
 }

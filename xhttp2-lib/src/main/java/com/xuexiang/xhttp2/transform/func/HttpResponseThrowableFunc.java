@@ -28,7 +28,7 @@ import io.reactivex.functions.Function;
  * @author xuexiang
  * @since 2018/6/21 下午8:31
  */
-public class HttpResponseFunc<T> implements Function<Throwable, Observable<T>> {
+public class HttpResponseThrowableFunc<T> implements Function<Throwable, Observable<T>> {
     @Override
     public Observable<T> apply(@NonNull Throwable throwable) throws Exception {
         return Observable.error(ApiExceptionHandler.handleException(throwable));

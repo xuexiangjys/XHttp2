@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2.transform.func;
+package com.xuexiang.xhttp2.transform;
 
-import com.xuexiang.xhttp2.exception.ApiException;
-import com.xuexiang.xhttp2.exception.ServerException;
 import com.xuexiang.xhttp2.model.ApiResult;
+import com.xuexiang.xhttp2.transform.func.HttpResponseThrowableFunc;
+import com.xuexiang.xhttp2.transform.func.HttpResultFuc;
 
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Function;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
 
 /**
- * ApiResult<T>转换T
+ * 将解析到的ApiResult转化为T, 并将错误抛出
  *
  * @author xuexiang
- * @since 2018/6/21 下午8:33
+ * @since 2018/6/25 上午12:09
  */
-public class HandleFuc<T> implements Function<ApiResult<T>, T> {
+public class HttpResultTransformer<T> implements ObservableTransformer<ApiResult<T>, T> {
 
     @Override
-    public T apply(@NonNull ApiResult<T> response) throws Exception {
-        if (ApiException.isSuccess(response)) {
-            return response.getData();
-        } else {
-            throw new ServerException(response.getCode(), response.getMsg());
-        }
+    public ObservableSource<T> apply(Observable<ApiResult<T>> upstream) {
+        return upstream.map(new HttpResultFuc<T>())
+                .onErrorResumeNext(new HttpResponseThrowableFunc<T>());
     }
 }

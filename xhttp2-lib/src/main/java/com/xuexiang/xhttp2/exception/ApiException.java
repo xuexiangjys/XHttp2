@@ -190,6 +190,10 @@ public class ApiException extends Exception {
          */
         public static final int OUT_OF_MEMORY_ERROR = NULL_POINTER_ERROR + 1;
         /**
+         * 下载错误
+         */
+        public static final int DOWNLOAD_ERROR = OUT_OF_MEMORY_ERROR + 1;
+        /**
          * openapi注解错误
          */
         public static final int OPENAPI_ANNOTATION_ERROR = OUT_OF_MEMORY_ERROR + 1;

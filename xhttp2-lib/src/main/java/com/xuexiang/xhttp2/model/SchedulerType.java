@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2.transform;
-
-import com.xuexiang.xhttp2.transform.func.HttpResponseThrowableFunc;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
+package com.xuexiang.xhttp2.model;
 
 /**
- * 错误转换Transformer
+ * 线程类型
  *
  * @author xuexiang
- * @since 2018/6/21 下午8:34
+ * @since 2018/6/25 上午12:02
  */
-public class HandleErrTransformer<T> implements ObservableTransformer<T, T> {
-    @Override
-    public ObservableSource<T> apply(Observable<T> upstream) {
-        return upstream.onErrorResumeNext(new HttpResponseThrowableFunc<T>());
-    }
+public enum SchedulerType {
+
+    /**
+     * 订阅发生在主线程 （  ->  -> main)
+     */
+    _main,
+    /**
+     * 订阅发生在io线程 （  ->  -> io)
+     */
+    _io,
+    /**
+     * 处理在io线程，订阅发生在主线程（ -> io -> main)
+     */
+    _io_main,
+    /**
+     * 处理在io线程，订阅也发生在io线程（ -> io -> io)
+     */
+    _io_io,
 }
