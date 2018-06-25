@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2.transform;
+package com.xuexiang.xhttp2.annotation;
 
-import com.xuexiang.xhttp2.transform.func.HttpResponseThrowableFunc;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * 将错误抛出
+ * 网络请求实体参数名的注解
  *
  * @author xuexiang
- * @since 2018/6/21 下午8:34
+ * @since 2018/5/22 下午3:23
  */
-public class HandleErrTransformer<T> implements ObservableTransformer<T, T> {
-    @Override
-    public ObservableSource<T> apply(Observable<T> upstream) {
-        return upstream.onErrorResumeNext(new HttpResponseThrowableFunc<T>());
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface ParamKey {
+    /**
+     * @return 请求参数的key
+     */
+    String key();
 }

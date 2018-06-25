@@ -35,27 +35,34 @@ import okhttp3.ResponseBody;
  * @author xuexiang
  * @since 2018/6/25 上午12:53
  */
-@SuppressWarnings(value={"unchecked", "deprecation"})
+@SuppressWarnings(value = {"unchecked", "deprecation"})
 public class DownloadRequest extends BaseRequest<DownloadRequest> {
 
     public DownloadRequest(String url) {
         super(url);
     }
 
+    /**
+     * 下载文件的路径
+     */
     private String mSavePath;
+    /**
+     * 下载文件的名称
+     */
     private String mSaveName;
 
     /**
-     * 下载文件路径<br>
-     * 默认在：/storage/emulated/0/Android/data/包名/files/1494647767055<br>
+     * 设置下载文件路径<br>
+     * SD卡不存在: /data/data/com.xxx.xxx/files;<br>
+     * 存在: /storage/emulated/0/Android/data/com.xxx.xxx/files;
      */
     public DownloadRequest savePath(String savePath) {
-        this.mSavePath = savePath;
+        mSavePath = savePath;
         return this;
     }
 
     /**
-     * 下载文件名称<br>
+     * 设置下载文件名称<br>
      * 默认名字是时间戳生成的<br>
      */
     public DownloadRequest saveName(String saveName) {

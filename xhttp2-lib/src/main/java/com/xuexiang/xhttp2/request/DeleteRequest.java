@@ -54,29 +54,6 @@ public class DeleteRequest extends BaseBodyRequest<DeleteRequest> {
         });
     }
 
-    public <T> Disposable execute(CallBackProxy<? extends ApiResult<T>, T> proxy) {
-        Observable<CacheResult<T>> observable = build().toObservable(generateRequest(), proxy);
-        if (CacheResult.class != proxy.getCallBack().getRawType())
-            return observable.compose(new ObservableTransformer<CacheResult<T>, T>() {
-                @Override
-                public ObservableSource<T> apply(@NonNull Observable<CacheResult<T>> upstream) {
-                    return upstream.map(new CacheResultFunc<T>());
-                }
-            }).subscribeWith(new CallBackSubscriber<T>(proxy.getCallBack()));
-        else {
-            return observable.subscribeWith(new CallBackSubscriber<CacheResult<T>>(proxy.getCallBack()));
-        }
-    }
-
-    private <T> Observable<CacheResult<T>> toObservable(Observable observable, CallBackProxy<? extends ApiResult<T>, T> proxy) {
-        return observable.map(new ApiResultFunc(proxy != null ? proxy.getType() : new TypeToken<ResponseBody>() {
-        }.getType(), mKeepJson))
-                .compose(new HttpResultTransformer())
-                .compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
-                .compose(mRxCache.transformer(mCacheMode, proxy.getCallBack().getType()))
-                .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay));
-    }
-
     @Override
     protected Observable<ResponseBody> generateRequest() {
         if (mRequestBody != null) { //自定义的请求体

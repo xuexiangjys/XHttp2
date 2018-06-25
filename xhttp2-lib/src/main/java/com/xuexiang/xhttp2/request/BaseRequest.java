@@ -19,19 +19,31 @@ package com.xuexiang.xhttp2.request;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.google.gson.reflect.TypeToken;
 import com.xuexiang.xhttp2.XHttp;
+import com.xuexiang.xhttp2.annotation.ThreadType;
 import com.xuexiang.xhttp2.api.ApiService;
 import com.xuexiang.xhttp2.cache.RxCache;
 import com.xuexiang.xhttp2.cache.converter.IDiskConverter;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
+import com.xuexiang.xhttp2.cache.model.CacheResult;
+import com.xuexiang.xhttp2.callback.CallBackProxy;
+import com.xuexiang.xhttp2.callback.CallClazzProxy;
 import com.xuexiang.xhttp2.https.HttpsUtils;
 import com.xuexiang.xhttp2.interceptor.BaseDynamicInterceptor;
 import com.xuexiang.xhttp2.interceptor.CacheInterceptor;
 import com.xuexiang.xhttp2.interceptor.CacheInterceptorOffline;
 import com.xuexiang.xhttp2.interceptor.HeadersInterceptor;
 import com.xuexiang.xhttp2.interceptor.NoCacheInterceptor;
+import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.model.HttpHeaders;
 import com.xuexiang.xhttp2.model.HttpParams;
+import com.xuexiang.xhttp2.subsciber.CallBackSubscriber;
+import com.xuexiang.xhttp2.transform.HttpResultTransformer;
+import com.xuexiang.xhttp2.transform.HttpSchedulersTransformer;
+import com.xuexiang.xhttp2.transform.func.ApiResultFunc;
+import com.xuexiang.xhttp2.transform.func.CacheResultFunc;
+import com.xuexiang.xhttp2.transform.func.RetryExceptionFunc;
 import com.xuexiang.xhttp2.utils.Utils;
 
 import java.io.File;
@@ -44,6 +56,10 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import okhttp3.Cache;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
@@ -216,6 +232,23 @@ public abstract class BaseRequest<R extends BaseRequest> {
      */
     public R onMainThread(boolean onMainThread) {
         mIsOnMainThread = onMainThread;
+        return (R) this;
+    }
+
+    /**
+     * 设置请求的线程调度类型
+     *
+     * @param threadType
+     * @return
+     */
+    public R threadType(@ThreadType String threadType) {
+        if (ThreadType.TO_MAIN.equals(threadType)) { // -> main -> io -> main
+            syncRequest(false).onMainThread(true);
+        } else if (ThreadType.TO_IO.equals(threadType)) { // -> main -> io -> io
+            syncRequest(false).onMainThread(false);
+        } else if (ThreadType.IN_THREAD.equals(threadType)) { // -> io -> io -> io
+            syncRequest(true).onMainThread(false);
+        }
         return (R) this;
     }
 
@@ -728,6 +761,11 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return rxCacheBuilder;
     }
 
+    /**
+     * 构建请求【构建RxCache、OkHttpClient、Retrofit、mApiManager】
+     *
+     * @return
+     */
     protected R build() {
         final RxCache.Builder rxCacheBuilder = generateRxCache();
         OkHttpClient.Builder okHttpClientBuilder = generateOkClient();
@@ -744,5 +782,88 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return (R) this;
     }
 
+    //==================================================//
+
+    /**
+     * 执行请求，获取请求响应结果【Observable<CacheResult<T>>】
+     *
+     * @param observable
+     * @param proxy
+     * @param <T>
+     * @return
+     */
+    protected <T> Observable<CacheResult<T>> toObservable(Observable observable, CallBackProxy<? extends ApiResult<T>, T> proxy) {
+        return observable.map(new ApiResultFunc(proxy != null ? proxy.getType() : new TypeToken<ResponseBody>() {
+        }.getType(), mKeepJson))
+                .compose(new HttpResultTransformer())
+                .compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
+                .compose(mRxCache.transformer(mCacheMode, proxy.getCallBack().getType()))
+                .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay));
+    }
+
+    /**
+     * 执行请求，并订阅请求响应结果
+     *
+     * @param proxy
+     * @param <T>
+     * @return
+     */
+    protected <T> Disposable execute(CallBackProxy<? extends ApiResult<T>, T> proxy) {
+        Observable<CacheResult<T>> observable = build().toObservable(generateRequest(), proxy);
+        if (CacheResult.class != proxy.getRawType()) {
+            return observable.compose(new ObservableTransformer<CacheResult<T>, T>() {
+                @Override
+                public ObservableSource<T> apply(@NonNull Observable<CacheResult<T>> upstream) {
+                    return upstream.map(new CacheResultFunc<T>());
+                }
+            }).subscribeWith(new CallBackSubscriber<T>(proxy.getCallBack()));
+        } else {
+            return observable.subscribeWith(new CallBackSubscriber<CacheResult<T>>(proxy.getCallBack()));
+        }
+    }
+
+    /**
+     * 执行请求，获取请求响应结果【Observable<T>】
+     *
+     * @param proxy 使用了getType
+     * @param <T>
+     * @return
+     */
+    protected <T> Observable<T> execute(CallClazzProxy<? extends ApiResult<T>, T> proxy) {
+        return build().generateRequest()
+                .map(new ApiResultFunc(proxy.getType(), mKeepJson))
+                .compose(new HttpResultTransformer())
+                .compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
+                .compose(mRxCache.transformer(mCacheMode, proxy.getCallType()))
+                .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay))
+                .compose(new ObservableTransformer() {
+                    @Override
+                    public ObservableSource apply(@NonNull Observable upstream) {
+                        return upstream.map(new CacheResultFunc<T>());
+                    }
+                });
+    }
+
+    /**
+     * 执行请求，获取请求响应结果【Observable<T>】
+     *
+     * @param proxy 使用了getCallType
+     * @param <T>
+     * @return
+     */
+    protected <T> Observable<T> executeForType(CallClazzProxy<? extends ApiResult<T>, T> proxy) {
+        return build().generateRequest()
+                .map(new ApiResultFunc(proxy.getCallType(), mKeepJson))
+                .compose(new HttpResultTransformer())
+                .compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
+                .compose(mRxCache.transformer(mCacheMode, proxy.getCallType()))
+                .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay))
+                .compose(new ObservableTransformer() {
+                    @Override
+                    public ObservableSource apply(@NonNull Observable upstream) {
+                        return upstream.map(new CacheResultFunc<T>());
+                    }
+                });
+    }
 }
 

@@ -16,6 +16,12 @@ import com.xuexiang.xhttp2.interceptor.HttpLoggingInterceptor;
 import com.xuexiang.xhttp2.logs.HttpLog;
 import com.xuexiang.xhttp2.model.HttpHeaders;
 import com.xuexiang.xhttp2.model.HttpParams;
+import com.xuexiang.xhttp2.request.CustomRequest;
+import com.xuexiang.xhttp2.request.DeleteRequest;
+import com.xuexiang.xhttp2.request.DownloadRequest;
+import com.xuexiang.xhttp2.request.GetRequest;
+import com.xuexiang.xhttp2.request.PostRequest;
+import com.xuexiang.xhttp2.request.PutRequest;
 import com.xuexiang.xhttp2.utils.RxSchedulers;
 import com.xuexiang.xhttp2.utils.Utils;
 
@@ -589,6 +595,49 @@ public final class XHttp {
         return getInstance().mCookieJar;
     }
 
+    //==================获取Request请求=====================//
+
+    /**
+     * @return get请求
+     */
+    public static GetRequest get(String url) {
+        return new GetRequest(url);
+    }
+
+    /**
+     * @return post请求
+     */
+    public static PostRequest post(String url) {
+        return new PostRequest(url);
+    }
+
+    /**
+     * @return delete请求
+     */
+    public static DeleteRequest delete(String url) {
+        return new DeleteRequest(url);
+    }
+
+    /**
+     * @return put请求
+     */
+    public static PutRequest put(String url) {
+        return new PutRequest(url);
+    }
+
+    /**
+     * @return 自定义请求
+     */
+    public static CustomRequest custom() {
+        return new CustomRequest();
+    }
+
+    /**
+     * @return 下载请求
+     */
+    public static DownloadRequest downLoad(String url) {
+        return new DownloadRequest(url);
+    }
 
     //==================清除缓存=====================//
 

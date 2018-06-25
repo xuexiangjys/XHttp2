@@ -46,12 +46,9 @@ public class CallClazzProxy<T extends ApiResult<R>, R> implements IType<T> {
 
     @Override
     public Type getType() {  //CallClazz代理方式，获取需要解析的Type
-        Type typeArguments = null;
+        Type typeArguments = ResponseBody.class;
         if (type != null) {
             typeArguments = type;
-        }
-        if (typeArguments == null) {
-            typeArguments = ResponseBody.class;
         }
         Type rawType = TypeUtils.findNeedType(getClass());
         if (rawType instanceof ParameterizedType) {

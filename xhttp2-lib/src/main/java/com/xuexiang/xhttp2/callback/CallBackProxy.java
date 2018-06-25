@@ -51,7 +51,7 @@ public class CallBackProxy<T extends ApiResult<R>, R> implements IType<T> {
 
     @Override
     public Type getType() {//CallBack代理方式，获取需要解析的Type
-        Type typeArguments = null;
+        Type typeArguments = ResponseBody.class;
         if (mCallBack != null) {
             Type rawType = mCallBack.getRawType();//如果用户的信息是返回List需单独处理
             if (List.class.isAssignableFrom(TypeUtils.getClass(rawType, 0)) || Map.class.isAssignableFrom(TypeUtils.getClass(rawType, 0))) {
@@ -63,9 +63,6 @@ public class CallBackProxy<T extends ApiResult<R>, R> implements IType<T> {
                 Type type = mCallBack.getType();
                 typeArguments = TypeUtils.getClass(type, 0);
             }
-        }
-        if (typeArguments == null) {
-            typeArguments = ResponseBody.class;
         }
         Type rawType = TypeUtils.findNeedType(getClass());
         if (rawType instanceof ParameterizedType) {

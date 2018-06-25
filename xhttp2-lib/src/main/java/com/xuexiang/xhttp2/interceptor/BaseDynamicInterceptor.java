@@ -126,7 +126,7 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
         }
         String nameKeys = Arrays.asList(nameList).toString();
         //拼装新的参数
-        TreeMap<String, String> newParams = dynamic(oldParams);
+        TreeMap<String, String> newParams = getDynamicParams(oldParams);
         Utils.checkNotNull(newParams, "newParams==null");
         for (Map.Entry<String, String> entry : newParams.entrySet()) {
             String urlValue = URLEncoder.encode(entry.getValue(), HttpUtils.UTF8.name());
@@ -160,7 +160,7 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
             }
 
             //拼装新的参数
-            TreeMap<String, String> newParams = dynamic(oldParams);
+            TreeMap<String, String> newParams = getDynamicParams(oldParams);
             Utils.checkNotNull(newParams, "newParams == null");
             for (Map.Entry<String, String> entry : newParams.entrySet()) {
                 String value = URLDecoder.decode(entry.getValue(), HttpUtils.UTF8.name());
@@ -179,7 +179,7 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
             List<MultipartBody.Part> newParts = new ArrayList<>();
             newParts.addAll(oldParts);
             TreeMap<String, String> oldParams = new TreeMap<>();
-            TreeMap<String, String> newParams = dynamic(oldParams);
+            TreeMap<String, String> newParams = getDynamicParams(oldParams);
             for (Map.Entry<String, String> stringStringEntry : newParams.entrySet()) {
                 MultipartBody.Part part = MultipartBody.Part.createFormData(stringStringEntry.getKey(), stringStringEntry.getValue());
                 newParts.add(part);
@@ -190,7 +190,7 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
             multipartBody = bodyBuilder.build();
             request = request.newBuilder().post(multipartBody).build();
         } else if (request.body() instanceof RequestBody) {
-            TreeMap<String, String> params = dynamic(new TreeMap<String, String>());
+            TreeMap<String, String> params = getDynamicParams(new TreeMap<String, String>());
             String url = HttpUtils.createUrlFromParams(mHttpUrl.url().toString(), params);
             request = request.newBuilder().url(url).build();
         }
@@ -198,10 +198,10 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
     }
 
     /**
-     * 动态处理参数
+     * 获取动态参数
      *
      * @param dynamicMap
      * @return 返回新的参数集合
      */
-    protected abstract TreeMap<String, String> dynamic(TreeMap<String, String> dynamicMap);
+    protected abstract TreeMap<String, String> getDynamicParams(TreeMap<String, String> dynamicMap);
 }

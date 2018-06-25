@@ -19,13 +19,18 @@ package com.xuexiang.xhttp2.utils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
+import com.xuexiang.xhttp2.annotation.ParamKey;
 import com.xuexiang.xhttp2.logs.HttpLog;
+import com.xuexiang.xhttp2.model.XHttpRequest;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.TreeMap;
 
 import okhttp3.MediaType;
 import okhttp3.Response;
@@ -135,5 +140,26 @@ public final class HttpUtils {
             HttpLog.e(e);
         }
         return url;
+    }
+
+    /**
+     * 获取注解设置请求key的请求Json
+     * @param xHttpRequest
+     * @return
+     * @throws IllegalAccessException
+     */
+    public static String getAnnotationParamString(XHttpRequest xHttpRequest) throws IllegalAccessException {
+        TreeMap<String, Object> params = new TreeMap<>();
+        Field[] fields = xHttpRequest.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            ParamKey paramKey = field.getAnnotation(ParamKey.class);
+            if (paramKey != null) {
+                params.put(paramKey.key(), field.get(xHttpRequest));
+            } else {
+                params.put(field.getName(), field.get(xHttpRequest));
+            }
+        }
+        return new Gson().toJson(params);
     }
 }

@@ -16,6 +16,9 @@
 
 package com.xuexiang.xhttp2.utils;
 
+import com.xuexiang.xhttp2.model.ApiResult;
+import com.xuexiang.xhttp2.reflect.TypeBuilder;
+
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -159,6 +162,18 @@ public final class TypeUtils {
             }
         }
         return needTypes;
+    }
+
+    /**
+     * 为请求的返回类型加上ApiResult包装类
+     * @param type
+     * @return
+     */
+    public static Type getApiResultType(Type type) {
+        return TypeBuilder
+                .newInstance(ApiResult.class)
+                .addTypeParam(type)
+                .build();
     }
 
 

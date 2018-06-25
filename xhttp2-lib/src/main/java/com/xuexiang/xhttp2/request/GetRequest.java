@@ -17,25 +17,14 @@
 package com.xuexiang.xhttp2.request;
 
 
-import com.google.gson.reflect.TypeToken;
-import com.xuexiang.xhttp2.cache.model.CacheResult;
 import com.xuexiang.xhttp2.callback.CallBack;
 import com.xuexiang.xhttp2.callback.CallBackProxy;
 import com.xuexiang.xhttp2.callback.CallClazzProxy;
 import com.xuexiang.xhttp2.model.ApiResult;
-import com.xuexiang.xhttp2.subsciber.CallBackSubscriber;
-import com.xuexiang.xhttp2.transform.HttpResultTransformer;
-import com.xuexiang.xhttp2.transform.HttpSchedulersTransformer;
-import com.xuexiang.xhttp2.transform.func.ApiResultFunc;
-import com.xuexiang.xhttp2.transform.func.CacheResultFunc;
-import com.xuexiang.xhttp2.transform.func.RetryExceptionFunc;
 
 import java.lang.reflect.Type;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import okhttp3.ResponseBody;
 
@@ -53,56 +42,15 @@ public class GetRequest extends BaseRequest<GetRequest> {
     }
 
     public <T> Observable<T> execute(Class<T> clazz) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz) {
-        });
+        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz));
     }
 
     public <T> Observable<T> execute(Type type) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(type) {
-        });
-    }
-
-    public <T> Observable<T> execute(CallClazzProxy<? extends ApiResult<T>, T> proxy) {
-        return build().generateRequest()
-                .map(new ApiResultFunc(proxy.getType(), mKeepJson))
-                .compose(new HttpResultTransformer())
-                .compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
-                .compose(mRxCache.transformer(mCacheMode, proxy.getCallType()))
-                .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay))
-                .compose(new ObservableTransformer() {
-                    @Override
-                    public ObservableSource apply(@NonNull Observable upstream) {
-                        return upstream.map(new CacheResultFunc<T>());
-                    }
-                });
+        return execute(new CallClazzProxy<ApiResult<T>, T>(type));
     }
 
     public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
-        });
-    }
-
-    public <T> Disposable execute(CallBackProxy<? extends ApiResult<T>, T> proxy) {
-        Observable<CacheResult<T>> observable = build().toObservable(mApiManager.get(getUrl(), mParams.urlParamsMap), proxy);
-        if (CacheResult.class != proxy.getCallBack().getRawType()) {
-            return observable.compose(new ObservableTransformer<CacheResult<T>, T>() {
-                @Override
-                public ObservableSource<T> apply(@NonNull Observable<CacheResult<T>> upstream) {
-                    return upstream.map(new CacheResultFunc<T>());
-                }
-            }).subscribeWith(new CallBackSubscriber<T>(proxy.getCallBack()));
-        } else {
-            return observable.subscribeWith(new CallBackSubscriber<CacheResult<T>>(proxy.getCallBack()));
-        }
-    }
-
-    private <T> Observable<CacheResult<T>> toObservable(Observable observable, CallBackProxy<? extends ApiResult<T>, T> proxy) {
-        return observable.map(new ApiResultFunc(proxy != null ? proxy.getType() : new TypeToken<ResponseBody>() {
-        }.getType(), mKeepJson))
-                .compose(new HttpResultTransformer())
-                .compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
-                .compose(mRxCache.transformer(mCacheMode, proxy.getCallBack().getType()))
-                .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay));
+        return execute(new CallBackProxy<>(callBack));
     }
 
     @Override

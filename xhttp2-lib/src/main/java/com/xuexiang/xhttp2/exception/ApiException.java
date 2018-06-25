@@ -194,9 +194,9 @@ public class ApiException extends Exception {
          */
         public static final int DOWNLOAD_ERROR = OUT_OF_MEMORY_ERROR + 1;
         /**
-         * openapi注解错误
+         * NetMethod注解错误
          */
-        public static final int OPENAPI_ANNOTATION_ERROR = OUT_OF_MEMORY_ERROR + 1;
+        public static final int NET_METHOD_ANNOTATION_ERROR = OUT_OF_MEMORY_ERROR + 1;
 
 
     }
