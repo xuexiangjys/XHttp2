@@ -55,9 +55,15 @@ public class CallBackSubscriber<T> extends BaseSubscriber<T> {
 
     @Override
     public void onSuccess(T t) {
-        if (mCallBack != null) {
-            mCallBack.onSuccess(t);
+        try {
+            if (mCallBack != null) {
+                mCallBack.onSuccess(t);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+            onError(e);
         }
+
     }
 
     @Override
