@@ -41,7 +41,7 @@ public class HttpParams implements Serializable {
     /**
      * 普通的键值对参数
      */
-    public LinkedHashMap<String, String> urlParamsMap;
+    public LinkedHashMap<String, Object> urlParamsMap;
     /**
      * 文件的键值对参数
      */
@@ -79,7 +79,7 @@ public class HttpParams implements Serializable {
      *
      * @param params
      */
-    public void put(Map<String, String> params) {
+    public void put(Map<String, Object> params) {
         if (params == null || params.isEmpty()) return;
         urlParamsMap.putAll(params);
     }
@@ -90,7 +90,7 @@ public class HttpParams implements Serializable {
      * @param key
      * @param value
      */
-    public void put(String key, String value) {
+    public void put(String key, Object value) {
         urlParamsMap.put(key, value);
     }
 
@@ -249,7 +249,7 @@ public class HttpParams implements Serializable {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        for (ConcurrentHashMap.Entry<String, String> entry : urlParamsMap.entrySet()) {
+        for (ConcurrentHashMap.Entry<String, Object> entry : urlParamsMap.entrySet()) {
             if (result.length() > 0) result.append("&");
             result.append(entry.getKey()).append("=").append(entry.getValue());
         }

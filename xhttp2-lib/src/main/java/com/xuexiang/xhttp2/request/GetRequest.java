@@ -50,7 +50,7 @@ public class GetRequest extends BaseRequest<GetRequest> {
     }
 
     public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<>(callBack));
+        return execute(new CallBackProxy<ApiResult<T>, T>(callBack){});
     }
 
     @Override

@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.xuexiang.xaop' //引用xaop插件
+apply plugin: 'com.xuexiang.xrouter' //引用xrouter-plugin插件实现自动注册
 
 android {
     compileSdkVersion build_versions.target_sdk
@@ -6,11 +8,17 @@ android {
     
     defaultConfig {
         applicationId "com.xuexiang.xhttp2demo"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
     }
 
     if (isNeedPackage.toBoolean()) {
@@ -26,7 +34,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (isNeedPackage.toBoolean()) {
                 signingConfig signingConfigs.release
@@ -38,7 +46,7 @@ android {
         applicationVariants.all { variant ->
             variant.outputs.all {
                 if (variant.buildType.name.equals('release')) {
-                    outputFileName = "demo.apk"
+                    outputFileName = "xhttp2_demo_${defaultConfig.versionName}.apk"
                 }
             }
         }
@@ -52,16 +60,28 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation deps.support.app_compat
     testImplementation deps.junit
     androidTestImplementation deps.runner
     androidTestImplementation deps.espresso.core
+
+    //SmartRefreshLayout
+    implementation deps.support.app_compat
+    implementation deps.support.recyclerview
+    implementation deps.support.design
+    implementation 'com.github.xuexiangjys.SmartRefreshLayout:refresh-layout:1.1.2'
+
     //XUtil
-    implementation 'com.github.xuexiangjys.XUtil:xutil-core:+'
+    implementation 'com.github.xuexiangjys.XUtil:xutil-core:1.1.4'
+    implementation 'com.github.xuexiangjys.XUtil:xutil-sub:1.1.4'
+    //XAOP
+    implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:1.0.1'
+    //XRouter
+    implementation 'com.github.xuexiangjys.XRouter:xrouter-runtime:1.0.1'
+    annotationProcessor 'com.github.xuexiangjys.XRouter:xrouter-compiler:1.0.1'
     //XPage
-    implementation 'com.github.xuexiangjys.XPage:xpage-lib:+'
-    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:+'
-    //butterknife的sdk
+    implementation 'com.github.xuexiangjys.XPage:xpage-lib:2.2.2'
+    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:2.2.2'
+    //butterKnife的sdk
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
@@ -74,4 +94,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     //Gson序列化反序列化的依赖包
     implementation deps.gson
+
+    implementation 'com.github.gturedi:stateful-layout:1.2.1'
+
+    implementation deps.glide
 }

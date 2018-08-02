@@ -52,7 +52,7 @@ public interface ApiService {
 
     @POST
     @FormUrlEncoded
-    Observable<ResponseBody> post(@Url String url, @FieldMap Map<String, String> maps);
+    Observable<ResponseBody> post(@Url String url, @FieldMap Map<String, Object> maps);
 
     @POST
     Observable<ResponseBody> postBody(@Url String url, @Body Object object);
@@ -69,14 +69,14 @@ public interface ApiService {
     // =========================//
 
     @GET
-    Observable<ResponseBody> get(@Url String url, @QueryMap Map<String, String> maps);
+    Observable<ResponseBody> get(@Url String url, @QueryMap Map<String, Object> maps);
 
     //==========================//
     //         DELETE请求        //
     // =========================//
 
     @DELETE
-    Observable<ResponseBody> delete(@Url String url, @QueryMap Map<String, String> maps);
+    Observable<ResponseBody> delete(@Url String url, @QueryMap Map<String, Object> maps);
 
     @DELETE
     Observable<ResponseBody> deleteBody(@Url String url, @Body Object object);
@@ -94,7 +94,7 @@ public interface ApiService {
     // =========================//
 
     @PUT
-    Observable<ResponseBody> put(@Url String url, @QueryMap Map<String, String> maps);
+    Observable<ResponseBody> put(@Url String url, @QueryMap Map<String, Object> maps);
 
     @PUT
     Observable<ResponseBody> putBody(@Url String url, @Body Object object);

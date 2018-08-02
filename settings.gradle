@@ -1,1 +1,1 @@
-include ':xhttp2-demo', ':xhttp2-lib'
+include ':xhttp2demo', ':xhttp2-lib'

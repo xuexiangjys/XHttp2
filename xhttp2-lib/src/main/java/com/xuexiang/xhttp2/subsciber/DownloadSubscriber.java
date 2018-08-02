@@ -17,10 +17,8 @@
 package com.xuexiang.xhttp2.subsciber;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.text.TextUtils;
 
-import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.callback.CallBack;
 import com.xuexiang.xhttp2.callback.DownloadProgressCallBack;
 import com.xuexiang.xhttp2.exception.ApiException;
@@ -85,6 +83,13 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
         writeResponseBodyToDisk(path, name, responseBody);
     }
 
+    /**
+     * 将响应的请求直接写入到磁盘中
+     *
+     * @param path 保存的文件目录
+     * @param name 保存的文件名
+     * @param body 文件响应
+     */
     private void writeResponseBodyToDisk(String path, String name, okhttp3.ResponseBody body) {
         name = checkFileName(name, body);
         path = checkFilePath(path, name);

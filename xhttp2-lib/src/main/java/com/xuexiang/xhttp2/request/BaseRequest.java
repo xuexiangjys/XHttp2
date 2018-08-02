@@ -428,7 +428,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     /**
      * 设置参数
      */
-    public R params(String key, String value) {
+    public R params(String key, Object value) {
         mParams.put(key, value);
         return (R) this;
     }

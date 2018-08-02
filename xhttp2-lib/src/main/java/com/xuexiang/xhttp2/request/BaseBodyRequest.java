@@ -231,8 +231,8 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
     protected Observable<ResponseBody> uploadFilesWithParts() {
         List<MultipartBody.Part> parts = new ArrayList<>();
         //拼接参数键值对
-        for (Map.Entry<String, String> mapEntry : mParams.urlParamsMap.entrySet()) {
-            parts.add(MultipartBody.Part.createFormData(mapEntry.getKey(), mapEntry.getValue()));
+        for (Map.Entry<String, Object> mapEntry : mParams.urlParamsMap.entrySet()) {
+            parts.add(MultipartBody.Part.createFormData(mapEntry.getKey(), String.valueOf(mapEntry.getValue())));
         }
         //拼接文件
         for (Map.Entry<String, List<HttpParams.FileWrapper>> entry : mParams.fileParamsMap.entrySet()) {
@@ -248,8 +248,8 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
     protected Observable<ResponseBody> uploadFilesWithBodys() {
         Map<String, RequestBody> bodyMap = new HashMap<>();
         //拼接参数键值对
-        for (Map.Entry<String, String> mapEntry : mParams.urlParamsMap.entrySet()) {
-            RequestBody body = RequestBody.create(MediaType.parse("text/plain"), mapEntry.getValue());
+        for (Map.Entry<String, Object> mapEntry : mParams.urlParamsMap.entrySet()) {
+            RequestBody body = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(mapEntry.getValue()));
             bodyMap.put(mapEntry.getKey(), body);
         }
         //拼接文件

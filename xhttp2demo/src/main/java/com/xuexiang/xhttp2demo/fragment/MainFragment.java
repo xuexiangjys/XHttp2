@@ -18,7 +18,7 @@ import com.xuexiang.xutil.common.ClickUtils;
  * </p>
  * ================================================
  */
-@Page
+@Page(name = "XHttp 使用演示")
 public class MainFragment extends XPageContainerListFragment {
     /**
      * 获取页面的类集合[使用@Page注解进行注册的页面]
@@ -28,6 +28,8 @@ public class MainFragment extends XPageContainerListFragment {
     @Override
     protected Class[] getPagesClasses() {
         return new Class[]{
+                SettingsFragment.class,
+                UserFragment.class
 
         };
     }

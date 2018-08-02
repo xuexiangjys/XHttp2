@@ -43,15 +43,42 @@ import java.util.TreeMap;
 public class XHttpProxy implements InvocationHandler {
 
     /**
+     * 网络请求代理
+     *
+     * @param cls 代理的请求接口
+     * @param <T>
+     * @return
+     */
+    public static <T> T proxy(Class<T> cls) {
+        return new XHttpProxy().create(cls);
+    }
+
+    /**
+     * 网络请求代理
+     *
+     * @param threadType
+     * @param cls        代理的请求接口
+     * @param <T>
+     * @return
+     */
+    public static <T> T proxy(@ThreadType String threadType, Class<T> cls) {
+        return new XHttpProxy(threadType).create(cls);
+    }
+
+    /**
      * 线程调度类型
      */
     private String mThreadType;
+
+    public XHttpProxy() {
+        this(ThreadType.TO_MAIN);
+    }
 
     public XHttpProxy(@ThreadType String threadType) {
         mThreadType = threadType;
     }
 
-    public <T> T Create(Class<T> cls) {
+    public <T> T create(Class<T> cls) {
         return (T) Proxy.newProxyInstance(cls.getClassLoader(), new Class[]{cls}, this);
     }
 

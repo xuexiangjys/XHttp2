@@ -3,8 +3,10 @@ package com.xuexiang.xhttp2demo;
 import android.app.Application;
 import android.content.Context;
 
+import com.xuexiang.xhttp2.XHttpSDK;
+import com.xuexiang.xhttp2demo.utils.SettingSPUtils;
+import com.xuexiang.xpage.Xhttp2demoPageConfig;
 import com.xuexiang.xutil.XUtil;
-import com.xuexiang.xpage.AppPageConfig;
 import com.xuexiang.xpage.PageConfig;
 import com.xuexiang.xpage.PageConfiguration;
 import com.xuexiang.xpage.model.PageInfo;
@@ -28,6 +30,8 @@ public class App extends Application {
         super.onCreate();
 
         initLibs();
+
+        initHttp();
     }
 
     private void initLibs() {
@@ -37,8 +41,14 @@ public class App extends Application {
         PageConfig.getInstance().setPageConfiguration(new PageConfiguration() {
             @Override
             public List<PageInfo> registerPages(Context context) {
-                return AppPageConfig.getInstance().getPages();
+                return Xhttp2demoPageConfig.getInstance().getPages();
             }
         }).debug("PageLog").enableWatcher(false).init(this);
+    }
+
+    private void initHttp() {
+        XHttpSDK.init(this);   //初始化网络请求框架，必须首先执行
+        XHttpSDK.debug();  //需要调试的时候执行
+        XHttpSDK.setBaseUrl(SettingSPUtils.getInstance().getApiURL());  //设置网络请求的基础地址
     }
 }

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2018 xuexiangjys(xuexiangjys@163.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:layout_height="300dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/iv_picture"
+        android:padding="10dp"
+        android:layout_width="195dp"
+        android:layout_height="250dp"
+        android:src="@drawable/img_default_book"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_book_name"
+            style="@style/Text_Title_Style"
+            android:textColor="@android:color/black"
+            tools:text="第一行代码:Android(第2版)" />
+
+        <TextView
+            android:id="@+id/tv_author"
+            style="@style/Text_Explain_Style"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            tools:text="郭林" />
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:layout_marginTop="5dp"
+            android:lineSpacingExtra="8dp"
+            android:maxLines="3"
+            android:padding="10dp"
+            android:textSize="15sp"
+            tools:text="《设计模式:可复用面向对象软件的基础》是引导读者走出软件设计迷宫的指路明灯，凝聚了软件开发界几十年设计经验的结晶。四位顶尖的面向对象领域专家精心选取了具有价值的设计实践，加以分类整理和命名，并用简洁而易于重用的形式表达出来。" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+
+            <TextView
+                android:id="@+id/tv_price"
+                style="@style/Text_Content_Style"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="20dp"
+                android:textColor="@android:color/holo_red_light"
+                tools:text="¥50" />
+
+            <TextView
+                android:id="@+id/tv_sales_volume"
+                style="@style/Text_Content_Style"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="30dp"
+                tools:text="销量：50" />
+
+            <TextView
+                android:id="@+id/tv_score"
+                style="@style/Text_Content_Style"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@+id/tv_sales_volume"
+                android:layout_marginEnd="20dp"
+                tools:text="评分：4星" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="end|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_mark"
+                style="@style/Text_Content_Style"
+                android:layout_marginEnd="35dp"
+                android:drawableStart="@drawable/icon_mark"
+                android:drawablePadding="8dp"
+                tools:text="45" />
+
+            <Button
+                android:id="@+id/sb_buy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="点击购买"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

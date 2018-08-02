@@ -105,8 +105,7 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
     //=================apiCall====================//
 
     public <T> Disposable apiCall(Observable<T> observable, CallBack<T> callBack) {
-        return call(observable, new CallBackProxy<ApiResult<T>, T>(callBack) {
-        });
+        return call(observable, new CallBackProxy<ApiResult<T>, T>(callBack){});
     }
 
     /**

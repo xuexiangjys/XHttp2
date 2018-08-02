@@ -8,8 +8,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/xhttp2-demo" />
             <option value="$PROJECT_DIR$/xhttp2-lib" />
+            <option value="$PROJECT_DIR$/xhttp2demo" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
