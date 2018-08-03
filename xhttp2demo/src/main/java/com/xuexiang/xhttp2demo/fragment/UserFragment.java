@@ -17,6 +17,7 @@
 package com.xuexiang.xhttp2demo.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,18 +42,19 @@ import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.adapter.UserAdapter;
 import com.xuexiang.xhttp2demo.api.ApiProvider;
 import com.xuexiang.xhttp2demo.entity.User;
+import com.xuexiang.xhttp2demo.utils.RouterUtils;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageFragment;
 import com.xuexiang.xpage.utils.TitleBar;
 import com.xuexiang.xutil.common.RandomUtils;
 import com.xuexiang.xutil.common.StringUtils;
-import com.xuexiang.xutil.resource.ResUtils;
 import com.xuexiang.xutil.tip.ToastUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * @author xuexiang
@@ -60,6 +62,8 @@ import butterknife.BindView;
  */
 @Page(name = "接口1 -- 用户管理")
 public class UserFragment extends XPageFragment implements SmartViewHolder.OnItemLongClickListener, SmartViewHolder.OnItemClickListener{
+    private static final int REQUEST_CODE_EDIT_USER = 1000;
+
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
     @BindView(R.id.ll_stateful)
@@ -69,28 +73,11 @@ public class UserFragment extends XPageFragment implements SmartViewHolder.OnIte
 
     private UserAdapter mUserAdapter;
 
-//    private List<MaterialSimpleListItem> list;
-
     private IProgressLoader mIProgressLoader;
 
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_user;
-    }
-
-    @Override
-    protected void initArgs() {
-        super.initArgs();
-//        list = new ArrayList<>();
-//        list.add(new MaterialSimpleListItem.Builder(getContext())
-//                .content(R.string.lab_edit)
-//                .icon(R.drawable.icon_edit)
-//                .iconPaddingDp(8)
-//                .build());
-//        list.add(new MaterialSimpleListItem.Builder(getContext())
-//                .content(R.string.lab_delete)
-//                .icon(R.drawable.icon_delete)
-//                .build());
     }
 
     @Override
@@ -186,57 +173,19 @@ public class UserFragment extends XPageFragment implements SmartViewHolder.OnIte
 
     @Override
     public void onItemLongClick(View itemView, final int position) {
-//        DialogUtils.getMenuDialog(getContext(), "菜单", list, new MaterialSimpleListAdapter.OnItemClickListener() {
-//            @Override
-//            public void onMaterialListItemSelected(MaterialDialog dialog, int index, MaterialSimpleListItem item) {
-//                if (item.getContent().equals(ResUtils.getString(R.string.lab_edit))) {
-//                    onEditUser(mUserAdapter.getItem(position));
-//                } else {
-//                    onDeleteUser(mUserAdapter.getItem(position));
-//                }
-//            }
-//        }).show();
+    }
+
+    @SingleClick
+    @Override
+    public void onItemClick(View itemView, final int position) {
+        openPageForResult(EditUserFragment.class, RouterUtils.getBundle("user", mUserAdapter.getItem(position)), REQUEST_CODE_EDIT_USER);
     }
 
     @Override
-    public void onItemClick(View itemView, final int position) {
-//        DialogUtils.getSimpleConfirmDialog(getContext(), "是否确定选择用户【" + mUserAdapter.getItem(position).getName() + "】？", new MaterialDialog.SingleButtonCallback() {
-//            @Override
-//            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                UserManager.getInstance().selectUser(mUserAdapter.getItem(position));
-//                ToastUtil.toast("已选择用户：" + mUserAdapter.getItem(position).getName());
-//            }
-//        }).show();
+    public void onFragmentResult(int requestCode, int resultCode, Intent data) {
+        super.onFragmentResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_EDIT_USER) {
+            mRefreshLayout.autoRefresh();
+        }
     }
-
-    private void onEditUser(User user) {
-//        new EditUserDialog(getContext(), new EditUserDialog.OnEditListener() {
-//            @Override
-//            public void onEditSuccess() {
-//                mRefreshLayout.autoRefresh();
-//            }
-//        }).show(user);
-    }
-
-    /**
-     * 这里直接使用post进行请求
-     * @param item
-     */
-    private void onDeleteUser(User item) {
-        XHttp.post("/user/deleteUser")
-                .params("userId", item.getUserId())
-                .execute(new SimpleCallBack<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean response) {
-                        ToastUtils.toast("删除成功！");
-                        mRefreshLayout.autoRefresh();
-                    }
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtils.toast("删除失败：" + e.getMessage());
-                    }
-
-                });
-    }
-
 }

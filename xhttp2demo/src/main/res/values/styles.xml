@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="xpage_actionbar_action_padding">12dp</item>
     </style>
 
     <style name="Text_Content_Style" parent="BaseTextStyle">
