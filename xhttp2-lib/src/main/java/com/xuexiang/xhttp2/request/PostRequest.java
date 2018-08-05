@@ -75,19 +75,23 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
     }
 
     public <T> Observable<T> execute(Class<T> clazz) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz));
+        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz) {
+        });
     }
 
     public <T> Observable<T> execute(Type type) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(type));
+        return execute(new CallClazzProxy<ApiResult<T>, T>(type) {
+        });
     }
 
     public <T> Observable<T> executeForType(Type type) {
-        return executeForType(new CallClazzProxy<ApiResult<T>, T>(type));
+        return executeForType(new CallClazzProxy<ApiResult<T>, T>(type) {
+        });
     }
 
     public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<ApiResult<T>, T>(callBack){});
+        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
+        });
     }
 
 }

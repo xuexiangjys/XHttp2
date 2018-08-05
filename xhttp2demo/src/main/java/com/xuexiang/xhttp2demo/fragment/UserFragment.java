@@ -17,6 +17,7 @@
 package com.xuexiang.xhttp2demo.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -42,6 +43,8 @@ import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.adapter.UserAdapter;
 import com.xuexiang.xhttp2demo.api.ApiProvider;
 import com.xuexiang.xhttp2demo.entity.User;
+import com.xuexiang.xhttp2demo.manager.UserManager;
+import com.xuexiang.xhttp2demo.utils.DialogUtils;
 import com.xuexiang.xhttp2demo.utils.RouterUtils;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageFragment;
@@ -60,7 +63,7 @@ import static android.app.Activity.RESULT_OK;
  * @author xuexiang
  * @since 2018/7/16 下午4:52
  */
-@Page(name = "接口1 -- 用户管理")
+@Page(name = "接口演示1 -- 用户管理")
 public class UserFragment extends XPageFragment implements SmartViewHolder.OnItemLongClickListener, SmartViewHolder.OnItemClickListener{
     private static final int REQUEST_CODE_EDIT_USER = 1000;
 
@@ -99,6 +102,8 @@ public class UserFragment extends XPageFragment implements SmartViewHolder.OnIte
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mUserAdapter = new UserAdapter());
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        ToastUtils.toast("长按选择用户！");
     }
 
     @Override
@@ -173,6 +178,14 @@ public class UserFragment extends XPageFragment implements SmartViewHolder.OnIte
 
     @Override
     public void onItemLongClick(View itemView, final int position) {
+        DialogUtils.getConfirmDialog(getContext(), "选择用户", "是否确定选择用户【" + mUserAdapter.getItem(position).getName() + "】？", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                UserManager.getInstance().selectUser(mUserAdapter.getItem(position));
+                ToastUtils.toast("已选择用户：" + mUserAdapter.getItem(position).getName());
+            }
+        }).show();
+
     }
 
     @SingleClick

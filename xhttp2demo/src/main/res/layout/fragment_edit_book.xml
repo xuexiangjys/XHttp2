@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2018 xuexiangjys(xuexiangjys@163.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingEnd="50dp"
+            android:paddingStart="50dp">
+
+            <TextView
+                style="@style/Text_Content_Style"
+                android:layout_marginTop="20dp"
+                android:text="书名"
+                android:textColor="@android:color/black" />
+
+            <EditText
+                android:id="@+id/et_book_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                tools:text="第一行代码:Android(第2版)" />
+
+            <TextView
+                style="@style/Text_Content_Style"
+                android:layout_marginTop="12dp"
+                android:text="作者"
+                android:textColor="@android:color/black" />
+
+            <EditText
+                android:id="@+id/et_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                tools:text="郭林" />
+
+            <TextView
+                style="@style/Text_Content_Style"
+                android:layout_marginTop="12dp"
+                android:text="简介"
+                android:textColor="@android:color/black" />
+
+            <EditText
+                android:id="@+id/et_description"
+                android:layout_width="match_parent"
+                android:layout_height="95dp"
+                android:layout_marginTop="12dp"
+                android:gravity="start"
+                android:inputType="textMultiLine"
+                android:lineSpacingExtra="8dp"
+                android:maxLines="3"
+                android:padding="10dp"
+                android:textSize="15sp"
+                tools:text="《设计模式:可复用面向对象软件的基础》是引导读者走出软件设计迷宫的指路明灯，凝聚了软件开发界几十年设计经验的结晶。四位顶尖的面向对象领域专家精心选取了具有价值的设计实践，加以分类整理和命名，并用简洁而易于重用的形式表达出来。" />
+
+            <TextView
+                style="@style/Text_Content_Style"
+                android:layout_marginTop="12dp"
+                android:text="价格"
+                android:textColor="@android:color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    tools:text="50" />
+
+                <TextView
+                    style="@style/Text_Content_Style"
+                    android:layout_marginStart="10dp"
+                    android:text="¥"
+                    android:textColor="@android:color/black" />
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/Text_Content_Style"
+                android:layout_marginTop="12dp"
+                android:text="封面"
+                android:textColor="@android:color/black" />
+
+            <ImageView
+                android:id="@+id/iv_picture"
+                android:layout_width="195dp"
+                android:layout_height="250dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/img_default_book" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="上传图片" />
+
+                <Button
+                    android:id="@+id/btn_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="下载图片" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

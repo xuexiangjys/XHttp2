@@ -29,7 +29,8 @@ public class MainFragment extends XPageContainerListFragment {
     protected Class[] getPagesClasses() {
         return new Class[]{
                 SettingsFragment.class,
-                UserFragment.class
+                UserFragment.class,
+                BookFragment.class
 
         };
     }

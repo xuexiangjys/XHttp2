@@ -34,7 +34,7 @@ import butterknife.OnClick;
  * @author xuexiang
  * @since 2018/7/16 下午4:04
  */
-@Page(name = "设置")
+@Page(name = "设置服务器地址")
 public class SettingsFragment extends XPageFragment {
 
     @BindView(R.id.et_api_url)

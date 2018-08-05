@@ -50,7 +50,8 @@ public class DeleteRequest extends BaseBodyRequest<DeleteRequest> {
     }
 
     public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<ApiResult<T>, T>(callBack){});
+        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
+        });
     }
 
     @Override

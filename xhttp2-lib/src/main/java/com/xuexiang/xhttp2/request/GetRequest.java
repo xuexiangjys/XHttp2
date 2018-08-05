@@ -34,7 +34,7 @@ import okhttp3.ResponseBody;
  * @author xuexiang
  * @since 2018/6/25 上午12:46
  */
-@SuppressWarnings(value={"unchecked", "deprecation"})
+@SuppressWarnings(value = {"unchecked", "deprecation"})
 public class GetRequest extends BaseRequest<GetRequest> {
 
     public GetRequest(String url) {
@@ -42,15 +42,18 @@ public class GetRequest extends BaseRequest<GetRequest> {
     }
 
     public <T> Observable<T> execute(Class<T> clazz) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz));
+        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz) {
+        });
     }
 
     public <T> Observable<T> execute(Type type) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(type));
+        return execute(new CallClazzProxy<ApiResult<T>, T>(type) {
+        });
     }
 
     public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<ApiResult<T>, T>(callBack){});
+        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
+        });
     }
 
     @Override

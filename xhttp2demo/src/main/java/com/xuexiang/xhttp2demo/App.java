@@ -3,6 +3,7 @@ package com.xuexiang.xhttp2demo;
 import android.app.Application;
 import android.content.Context;
 
+import com.xuexiang.xaop.XAOP;
 import com.xuexiang.xhttp2.XHttpSDK;
 import com.xuexiang.xhttp2demo.utils.SettingSPUtils;
 import com.xuexiang.xpage.Xhttp2demoPageConfig;
@@ -38,6 +39,7 @@ public class App extends Application {
     private void initLibs() {
         XUtil.init(this);
         XUtil.debug(true);
+        XAOP.init(this);
 
         PageConfig.getInstance().setPageConfiguration(new PageConfiguration() {
             @Override
