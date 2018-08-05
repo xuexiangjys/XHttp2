@@ -16,6 +16,7 @@
 
 package com.xuexiang.xhttp2demo.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.callback.SimpleCallBack;
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2demo.R;
+import com.xuexiang.xhttp2demo.api.subscriber.TipRequestSubscriber;
 import com.xuexiang.xhttp2demo.entity.User;
 import com.xuexiang.xhttp2demo.utils.DialogUtils;
 import com.xuexiang.xhttp2demo.utils.RouterUtils;
@@ -180,21 +182,18 @@ public class EditUserFragment extends XPageFragment {
      * 这里直接使用post进行请求
      * @param item
      */
+    @SuppressLint("CheckResult")
     private void onDeleteUser(User item) {
         XHttp.post("/user/deleteUser")
                 .params("userId", item.getUserId())
-                .execute(new SimpleCallBack<Boolean>() {
+                .execute(Boolean.class)
+                .subscribeWith(new TipRequestSubscriber<Boolean>() {
                     @Override
-                    public void onSuccess(Boolean response) {
+                    protected void onSuccess(Boolean aBoolean) {
                         ToastUtils.toast("删除成功！");
                         setFragmentResult(RESULT_OK, null);
                         popToBack();
                     }
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtils.toast("删除失败：" + e.getMessage());
-                    }
-
                 });
     }
 

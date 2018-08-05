@@ -70,8 +70,6 @@ public class BookFragment extends XPageFragment implements SmartViewHolder.OnIte
 
     private BookAdapter mBookAdapter;
 
-    private IProgressLoader mIProgressLoader;
-
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_book;
@@ -79,8 +77,6 @@ public class BookFragment extends XPageFragment implements SmartViewHolder.OnIte
 
     @Override
     protected void initViews() {
-        mIProgressLoader = new ProgressDialogLoader(getContext(),"文件下载中...");
-
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mBookAdapter = new BookAdapter());
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -174,7 +170,7 @@ public class BookFragment extends XPageFragment implements SmartViewHolder.OnIte
 
     @SuppressLint("CheckResult")
     private void buyBook(final int position) {
-        //使用RxHttpProxy进行接口代理请求
+        //使用XHttpProxy进行接口代理请求
         XHttpProxy.proxy(TestApi.IOrder.class)
                 .buyBook(mBookAdapter.getItem(position).getBookId(), UserManager.getInstance().getUser().getUserId(), 1)
                 .subscribeWith(new TipRequestSubscriber<Boolean>() {
