@@ -54,13 +54,14 @@ public final class HttpUtils {
 
     /**
      * 获取响应body的byte流
+     *
      * @param response
      * @return
      */
     @Nullable
-    public static byte[] getResponseBody(@NonNull Response response){
+    public static byte[] getResponseBody(@NonNull Response response) {
         ResponseBody responseBody = response.body();
-        byte[] source = null ;
+        byte[] source = null;
         try {
             source = responseBody.bytes();
         } catch (IOException e) {
@@ -71,6 +72,7 @@ public final class HttpUtils {
 
     /**
      * 获取响应body的String
+     *
      * @param response
      * @return
      * @throws IOException
@@ -91,21 +93,39 @@ public final class HttpUtils {
 
     /**
      * 判断MediaType是否是text类型
+     *
      * @param mediaType
      * @return
      */
     public static boolean isText(MediaType mediaType) {
-        if (mediaType == null)
+        return mediaType != null && (mediaType.type() != null && mediaType.type().equals("text") || mediaType.subtype() != null && mediaType.subtype().equals("json"));
+    }
+
+    /**
+     * 判断请求响应内容是否是人能读懂的内容
+     */
+    public static boolean isPlaintext(MediaType mediaType) {
+        if (mediaType == null) {
             return false;
+        }
         if (mediaType.type() != null && mediaType.type().equals("text")) {
             return true;
         }
-        return mediaType.subtype() != null && mediaType.subtype().equals("json");
+        String subtype = mediaType.subtype();
+        if (subtype != null) {
+            subtype = subtype.toLowerCase();
+            return subtype.contains("x-www-form-urlencoded") ||
+                    subtype.contains("json") ||
+                    subtype.contains("xml") ||
+                    subtype.contains("html");
+        }
+        return false;
     }
 
     /**
      * 解析前：https://xxx.xxx.xxx/app/chairdressing/skinAnalyzePower/skinTestResult?appId=10101
      * 解析后：https://xxx.xxx.xxx/app/chairdressing/skinAnalyzePower/skinTestResult
+     *
      * @param url
      * @return
      */
@@ -118,18 +138,19 @@ public final class HttpUtils {
 
     /**
      * 将参数拼接到url中
-     * @param url 请求的url
+     *
+     * @param url    请求的url
      * @param params 参数
      * @return
      */
-    public static String createUrlFromParams(String url, Map<String, String> params) {
+    public static String createUrlFromParams(String url, Map<String, Object> params) {
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(url);
             if (url.indexOf('&') > 0 || url.indexOf('?') > 0) sb.append("&");
             else sb.append("?");
-            for (Map.Entry<String, String> urlParams : params.entrySet()) {
-                String urlValues = urlParams.getValue();
+            for (Map.Entry<String, Object> urlParams : params.entrySet()) {
+                String urlValues = String.valueOf(urlParams.getValue());
                 //对参数进行 utf-8 编码,防止头信息传中文
                 String urlValue = URLEncoder.encode(urlValues, UTF8.name());
                 sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
@@ -144,6 +165,7 @@ public final class HttpUtils {
 
     /**
      * 获取注解设置请求key的请求Json
+     *
      * @param xHttpRequest
      * @return
      * @throws IllegalAccessException

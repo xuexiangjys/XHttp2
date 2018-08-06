@@ -83,7 +83,7 @@ XHttpSDK.debug("XHttp");  //需要调试的时候执行
 XHttpSDK.setBaseUrl(SettingSPUtils.getInstance().getApiURL());  //设置网络请求的基础地址
 ```
 
-4.全局初始化配置
+4.全局初始化配置（非必要)
 
 除了上述的操作以外，你还可以使用`XHttp.getInstance()`对网络请求框架进行全局性参数配置，配置一些公用默认的参数，这样我们就不需要为每个请求都进行设置。方法如下：
 
@@ -448,8 +448,13 @@ protected void onCreate(Bundle savedInstanceState) {
 
 (3)设置自定义的日志拦截器.
 ```
-XHttpSDK.debug(new CustomLoggingInterceptor("XHttp"));
+XHttpSDK.debug(new CustomLoggingInterceptor());
 ```
+
+2.动态参数添加拦截器
+
+> 有时候，我们需要对所有请求添加一些固定的请求参数，但是这些参数的值又是变化的，这个时候我们就需要动态添加请求参数【例如，请求的token、时间戳以及签名等】
+
 
 
 --------------

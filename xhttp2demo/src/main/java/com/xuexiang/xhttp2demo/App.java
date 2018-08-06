@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.xuexiang.xaop.XAOP;
 import com.xuexiang.xhttp2.XHttpSDK;
+import com.xuexiang.xhttp2demo.http.interceptor.CustomLoggingInterceptor;
 import com.xuexiang.xhttp2demo.utils.SettingSPUtils;
 import com.xuexiang.xpage.Xhttp2demoPageConfig;
 import com.xuexiang.xrouter.launcher.XRouter;
@@ -54,6 +55,7 @@ public class App extends Application {
     private void initHttp() {
         XHttpSDK.init(this);   //初始化网络请求框架，必须首先执行
         XHttpSDK.debug();  //需要调试的时候执行
+//        XHttpSDK.debug(new CustomLoggingInterceptor());
         XHttpSDK.setBaseUrl(SettingSPUtils.getInstance().getApiURL());  //设置网络请求的基础地址
     }
 

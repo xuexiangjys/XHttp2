@@ -119,17 +119,17 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
         Set<String> nameSet = httpUrl.queryParameterNames();
         ArrayList<String> nameList = new ArrayList<>();
         nameList.addAll(nameSet);
-        TreeMap<String, String> oldParams = new TreeMap<>();
+        TreeMap<String, Object> oldParams = new TreeMap<>();
         for (int i = 0; i < nameList.size(); i++) {
             String value = httpUrl.queryParameterValues(nameList.get(i)) != null && httpUrl.queryParameterValues(nameList.get(i)).size() > 0 ? httpUrl.queryParameterValues(nameList.get(i)).get(0) : "";
             oldParams.put(nameList.get(i), value);
         }
         String nameKeys = Arrays.asList(nameList).toString();
         //拼装新的参数
-        TreeMap<String, String> newParams = getDynamicParams(oldParams);
+        TreeMap<String, Object> newParams = updateDynamicParams(oldParams);
         Utils.checkNotNull(newParams, "newParams==null");
-        for (Map.Entry<String, String> entry : newParams.entrySet()) {
-            String urlValue = URLEncoder.encode(entry.getValue(), HttpUtils.UTF8.name());
+        for (Map.Entry<String, Object> entry : newParams.entrySet()) {
+            String urlValue = URLEncoder.encode(String.valueOf(entry.getValue()), HttpUtils.UTF8.name());
             //原来的URl: https://xxx.xxx.xxx/app/chairdressing/skinAnalyzePower/skinTestResult?appId=10101
             if (!nameKeys.contains(entry.getKey())) {//避免重复添加
                 newBuilder.addQueryParameter(entry.getKey(), urlValue);
@@ -154,16 +154,16 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
             FormBody formBody = (FormBody) request.body();
 
             //原有的参数
-            TreeMap<String, String> oldParams = new TreeMap<>();
+            TreeMap<String, Object> oldParams = new TreeMap<>();
             for (int i = 0; i < formBody.size(); i++) {
                 oldParams.put(formBody.encodedName(i), formBody.encodedValue(i));
             }
 
             //拼装新的参数
-            TreeMap<String, String> newParams = getDynamicParams(oldParams);
+            TreeMap<String, Object> newParams = updateDynamicParams(oldParams);
             Utils.checkNotNull(newParams, "newParams == null");
-            for (Map.Entry<String, String> entry : newParams.entrySet()) {
-                String value = URLDecoder.decode(entry.getValue(), HttpUtils.UTF8.name());
+            for (Map.Entry<String, Object> entry : newParams.entrySet()) {
+                String value = URLDecoder.decode(String.valueOf(entry.getValue()), HttpUtils.UTF8.name());
                 bodyBuilder.addEncoded(entry.getKey(), value);
             }
             String url = HttpUtils.createUrlFromParams(mHttpUrl.url().toString(), newParams);
@@ -178,10 +178,10 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
             //拼装新的参数
             List<MultipartBody.Part> newParts = new ArrayList<>();
             newParts.addAll(oldParts);
-            TreeMap<String, String> oldParams = new TreeMap<>();
-            TreeMap<String, String> newParams = getDynamicParams(oldParams);
-            for (Map.Entry<String, String> stringStringEntry : newParams.entrySet()) {
-                MultipartBody.Part part = MultipartBody.Part.createFormData(stringStringEntry.getKey(), stringStringEntry.getValue());
+            TreeMap<String, Object> oldParams = new TreeMap<>();
+            TreeMap<String, Object> newParams = updateDynamicParams(oldParams);
+            for (Map.Entry<String, Object> paramEntry : newParams.entrySet()) {
+                MultipartBody.Part part = MultipartBody.Part.createFormData(paramEntry.getKey(), String.valueOf(paramEntry.getValue()));
                 newParts.add(part);
             }
             for (MultipartBody.Part part : newParts) {
@@ -190,7 +190,7 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
             multipartBody = bodyBuilder.build();
             request = request.newBuilder().post(multipartBody).build();
         } else if (request.body() instanceof RequestBody) {
-            TreeMap<String, String> params = getDynamicParams(new TreeMap<String, String>());
+            TreeMap<String, Object> params = updateDynamicParams(new TreeMap<String, Object>());
             String url = HttpUtils.createUrlFromParams(mHttpUrl.url().toString(), params);
             request = request.newBuilder().url(url).build();
         }
@@ -198,10 +198,10 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
     }
 
     /**
-     * 获取动态参数
+     * 更新请求的动态参数
      *
      * @param dynamicMap
      * @return 返回新的参数集合
      */
-    protected abstract TreeMap<String, String> getDynamicParams(TreeMap<String, String> dynamicMap);
+    protected abstract TreeMap<String, Object> updateDynamicParams(TreeMap<String, Object> dynamicMap);
 }

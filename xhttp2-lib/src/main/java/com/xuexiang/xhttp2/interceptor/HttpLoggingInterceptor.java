@@ -146,8 +146,8 @@ public class HttpLoggingInterceptor implements Interceptor {
             }
 
             if (logBody && hasRequestBody) {
-                if (isPlaintext(requestBody.contentType())) {
-                    bodyToString(request);
+                if (HttpUtils.isPlaintext(requestBody.contentType())) {
+                    log("\tbody:" + bodyToString(request));
                 } else {
                     log("\tbody: maybe [file part] , too large too print , ignored!");
                 }
@@ -190,7 +190,7 @@ public class HttpLoggingInterceptor implements Interceptor {
             }
 
             if (logBody && HttpHeaders.hasBody(clone)) {
-                if (isPlaintext(responseBody.contentType())) {
+                if (HttpUtils.isPlaintext(responseBody.contentType())) {
                     String body = responseBody.string();
                     log("\tbody:" + body);
                     responseBody = ResponseBody.create(responseBody.contentType(), body);
@@ -212,29 +212,8 @@ public class HttpLoggingInterceptor implements Interceptor {
         return response;
     }
 
-    /**
-     * Returns true if the body in question probably contains human readable text. Uses a small sample
-     * of code points to detect unicode control characters commonly used in binary file signatures.
-     */
-    static boolean isPlaintext(MediaType mediaType) {
-        if (mediaType == null) {
-            return false;
-        }
-        if (mediaType.type() != null && mediaType.type().equals("text")) {
-            return true;
-        }
-        String subtype = mediaType.subtype();
-        if (subtype != null) {
-            subtype = subtype.toLowerCase();
-            return subtype.contains("x-www-form-urlencoded") ||
-                    subtype.contains("json") ||
-                    subtype.contains("xml") ||
-                    subtype.contains("html");
-        }
-        return false;
-    }
 
-    protected void bodyToString(Request request) {
+    protected String bodyToString(Request request) {
         try {
             final Request copy = request.newBuilder().build();
             final Buffer buffer = new Buffer();
@@ -244,10 +223,11 @@ public class HttpLoggingInterceptor implements Interceptor {
             if (contentType != null) {
                 charset = contentType.charset(HttpUtils.UTF8);
             }
-            log("\tbody:" + URLDecoder.decode(buffer.readString(charset), HttpUtils.UTF8.name()));
+            return URLDecoder.decode(buffer.readString(charset), HttpUtils.UTF8.name());
         } catch (Exception e) {
             onError(e);
         }
+        return "";
     }
 
     protected void onError(Throwable t) {
