@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2demo.api.subscriber;
+package com.xuexiang.xhttp2demo.http.subscriber;
 
 
 import android.support.annotation.NonNull;

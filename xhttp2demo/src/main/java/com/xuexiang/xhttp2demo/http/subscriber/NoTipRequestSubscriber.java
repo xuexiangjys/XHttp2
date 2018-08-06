@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2demo.api.subscriber;
+package com.xuexiang.xhttp2demo.http.subscriber;
 
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.model.XHttpRequest;

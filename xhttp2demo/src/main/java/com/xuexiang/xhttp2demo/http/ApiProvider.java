@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2demo.api;
+package com.xuexiang.xhttp2demo.http;
 
 
 import com.xuexiang.xhttp2demo.entity.User;

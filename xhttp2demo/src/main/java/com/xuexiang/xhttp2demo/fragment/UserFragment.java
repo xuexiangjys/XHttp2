@@ -41,7 +41,7 @@ import com.xuexiang.xhttp2.subsciber.ProgressLoadingSubscriber;
 import com.xuexiang.xhttp2.subsciber.impl.IProgressLoader;
 import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.adapter.UserAdapter;
-import com.xuexiang.xhttp2demo.api.ApiProvider;
+import com.xuexiang.xhttp2demo.http.ApiProvider;
 import com.xuexiang.xhttp2demo.entity.User;
 import com.xuexiang.xhttp2demo.manager.UserManager;
 import com.xuexiang.xhttp2demo.utils.DialogUtils;

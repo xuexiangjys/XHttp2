@@ -28,7 +28,7 @@ import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.callback.SimpleCallBack;
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2demo.R;
-import com.xuexiang.xhttp2demo.api.subscriber.TipRequestSubscriber;
+import com.xuexiang.xhttp2demo.http.subscriber.TipRequestSubscriber;
 import com.xuexiang.xhttp2demo.entity.User;
 import com.xuexiang.xhttp2demo.utils.DialogUtils;
 import com.xuexiang.xhttp2demo.utils.RouterUtils;

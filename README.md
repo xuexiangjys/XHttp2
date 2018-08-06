@@ -256,7 +256,7 @@ public interface IOrder {
 
 注解参数 | 类型 | 默认值 | 备注
 :-|:-:|:-:|:-
-ParameterNames | String[] | {} | 参数名集合
+ParameterNames | String\[\] | {} | 参数名集合
 BaseUrl | String | "" | 设置该请求的baseUrl
 Url | String | "" | 请求网络接口地址
 Timeout | long | 10000 | 设置超时时间
@@ -350,9 +350,70 @@ XHttp.downLoad(BookAdapter.getBookImgUrl(book))
 
 --------------
 
+## 高阶网络请求操作
 
+### 请求生命周期绑定
 
+1.请求loading加载和请求生命周期绑定
 
+在请求时，订阅`ProgressLoadingSubscriber`或者`ProgressLoadingCallBack`，传入请求消息加载者`IProgressLoader`，即可完成生命周期的绑定。示例如下：
+
+```
+XHttpRequest req = ApiProvider.getAddUserReq(getRandomUser());
+    XHttpSDK.executeToMain(req, new ProgressLoadingSubscriber<Boolean>(mIProgressLoader) {
+        @Override
+        public void onSuccess(Boolean aBoolean) {
+            ToastUtils.toast("用户添加成功！");
+            mRefreshLayout.autoRefresh();
+        }
+    });
+```
+
+2.网络请求生命周期和Activity/Fragment生命周期绑定
+
+(1)这里需要依赖一下RxUtil2
+```
+implementation 'com.github.xuexiangjys:rxutil2:1.1.2'
+```
+
+(2)在所在的Activity的onCreate()下锁定Activity.
+
+```
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    RxLifecycle.injectRxLifecycle(this);
+}
+```
+
+(3)然后在请求中使用RxJava的`compose`的操作符进行绑定。
+
+```
+.compose(RxLifecycle.with(this).<Boolean>bindToLifecycle())
+```
+
+### 拦截器
+
+1.日志拦截器
+
+(1)框架默认提供一个实现好的日志拦截器`HttpLoggingInterceptor`,通过`XHttpSDK.debug("XHttp");`就可以设置进去，它有5种打印模式
+
+* NONE: 不打印log
+
+* BASIC: 只打印"请求首行"和"响应首行"。
+
+* HEADERS: 打印请求和响应的所有 Header
+
+* PARAM: 只打印请求和响应参数
+
+* BODY: 打印所有数据(默认是这种)
+
+(2)如果需要对网络请求的相关参数进行记录的话，可以继承`HttpLoggingInterceptor`实现一个自己的网络请求日志拦截器，重写`logForRequest`和`logForResponse`两个方法即可。
+
+(3)设置自定义的拦截器.
+```
+XHttpSDK.debug(new CustomLoggingInterceptor("XHttp"));
+```
 
 
 --------------
