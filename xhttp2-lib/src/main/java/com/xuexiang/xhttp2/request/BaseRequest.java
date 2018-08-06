@@ -747,13 +747,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 mInterceptors.add(new NoCacheInterceptor());
                 if (mDiskConverter == null) {
                     final RxCache.Builder tempRxCacheBuilder = rxCacheBuilder;
-                    tempRxCacheBuilder.cachekey(Utils.checkNotNull(mCacheKey, "mCacheKey == null"))
+                    tempRxCacheBuilder.cacheKey(Utils.checkNotNull(mCacheKey, "mCacheKey == null"))
                             .cacheTime(mCacheTime);
                     return tempRxCacheBuilder;
                 } else {
                     final RxCache.Builder cacheBuilder = XHttp.getRxCache().newBuilder();
                     cacheBuilder.diskConverter(mDiskConverter)
-                            .cachekey(Utils.checkNotNull(mCacheKey, "mCacheKey == null"))
+                            .cacheKey(Utils.checkNotNull(mCacheKey, "mCacheKey == null"))
                             .cacheTime(mCacheTime);
                     return cacheBuilder;
                 }

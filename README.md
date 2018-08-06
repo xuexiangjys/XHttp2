@@ -83,6 +83,42 @@ XHttpSDK.debug("XHttp");  //需要调试的时候执行
 XHttpSDK.setBaseUrl(SettingSPUtils.getInstance().getApiURL());  //设置网络请求的基础地址
 ```
 
+4.全局初始化配置
+
+除了上述的操作以外，你还可以使用`XHttp.getInstance()`对网络请求框架进行全局性参数配置，配置一些公用默认的参数，这样我们就不需要为每个请求都进行设置。方法如下：
+
+方法名 | 备注
+:-|:-
+debug | 设置日志的打印模式
+setBaseUrl | 设置全局baseUrl
+setSubUrl | 设置全局subUrl
+setReadTimeOut | 设置全局读取超时时间
+setWriteTimeOut | 设置全局写入超时时间
+setConnectTimeout | 设置全局连接超时时间
+setTimeout | 设置全局超时时间
+setRetryCount | 设置全局超时重试次数
+setRetryDelay | 设置全局超时重试延迟时间
+setRetryIncreaseDelay | 设置全局超时重试延迟叠加时间
+setCacheMode | 设置全局的缓存模式
+setIsDiskCache | 设置是否是磁盘缓存
+setMemoryMaxSize | 设置内存缓存的最大数量
+setCacheTime | 设置全局的缓存过期时间
+setCacheMaxSize | 设置全局的磁盘缓存大小,默认50M
+setCacheDirectory | 设置全局缓存的路径，默认是应用包下面的缓存
+setCacheDiskConverter | 设置全局缓存的转换器
+addCommonParams | 添加全局公共请求参数
+addCommonHeaders | 添加全局公共请求参数
+addInterceptor | 添加全局拦截器
+addNetworkInterceptor | 添加全局网络拦截器
+setOkproxy | 全局设置OkHttpClient的代理
+setOkconnectionPool | 设置全局OkHttpClient的请求连接池
+setOkclient | 全局为Retrofit设置自定义的OkHttpClient
+addConverterFactory | 设置全局Converter.Factory,默认GsonConverterFactory.create()
+addCallAdapterFactory | 设置全局CallAdapter.Factory,默认RxJavaCallAdapterFactory.create()
+setHostnameVerifier | 设置https的全局访问规则
+setCertificates | 设置https的全局自签名证书
+setCookieStore | 设置全局cookie存取规则
+
 --------------
 
 ## 如何进行网络请求
@@ -408,9 +444,9 @@ protected void onCreate(Bundle savedInstanceState) {
 
 * BODY: 打印所有数据(默认是这种)
 
-(2)如果需要对网络请求的相关参数进行记录的话，可以继承`HttpLoggingInterceptor`实现一个自己的网络请求日志拦截器，重写`logForRequest`和`logForResponse`两个方法即可。
+(2)如果需要对网络请求的相关参数进行自定义记录的话，可以继承`HttpLoggingInterceptor`实现一个自己的网络请求日志拦截器，重写`logForRequest`和`logForResponse`两个方法即可。
 
-(3)设置自定义的拦截器.
+(3)设置自定义的日志拦截器.
 ```
 XHttpSDK.debug(new CustomLoggingInterceptor("XHttp"));
 ```
@@ -464,6 +500,12 @@ XHttpSDK.debug(new CustomLoggingInterceptor("XHttp"));
 -keep class com.google.gson.stream.** { *; }
 -keep class com.google.gson.examples.android.model.** { *; }
 ```
+
+
+## 特别感谢
+
+https://github.com/zhou-you/RxEasyHttp
+
 
 ## 联系方式
 

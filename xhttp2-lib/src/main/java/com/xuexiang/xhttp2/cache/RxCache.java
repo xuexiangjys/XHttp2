@@ -23,6 +23,7 @@ import com.xuexiang.xhttp2.cache.converter.IDiskConverter;
 import com.xuexiang.xhttp2.cache.converter.SerializableDiskConverter;
 import com.xuexiang.xhttp2.cache.core.CacheCore;
 import com.xuexiang.xhttp2.cache.core.LruDiskCache;
+import com.xuexiang.xhttp2.cache.core.LruMemoryCache;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
 import com.xuexiang.xhttp2.cache.model.CacheResult;
 import com.xuexiang.xhttp2.cache.stategy.IStrategy;
@@ -74,6 +75,10 @@ import io.reactivex.exceptions.Exceptions;
 public final class RxCache {
     public static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
 
+    private boolean isDiskCache;
+    //构建内存缓存需要的属性
+    private int memoryMaxSize;
+
     private final Context context;
     private final CacheCore cacheCore;                                  //缓存的核心管理类
     private final String cacheKey;                                      //缓存的key
@@ -89,13 +94,19 @@ public final class RxCache {
 
     private RxCache(Builder builder) {
         this.context = builder.context;
+        this.isDiskCache = builder.isDiskCache;
+        this.memoryMaxSize = builder.memoryMaxSize;
         this.cacheKey = builder.cacheKey;
         this.cacheTime = builder.cacheTime;
         this.diskDir = builder.diskDir;
         this.appVersion = builder.appVersion;
         this.diskMaxSize = builder.diskMaxSize;
         this.diskConverter = builder.diskConverter;
-        cacheCore = new CacheCore(new LruDiskCache(diskConverter, diskDir, appVersion, diskMaxSize));
+        if (isDiskCache) {
+            cacheCore = new CacheCore(new LruDiskCache(diskConverter, diskDir, appVersion, diskMaxSize));
+        } else {
+            cacheCore = new CacheCore(new LruMemoryCache(builder.memoryMaxSize));
+        }
     }
 
     public Builder newBuilder() {
@@ -277,33 +288,62 @@ public final class RxCache {
     public static final class Builder {
         private static final int MIN_DISK_CACHE_SIZE = 5 * 1024 * 1024; // 5MB
         private static final int MAX_DISK_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
+
+        private Context context;
+        private boolean isDiskCache;
+        //构建内存缓存需要的属性
+        private int memoryMaxSize;
+        //构建磁盘缓存需要的属性
         private int appVersion;
         private long diskMaxSize;
         private File diskDir;
         private IDiskConverter diskConverter;
-        private Context context;
         private String cacheKey;
         private long cacheTime;
 
         public Builder() {
-            diskConverter = new SerializableDiskConverter();
-            cacheTime = CACHE_NEVER_EXPIRE;
-            appVersion = 1;
+            this.isDiskCache = true;
+            this.diskConverter = new SerializableDiskConverter();
+            this.cacheTime = CACHE_NEVER_EXPIRE;
+            this.appVersion = 1;
         }
 
         public Builder(RxCache rxCache) {
             this.context = rxCache.context;
+            this.isDiskCache = rxCache.isDiskCache;
+            this.memoryMaxSize = rxCache.memoryMaxSize;
             this.appVersion = rxCache.appVersion;
             this.diskMaxSize = rxCache.diskMaxSize;
             this.diskDir = rxCache.diskDir;
             this.diskConverter = rxCache.diskConverter;
-            this.context = rxCache.context;
             this.cacheKey = rxCache.cacheKey;
             this.cacheTime = rxCache.cacheTime;
         }
 
         public Builder init(Context context) {
             this.context = context;
+            return this;
+        }
+
+        /**
+         * 设置是否是磁盘缓存
+         *
+         * @param isDiskCache
+         * @return
+         */
+        public Builder isDiskCache(boolean isDiskCache) {
+            this.isDiskCache = isDiskCache;
+            return this;
+        }
+
+        /**
+         * 设置内存缓存的最大数量
+         *
+         * @param memoryMaxSize
+         * @return
+         */
+        public Builder memoryMaxSize(int memoryMaxSize) {
+            this.memoryMaxSize = memoryMaxSize;
             return this;
         }
 
@@ -340,7 +380,7 @@ public final class RxCache {
             return this;
         }
 
-        public Builder cachekey(String cacheKey) {
+        public Builder cacheKey(String cacheKey) {
             this.cacheKey = cacheKey;
             return this;
         }
@@ -351,23 +391,27 @@ public final class RxCache {
         }
 
         public RxCache build() {
-            if (this.diskDir == null && this.context != null) {
-                this.diskDir = Utils.getDiskCacheDir(this.context, "data-cache");
-            }
-            Utils.checkNotNull(this.diskDir, "diskDir == null");
-            if (!this.diskDir.exists()) {
-                this.diskDir.mkdirs();
-            }
-            if (this.diskConverter == null) {
-                this.diskConverter = new SerializableDiskConverter();
-            }
-            if (diskMaxSize <= 0) {
-                diskMaxSize = calculateDiskCacheSize(diskDir);
+            if (isDiskCache) { //初始化磁盘缓存的属性
+                if (this.diskDir == null && this.context != null) {
+                    this.diskDir = Utils.getDiskCacheDir(this.context, "data-cache");
+                }
+                Utils.checkNotNull(this.diskDir, "diskDir == null");
+                if (!this.diskDir.exists()) {
+                    this.diskDir.mkdirs();
+                }
+                if (this.diskConverter == null) {
+                    this.diskConverter = new SerializableDiskConverter();
+                }
+                if (diskMaxSize <= 0) {
+                    diskMaxSize = calculateDiskCacheSize(diskDir);
+                }
+                appVersion = Math.max(1, this.appVersion);
+            } else {
+                if (memoryMaxSize <= 0) {
+                    memoryMaxSize = (int) (Runtime.getRuntime().maxMemory() / 1024) / 8;
+                }
             }
             cacheTime = Math.max(CACHE_NEVER_EXPIRE, this.cacheTime);
-
-            appVersion = Math.max(1, this.appVersion);
-
             return new RxCache(this);
         }
 

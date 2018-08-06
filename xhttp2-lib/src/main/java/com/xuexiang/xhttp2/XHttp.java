@@ -260,7 +260,7 @@ public final class XHttp {
     //==================超时、重试设置=====================//
 
     /**
-     * 全局读取超时时间
+     * 全局设置读取超时时间
      */
     public XHttp setReadTimeOut(long readTimeOut) {
         mOkHttpClientBuilder.readTimeout(readTimeOut, TimeUnit.MILLISECONDS);
@@ -268,7 +268,7 @@ public final class XHttp {
     }
 
     /**
-     * 全局写入超时时间
+     * 全局设置写入超时时间
      */
     public XHttp setWriteTimeOut(long writeTimeout) {
         mOkHttpClientBuilder.writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
@@ -276,7 +276,7 @@ public final class XHttp {
     }
 
     /**
-     * 全局连接超时时间
+     * 全局设置连接超时时间
      */
     public XHttp setConnectTimeout(long connectTimeout) {
         mOkHttpClientBuilder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
@@ -284,7 +284,7 @@ public final class XHttp {
     }
 
     /**
-     * 全局超时时间
+     * 全局设置超时时间
      */
     public XHttp setTimeout(long timeout) {
         mOkHttpClientBuilder.readTimeout(timeout, TimeUnit.MILLISECONDS);
@@ -294,7 +294,7 @@ public final class XHttp {
     }
 
     /**
-     * 超时重试次数
+     * 全局设置超时重试次数
      */
     public XHttp setRetryCount(int retryCount) {
         if (retryCount < 0) throw new IllegalArgumentException("mRetryCount must >= 0");
@@ -310,7 +310,7 @@ public final class XHttp {
     }
 
     /**
-     * 超时重试延迟时间
+     * 全局设置超时重试延迟时间
      */
     public XHttp setRetryDelay(int retryDelay) {
         if (retryDelay < 0) throw new IllegalArgumentException("mRetryDelay must > 0");
@@ -326,7 +326,7 @@ public final class XHttp {
     }
 
     /**
-     * 超时重试延迟叠加时间
+     * 全局设置超时重试延迟叠加时间
      */
     public XHttp setRetryIncreaseDelay(int retryIncreaseDelay) {
         if (retryIncreaseDelay < 0)
@@ -345,7 +345,7 @@ public final class XHttp {
     //==================缓存模式设置=====================//
 
     /**
-     * 全局的缓存模式
+     * 设置全局的缓存模式
      */
     public XHttp setCacheMode(CacheMode cacheMode) {
         mCacheMode = cacheMode;
@@ -360,7 +360,29 @@ public final class XHttp {
     }
 
     /**
-     * 全局的缓存过期时间
+     * 设置是否是磁盘缓存
+     *
+     * @param isDiskCache
+     * @return
+     */
+    public XHttp setIsDiskCache(boolean isDiskCache) {
+        mRxCacheBuilder.isDiskCache(isDiskCache);
+        return this;
+    }
+
+    /**
+     * 设置内存缓存的最大数量
+     *
+     * @param memoryMaxSize
+     * @return
+     */
+    public XHttp setMemoryMaxSize(int memoryMaxSize) {
+        mRxCacheBuilder.memoryMaxSize(memoryMaxSize);
+        return this;
+    }
+
+    /**
+     * 设置全局的缓存过期时间
      */
     public XHttp setCacheTime(long cacheTime) {
         if (cacheTime <= -1) cacheTime = DEFAULT_CACHE_NEVER_EXPIRE;
@@ -376,7 +398,7 @@ public final class XHttp {
     }
 
     /**
-     * 全局的缓存大小,默认50M
+     * 设置全局的缓存大小,默认50M
      */
     public XHttp setCacheMaxSize(long maxSize) {
         mCacheMaxSize = maxSize;
