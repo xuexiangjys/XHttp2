@@ -19,6 +19,7 @@ package com.xuexiang.xhttp2demo.http;
 import com.xuexiang.xhttp2.annotation.NetMethod;
 import com.xuexiang.xhttp2.annotation.RequestParams;
 import com.xuexiang.xhttp2.model.XHttpRequest;
+import com.xuexiang.xhttp2demo.entity.LoginInfo;
 import com.xuexiang.xhttp2demo.entity.User;
 
 import io.reactivex.Observable;
@@ -53,11 +54,28 @@ public class TestApi {
         /**
          * 购买书
          *
-         * @param bookId 用户名
-         * @param userId 密码
+         * @param bookId 图书ID
+         * @param userId 用户ID
+         * @param number 购买数量
          */
-        @NetMethod(ParameterNames = {"bookId", "userId", "number"}, Url = "/order/addOrder/")
+        @NetMethod(ParameterNames = {"bookId", "userId", "number"}, Url = "/order/addOrder/", AccessToken = false)
         Observable<Boolean> buyBook(int bookId, int userId, int number);
+    }
+
+
+    /**
+     * 身份验证
+     */
+    public interface IAuthorization {
+        /**
+         * 登录获取token
+         *
+         * @param loginName 用户名
+         * @param password 密码
+         */
+        @NetMethod(ParameterNames = {"loginName", "password"}, Url = "/authorization/login/", AccessToken = false)
+        Observable<LoginInfo> login(String loginName, String password);
+
     }
 
 }

@@ -30,7 +30,8 @@ public class MainFragment extends XPageContainerListFragment {
         return new Class[]{
                 SettingsFragment.class,
                 UserFragment.class,
-                BookFragment.class
+                BookFragment.class,
+                TokenFragment.class
 
         };
     }

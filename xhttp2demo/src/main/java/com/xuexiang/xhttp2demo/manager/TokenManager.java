@@ -16,6 +16,8 @@
 
 package com.xuexiang.xhttp2demo.manager;
 
+import com.xuexiang.xhttp2demo.entity.User;
+
 /**
  * token管理器
  *
@@ -29,6 +31,11 @@ public class TokenManager {
     private String mToken = "";
 
     private String mSign = "";
+
+    /**
+     * 当前登录的用户
+     */
+    private User mLoginUser;
 
     private TokenManager() {
 
@@ -61,5 +68,14 @@ public class TokenManager {
 
     public String getSign() {
         return mSign;
+    }
+
+    public User getLoginUser() {
+        return mLoginUser;
+    }
+
+    public TokenManager setLoginUser(User loginUser) {
+        mLoginUser = loginUser;
+        return this;
     }
 }

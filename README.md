@@ -146,14 +146,18 @@ headers | HttpHeaders | ／ | 添加头信息
 params | HttpParams | ／| 设置表单请求参数
 cacheMode | CacheMode | CacheMode.NO_CACHE | 设置缓存的模式
 
-3.调用`execute`方法执行请求。
+3.调用`execute`方法执行请求。execute一般有如下两种方式：
+
+* execute(CallBack callBack): 直接回调结果。
+
+* execute(Class clazz)和execute(Type type): 回调Observable<T>对象，可通过订阅获取到结果。
 
 4.请求使用演示
 
 ```
 XHttp.get("/user/getAllUser")
-        .syncRequest(false)
-        .onMainThread(true)
+        .syncRequest(false) //异步请求
+        .onMainThread(true) //回到主线程
         .execute(new SimpleCallBack<List<User>>() {
             @Override
             public void onSuccess(List<User> response) {
@@ -455,7 +459,29 @@ XHttpSDK.debug(new CustomLoggingInterceptor());
 
 > 有时候，我们需要对所有请求添加一些固定的请求参数，但是这些参数的值又是变化的，这个时候我们就需要动态添加请求参数【例如，请求的token、时间戳以及签名等】
 
+(1)继承`BaseDynamicInterceptor`，实现`updateDynamicParams`方法，如下：
 
+```
+@Override
+protected TreeMap<String, Object> updateDynamicParams(TreeMap<String, Object> dynamicMap) {
+    if (isAccessToken()) {//是否添加token
+        dynamicMap.put("token", TokenManager.getInstance().getToken());
+    }
+    if (isSign()) {//是否添加签名
+        dynamicMap.put("sign", TokenManager.getInstance().getSign());
+    }
+    if (isTimeStamp()) {//是否添加请求时间戳
+        dynamicMap.put("timeStamp", DateUtils.getNowMills());
+    }
+    return dynamicMap;//dynamicMap:是原有的全局参数+局部参数+新增的动态参数
+}
+```
+
+(2)设置动态参数添加拦截器。
+
+```
+
+```
 
 --------------
 
@@ -505,7 +531,6 @@ XHttpSDK.debug(new CustomLoggingInterceptor());
 -keep class com.google.gson.stream.** { *; }
 -keep class com.google.gson.examples.android.model.** { *; }
 ```
-
 
 ## 特别感谢
 
