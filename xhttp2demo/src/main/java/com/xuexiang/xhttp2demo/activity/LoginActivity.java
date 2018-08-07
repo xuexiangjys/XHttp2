@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.xuexiang.xhttp2demo.fragment;
+package com.xuexiang.xhttp2demo.activity;
 
-import android.media.session.MediaSession;
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -30,40 +33,45 @@ import com.xuexiang.xhttp2demo.entity.LoginInfo;
 import com.xuexiang.xhttp2demo.http.TestApi;
 import com.xuexiang.xhttp2demo.manager.TokenManager;
 import com.xuexiang.xpage.annotation.Page;
-import com.xuexiang.xpage.base.XPageFragment;
+import com.xuexiang.xpage.utils.TitleBar;
+import com.xuexiang.xpage.utils.TitleUtils;
+import com.xuexiang.xrouter.annotation.Router;
 import com.xuexiang.xutil.common.StringUtils;
+import com.xuexiang.xutil.system.KeyboardUtils;
 import com.xuexiang.xutil.tip.ToastUtils;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * @author xuexiang
  * @since 2018/8/7 上午12:50
  */
-@Page(name = "登录")
-public class LoginFragment extends XPageFragment {
+@Router(path = "/xhttp/login")
+public class LoginActivity extends Activity {
 
     @BindView(R.id.et_login_name)
     EditText mEtLoginName;
     @BindView(R.id.et_password)
     EditText mEtPassword;
+    @BindView(R.id.titleBar)
+    TitleBar mTitleBar;
 
     private IProgressLoader mIProgressLoader;
 
     @Override
-    protected int getLayoutId() {
-        return R.layout.fragment_login;
-    }
-
-    @Override
-    protected void initViews() {
-        mIProgressLoader = new ProgressDialogLoader(getContext(), "登录中...");
-    }
-
-    @Override
-    protected void initListeners() {
-
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+        TitleUtils.initTitleBarStyle(mTitleBar, "登录", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mIProgressLoader = new ProgressDialogLoader(this, "登录中...");
     }
 
     @OnClick({R.id.btn_login, R.id.btn_reset})
@@ -89,7 +97,7 @@ public class LoginFragment extends XPageFragment {
                                 TokenManager.getInstance()
                                         .setToken(loginInfo.getToken())
                                         .setLoginUser(loginInfo.getUser());
-                                popToBack(); //结束界面
+                                finish(); //结束界面
                             }
 
                             @Override
@@ -104,5 +112,11 @@ public class LoginFragment extends XPageFragment {
                 mEtPassword.setText("");
                 break;
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        KeyboardUtils.onClickBlankArea2HideSoftInput(ev, this);
+        return super.dispatchTouchEvent(ev);
     }
 }

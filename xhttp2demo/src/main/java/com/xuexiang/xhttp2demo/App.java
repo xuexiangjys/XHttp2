@@ -6,6 +6,7 @@ import android.content.Context;
 import com.xuexiang.xaop.XAOP;
 import com.xuexiang.xhttp2.XHttpSDK;
 import com.xuexiang.xhttp2demo.http.interceptor.CustomDynamicInterceptor;
+import com.xuexiang.xhttp2demo.http.interceptor.CustomExpiredInterceptor;
 import com.xuexiang.xhttp2demo.http.interceptor.CustomLoggingInterceptor;
 import com.xuexiang.xhttp2demo.utils.SettingSPUtils;
 import com.xuexiang.xpage.Xhttp2demoPageConfig;
@@ -59,6 +60,7 @@ public class App extends Application {
 //        XHttpSDK.debug(new CustomLoggingInterceptor()); //设置自定义的日志打印拦截器
         XHttpSDK.setBaseUrl(SettingSPUtils.getInstance().getApiURL());  //设置网络请求的基础地址
         XHttpSDK.addInterceptor(new CustomDynamicInterceptor()); //设置动态参数添加拦截器
+        XHttpSDK.addInterceptor(new CustomExpiredInterceptor()); //请求失效校验拦截器
     }
 
     private void initXRouter() {

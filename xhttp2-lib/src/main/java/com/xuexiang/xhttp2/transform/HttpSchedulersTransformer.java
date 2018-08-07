@@ -79,7 +79,7 @@ public class HttpSchedulersTransformer<T> implements ObservableTransformer<T, T>
             case _main:
                 return upstream.observeOn(AndroidSchedulers.mainThread());
             case _io:
-                return upstream.observeOn(Schedulers.io());
+                return upstream;
             case _io_main:
                 return upstream
                         .subscribeOn(Schedulers.io())
@@ -88,8 +88,7 @@ public class HttpSchedulersTransformer<T> implements ObservableTransformer<T, T>
             case _io_io:
                 return upstream
                         .subscribeOn(Schedulers.io())
-                        .unsubscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io());
+                        .unsubscribeOn(Schedulers.io());
             default:
                 break;
         }

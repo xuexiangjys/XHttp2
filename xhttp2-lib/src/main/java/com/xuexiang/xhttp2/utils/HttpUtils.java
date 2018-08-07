@@ -22,17 +22,24 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.xuexiang.xhttp2.annotation.ParamKey;
 import com.xuexiang.xhttp2.logs.HttpLog;
+import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.model.XHttpRequest;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.Buffer;
@@ -183,5 +190,89 @@ public final class HttpUtils {
             }
         }
         return new Gson().toJson(params);
+    }
+
+    /**
+     * 更新请求body
+     *
+     * @param oldRequest
+     * @param params
+     * @return
+     */
+    public static Request updateRequestBody(Request oldRequest, HashMap<String, Object> params) {
+        String requestBody = getRequestBodyString(oldRequest);
+        try {
+            JSONObject jsonObject = new JSONObject(requestBody);
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                jsonObject.put(entry.getKey(), entry.getValue());
+            }
+            return oldRequest.newBuilder().post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toString())).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return oldRequest;
+    }
+
+    /**
+     * 更新url上的请求参数
+     *
+     * @param oldRequest 拦截的旧请求
+     * @param key        请求的key
+     * @param value      参数值
+     * @return
+     * @throws IOException
+     */
+    public static Request updateUrlParams(Request oldRequest, String key, String value) throws IOException {
+        TreeMap<String, Object> params = new TreeMap<>();
+        params.put(key, value);
+        return updateUrlParams(oldRequest, params);
+    }
+
+    /**
+     * 更新url上的请求参数
+     *
+     * @param oldRequest 拦截的旧请求
+     * @param params     参数
+     * @return
+     * @throws IOException
+     */
+    public static Request updateUrlParams(Request oldRequest, Map<String, Object> params) throws IOException {
+        String url = HttpUtils.createUrlFromParams(HttpUtils.parseUrl(oldRequest.url().toString()), params);
+        return oldRequest.newBuilder().url(url).build();
+    }
+
+    /**
+     * 获取post请求的json
+     *
+     * @param request
+     */
+    public static String getRequestBodyString(Request request) {
+        try {
+            final Request copy = request.newBuilder().build();
+            final Buffer buffer = new Buffer();
+            copy.body().writeTo(buffer);
+            Charset charset = UTF8;
+            MediaType contentType = copy.body().contentType();
+            if (contentType != null) {
+                charset = contentType.charset(UTF8);
+            }
+            return buffer.readString(charset);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    /**
+     * 获得错误的返回
+     *
+     * @param oldResponse
+     * @param code
+     * @param message
+     * @return
+     */
+    public static Response getErrorResponse(Response oldResponse, int code, String message) {
+        ApiResult apiResult = new ApiResult().setCode(code).setMsg(message);
+        return oldResponse.newBuilder().body(ResponseBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(apiResult))).build();
     }
 }

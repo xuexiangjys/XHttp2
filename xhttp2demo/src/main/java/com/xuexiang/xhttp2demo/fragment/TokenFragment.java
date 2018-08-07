@@ -19,9 +19,11 @@ package com.xuexiang.xhttp2demo.fragment;
 import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.callback.SimpleCallBack;
 import com.xuexiang.xhttp2.exception.ApiException;
+import com.xuexiang.xhttp2demo.activity.LoginActivity;
 import com.xuexiang.xhttp2demo.entity.User;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageSimpleListFragment;
+import com.xuexiang.xrouter.launcher.XRouter;
 import com.xuexiang.xutil.net.JsonUtil;
 import com.xuexiang.xutil.tip.ToastUtils;
 
@@ -45,7 +47,7 @@ public class TokenFragment extends XPageSimpleListFragment {
     protected void onItemClick(int position) {
         switch (position) {
             case 0:
-                openPage(LoginFragment.class);
+                XRouter.getInstance().build("/xhttp/login").navigation();
                 break;
             case 1:
                 XHttp.get("/authorization/getCurrentUser")
