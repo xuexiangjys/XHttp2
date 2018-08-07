@@ -41,6 +41,7 @@ public class TokenFragment extends XPageSimpleListFragment {
         lists.add("跳转至登陆获取token");
         lists.add("验证token");
         lists.add("频繁进行网络请求的校验（30秒内请求不能超过3次）");
+        lists.add("频繁进行网络请求的校验（10秒钟之内只能请求一次）");
         return lists;
     }
 
@@ -66,6 +67,20 @@ public class TokenFragment extends XPageSimpleListFragment {
                 break;
             case 2:
                 XHttp.get("/authorization/testLimitedRequest")
+                        .execute(new SimpleCallBack<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean aBoolean) throws Throwable {
+                                ToastUtils.toast("请求成功！");
+                            }
+                            @Override
+                            public void onError(ApiException e) {
+                                ToastUtils.toast(e.getDisplayMessage());
+                            }
+                        });
+                break;
+            case 3:
+                XHttp.get("/authorization/testQuickRequest")
+                        .timeStamp(true)
                         .execute(new SimpleCallBack<Boolean>() {
                             @Override
                             public void onSuccess(Boolean aBoolean) throws Throwable {
