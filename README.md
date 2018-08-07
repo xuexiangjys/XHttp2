@@ -310,8 +310,16 @@ CacheMode | CacheMode | CacheMode.NO_CACHE | 设置请求的缓存模式
 构造XHttpProxy需要传入`ThreadType`,默认是`ThreadType.TO_MAIN`。
 
 * TO_MAIN: executeToMain(main  -> io -> main)
+
+> 【注意】请确保网络请求在主线程中【实质是异步请求(切换到io线程)，且响应的线程又切换至主线程】
+
 * TO_IO: executeToIO(main  -> io -> io)
+
+> 【注意】请确保网络请求在主线程中【实质是异步请求(切换到io线程)，不过响应的线程不变，还是之前请求的那个io线程】
+
 * IN_THREAD: executeInThread(io  -> io -> io)
+
+> 【注意】请确保网络请求在子线程中才可以使用该类型【实质是不做任何线程调度的同步请求】
 
 3.请求使用演示。
 
@@ -434,7 +442,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
 ### 拦截器
 
-1.日志拦截器
+#### 日志拦截器
 
 (1)框架默认提供一个实现好的日志拦截器`HttpLoggingInterceptor`,通过`XHttpSDK.debug("XHttp");`就可以设置进去，它有5种打印模式
 
@@ -455,7 +463,7 @@ protected void onCreate(Bundle savedInstanceState) {
 XHttpSDK.debug(new CustomLoggingInterceptor());
 ```
 
-2.动态参数添加拦截器
+#### 动态参数添加拦截器
 
 > 有时候，我们需要对所有请求添加一些固定的请求参数，但是这些参数的值又是变化的，这个时候我们就需要动态添加请求参数【例如，请求的token、时间戳以及签名等】
 
@@ -480,7 +488,95 @@ protected TreeMap<String, Object> updateDynamicParams(TreeMap<String, Object> dy
 (2)设置动态参数添加拦截器。
 
 ```
+XHttpSDK.addInterceptor(new CustomDynamicInterceptor()); //设置动态参数添加拦截器
+```
 
+#### 失效请求校验拦截器
+
+> 当服务端返回一些独特的错误码（一般是token校验错误、失效，请求过于频繁等），需要我们进行全局性的拦截捕获，并作出相应的响应时，我们就需要定义一个特殊的拦截器求处理这些请求。
+
+(1)继承`BaseExpiredInterceptor`，实现`isResponseExpired`和`responseExpired`方法，如下：
+
+```
+/**
+ * 判断是否是失效的响应
+ *
+ * @param oldResponse
+ * @param bodyString
+ * @return {@code true} : 失效 <br>  {@code false} : 有效
+ */
+@Override
+protected ExpiredInfo isResponseExpired(Response oldResponse, String bodyString) {
+    int code = JSONUtils.getInt(bodyString, ApiResult.CODE, 0);
+    ExpiredInfo expiredInfo = new ExpiredInfo(code);
+    switch (code) {
+        case TOKEN_INVALID:
+        case TOKEN_MISSING:
+            expiredInfo.setExpiredType(KEY_TOKEN_EXPIRED)
+                    .setBodyString(bodyString);
+            break;
+        case AUTH_ERROR:
+            expiredInfo.setExpiredType(KEY_UNREGISTERED_USER)
+                    .setBodyString(bodyString);
+            break;
+        default:
+            break;
+    }
+    return expiredInfo;
+}
+
+/**
+ * 失效响应的处理
+ *
+ * @return 获取新的有效请求响应
+ */
+@Override
+protected Response responseExpired(Response oldResponse, Chain chain, ExpiredInfo expiredInfo) {
+    switch(expiredInfo.getExpiredType()) {
+        case KEY_TOKEN_EXPIRED:
+            User user = TokenManager.getInstance().getLoginUser();
+            if (user != null) {
+                final boolean[] isGetNewToken = {false};
+                HttpLog.e("正在重新获取token...");
+                XHttpProxy.proxy(ThreadType.IN_THREAD, TestApi.IAuthorization.class)
+                        .login(user.getLoginName(), user.getPassword())
+                        .subscribeWith(new NoTipRequestSubscriber<LoginInfo>() {
+                            @Override
+                            protected void onSuccess(LoginInfo loginInfo) {
+                                TokenManager.getInstance()
+                                        .setToken(loginInfo.getToken())
+                                        .setLoginUser(loginInfo.getUser());
+                                isGetNewToken[0] = true;
+                                HttpLog.e("重新获取token成功：" + loginInfo.getToken());
+                            }
+                        });
+                if (isGetNewToken[0]) {
+                    try {
+                        HttpLog.e("使用新的token重新进行请求...");
+                        return chain.proceed(HttpUtils.updateUrlParams(chain.request(), "token", TokenManager.getInstance().getToken()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                XRouter.getInstance().build("/xhttp/login").navigation();
+                return HttpUtils.getErrorResponse(oldResponse, expiredInfo.getCode(), "请先进行登录！");
+            }
+            break;
+        case KEY_UNREGISTERED_USER:
+            return HttpUtils.getErrorResponse(oldResponse, expiredInfo.getCode(), "非法用户登录！");
+        default:
+            break;
+    }
+    return null;
+}
+
+```
+
+(2)设置失效请求校验拦截器。
+
+```
+XHttpSDK.addInterceptor(new CustomExpiredInterceptor()); //请求失效校验拦截器
 ```
 
 --------------

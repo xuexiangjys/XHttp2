@@ -46,7 +46,7 @@ public abstract class BaseExpiredInterceptor extends BaseResponseInterceptor {
 
 
     /**
-     * 判断响应是否失效
+     * 判断是否是失效的响应
      *
      * @param oldResponse
      * @param bodyString

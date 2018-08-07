@@ -61,8 +61,6 @@ public class CustomExpiredInterceptor extends BaseExpiredInterceptor {
      */
     public static final int AUTH_ERROR = TOKEN_MISSING + 1;
 
-    private boolean isGetNewToken = false;
-
     @Override
     protected ExpiredInfo isResponseExpired(Response oldResponse, String bodyString) {
         int code = JSONUtils.getInt(bodyString, ApiResult.CODE, 0);
@@ -90,7 +88,7 @@ public class CustomExpiredInterceptor extends BaseExpiredInterceptor {
             case KEY_TOKEN_EXPIRED:
                 User user = TokenManager.getInstance().getLoginUser();
                 if (user != null) {
-                    isGetNewToken = false;
+                    final boolean[] isGetNewToken = {false};
                     HttpLog.e("正在重新获取token...");
                     XHttpProxy.proxy(ThreadType.IN_THREAD, TestApi.IAuthorization.class)
                             .login(user.getLoginName(), user.getPassword())
@@ -100,11 +98,11 @@ public class CustomExpiredInterceptor extends BaseExpiredInterceptor {
                                     TokenManager.getInstance()
                                             .setToken(loginInfo.getToken())
                                             .setLoginUser(loginInfo.getUser());
-                                    isGetNewToken = true;
+                                    isGetNewToken[0] = true;
                                     HttpLog.e("重新获取token成功：" + loginInfo.getToken());
                                 }
                             });
-                    if (isGetNewToken) {
+                    if (isGetNewToken[0]) {
                         try {
                             HttpLog.e("使用新的token重新进行请求...");
                             return chain.proceed(HttpUtils.updateUrlParams(chain.request(), "token", TokenManager.getInstance().getToken()));
@@ -126,14 +124,10 @@ public class CustomExpiredInterceptor extends BaseExpiredInterceptor {
     }
 
 
-
-
-
-
     /**
      * 失效类型
      */
-    public static final class ExpiredType {
+    static final class ExpiredType {
 
         /**
          * token失效
