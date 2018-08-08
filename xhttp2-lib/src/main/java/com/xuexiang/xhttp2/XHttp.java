@@ -328,7 +328,7 @@ public final class XHttp {
      */
     public XHttp setRetryIncreaseDelay(int retryIncreaseDelay) {
         if (retryIncreaseDelay < 0)
-            throw new IllegalArgumentException("mRetryIncreaseDelay must > 0");
+            throw new IllegalArgumentException("mRetryIncreaseDelay must >= 0");
         mRetryIncreaseDelay = retryIncreaseDelay;
         return this;
     }

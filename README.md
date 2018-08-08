@@ -39,7 +39,9 @@
 
 ## 1、演示（请star支持）
 
-### 1.1、Demo截图
+### 1.1、Demo演示动画
+
+![demo](https://github.com/xuexiangjys/XHttp2/blob/master/img/demo.gif)
 
 ### 1.2、Demo下载
 
