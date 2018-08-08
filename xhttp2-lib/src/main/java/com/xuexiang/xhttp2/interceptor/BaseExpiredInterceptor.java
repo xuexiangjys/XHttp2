@@ -32,7 +32,7 @@ public abstract class BaseExpiredInterceptor extends BaseResponseInterceptor {
 
     @Override
     protected Response onAfterRequest(Response response, Chain chain, String bodyString) {
-        HttpLog.i("[ExpiredInterceptor]  host:" + chain.request().url().toString() + "\n  body:" + bodyString);
+//        HttpLog.i("[ExpiredInterceptor]  host:" + chain.request().url().toString() + "\n  body:" + bodyString);
 
         ExpiredInfo expiredInfo = isResponseExpired(response, bodyString);
         if (expiredInfo.isExpired()) {

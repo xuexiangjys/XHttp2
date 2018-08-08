@@ -120,12 +120,12 @@ public final class RxCache {
      * @param type      缓存clazz
      */
     @SuppressWarnings(value = {"unchecked", "deprecation"})
-    public <T> ObservableTransformer<T, CacheResult<T>> transformer(CacheMode cacheMode, final Type type) {
+    public <T> ObservableTransformer<T, CacheResult<T>> transformer(final CacheMode cacheMode, final Type type) {
         final IStrategy strategy = loadStrategy(cacheMode);//获取缓存策略
         return new ObservableTransformer<T, CacheResult<T>>() {
             @Override
             public ObservableSource<CacheResult<T>> apply(@NonNull Observable<T> upstream) {
-                HttpLog.i("cacheKey=" + RxCache.this.cacheKey);
+                HttpLog.i("cacheMode=" + cacheMode + ", cacheKey=" + RxCache.this.cacheKey);
                 Type tempType = type;
                 if (type instanceof ParameterizedType) {//自定义ApiResult
                     Class<T> cls = (Class) ((ParameterizedType) type).getRawType();

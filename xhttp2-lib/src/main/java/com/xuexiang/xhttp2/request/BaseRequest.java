@@ -738,12 +738,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 mNetworkInterceptors.add(REWRITE_CACHE_CONTROL_INTERCEPTOR_OFFLINE);
                 mInterceptors.add(REWRITE_CACHE_CONTROL_INTERCEPTOR_OFFLINE);
                 break;
-            case FIRSTREMOTE:
-            case FIRSTCACHE:
-            case ONLYREMOTE:
-            case ONLYCACHE:
-            case CACHEANDREMOTE:
-            case CACHEANDREMOTEDISTINCT:
+            case FIRST_REMOTE:
+            case FIRST_CACHE:
+            case ONLY_REMOTE:
+            case ONLY_CACHE:
+            case CACHE_REMOTE:
+            case CACHE_REMOTE_DISTINCT:
                 mInterceptors.add(new NoCacheInterceptor());
                 if (mDiskConverter == null) {
                     final RxCache.Builder tempRxCacheBuilder = rxCacheBuilder;
@@ -769,7 +769,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected R build() {
         final RxCache.Builder rxCacheBuilder = generateRxCache();
         OkHttpClient.Builder okHttpClientBuilder = generateOkClient();
-        if (mCacheMode == CacheMode.DEFAULT) {//okhttp缓存
+        if (mCacheMode == CacheMode.DEFAULT) {//okHttp缓存
             okHttpClientBuilder.cache(mCache);
         }
         final Retrofit.Builder retrofitBuilder = generateRetrofit();

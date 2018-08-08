@@ -31,7 +31,7 @@ import io.reactivex.Observable;
  * @author xuexiang
  * @since 2018/6/20 下午7:45
  */
-public final class FirstRemoteStrategy extends  BaseStrategy{
+public final class FirstRemoteStrategy extends BaseStrategy {
     @Override
     public <T> Observable<CacheResult<T>> execute(RxCache rxCache, String key, long time, Observable<T> source, Type type) {
         Observable<CacheResult<T>> cache = loadCache(rxCache, type, key, time, true);

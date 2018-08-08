@@ -49,6 +49,10 @@ public class CacheResult<T> implements Serializable {
         isFromCache = cache;
     }
 
+    public T getData() {
+        return data;
+    }
+
     @Override
     public String toString() {
         return "CacheResult{" +

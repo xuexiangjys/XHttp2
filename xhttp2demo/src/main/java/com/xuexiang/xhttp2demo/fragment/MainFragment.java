@@ -32,7 +32,8 @@ public class MainFragment extends XPageContainerListFragment {
                 UserFragment.class,
                 BookFragment.class,
                 TokenFragment.class,
-                CustomRequestFragment.class
+                CustomRequestFragment.class,
+                CacheFragment.class
         };
     }
 

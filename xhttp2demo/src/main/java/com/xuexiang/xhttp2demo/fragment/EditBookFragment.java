@@ -269,8 +269,9 @@ public class EditBookFragment extends XPageFragment {
                     }
 
                     @Override
-                    public void update(long bytesRead, long contentLength, boolean done) {
-                        HProgressDialogUtils.onLoading(contentLength, bytesRead);
+                    public void update(long downLoadSize, long totalSize, boolean done) {
+                        HProgressDialogUtils.setMax(totalSize);
+                        HProgressDialogUtils.setProgress(downLoadSize);
                     }
 
                     @Override
