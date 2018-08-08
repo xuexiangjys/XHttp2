@@ -17,6 +17,8 @@
 package com.xuexiang.xhttp2demo.manager;
 
 import com.xuexiang.xhttp2demo.entity.User;
+import com.xuexiang.xutil.common.RandomUtils;
+import com.xuexiang.xutil.common.StringUtils;
 
 /**
  * @author xuexiang
@@ -63,5 +65,16 @@ public class UserManager {
 
     public void clear() {
         mUser = null;
+    }
+
+    public User getRandomUser() {
+        User user = new User();
+        user.setAge(StringUtils.toInt(RandomUtils.getRandomNumbers(2), 0));
+        user.setGender((int) (Math.random() * 2 + 1));
+        user.setPhone(RandomUtils.getRandomNumbers(11));
+        user.setName(RandomUtils.getRandomLowerCaseLetters((int) (Math.random() * 8 + 8)));
+        user.setLoginName(user.getName());
+        user.setPassword(RandomUtils.getRandomLowerCaseLetters((int) (Math.random() * 10 + 8)));
+        return user;
     }
 }

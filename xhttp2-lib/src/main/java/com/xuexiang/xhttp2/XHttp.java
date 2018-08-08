@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.xuexiang.xhttp2.cache.RxCache;
 import com.xuexiang.xhttp2.cache.converter.IDiskConverter;
 import com.xuexiang.xhttp2.cache.converter.SerializableDiskConverter;
@@ -42,6 +43,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * <p>描述：网络请求入口类</p>
@@ -151,10 +153,6 @@ public final class XHttp {
 
     public static OkHttpClient getOkHttpClient() {
         return getInstance().mOkHttpClientBuilder.build();
-    }
-
-    public static Retrofit getRetrofit() {
-        return getInstance().mRetrofitBuilder.build();
     }
 
     public static RxCache getRxCache() {
@@ -651,7 +649,19 @@ public final class XHttp {
      * @return 自定义请求
      */
     public static CustomRequest custom() {
-        return new CustomRequest();
+        return new CustomRequest()
+                .addConverterFactory(GsonConverterFactory.create(new Gson()))
+                .build();
+    }
+
+    /**
+     * @return 自定义请求
+     */
+    public static <T> T custom(final Class<T> service) {
+        return new CustomRequest()
+                .addConverterFactory(GsonConverterFactory.create(new Gson()))
+                .build()
+                .create(service);
     }
 
     /**

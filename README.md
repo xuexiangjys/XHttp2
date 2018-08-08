@@ -579,6 +579,201 @@ protected Response responseExpired(Response oldResponse, Chain chain, ExpiredInf
 XHttpSDK.addInterceptor(new CustomExpiredInterceptor()); //请求失效校验拦截器
 ```
 
+### 自定义API请求
+
+#### 自定义请求响应的API结构
+
+如果你不想使用默认的ApiResult实体作为统一的服务端响应实体，比如说你想要下面的响应实体:
+
+```
+private int errorCode; //请求的错误码
+private String errorInfo; //请求错误的原因描述
+private T result; //请求的结果
+private long timeStamp; //服务端返回的时间戳
+```
+
+(1)首先，继承`ApiResult`实体，重写其`getCode`、`getMsg`、`isSuccess`和`getData`方法。
+
+```
+public class CustomApiResult<T> extends ApiResult<T> {
+
+    private int errorCode;
+    private String errorInfo;
+    private T result;
+    private long timeStamp;
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public CustomApiResult<T> setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+        return this;
+    }
+
+    public String getErrorInfo() {
+        return errorInfo;
+    }
+
+    public CustomApiResult<T> setErrorInfo(String errorInfo) {
+        this.errorInfo = errorInfo;
+        return this;
+    }
+
+    public T getResult() {
+        return result;
+    }
+
+    public CustomApiResult<T> setResult(T result) {
+        this.result = result;
+        return this;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public CustomApiResult<T> setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+        return this;
+    }
+
+    @Override
+    public int getCode() {
+        return errorCode;
+    }
+
+    @Override
+    public String getMsg() {
+        return errorInfo;
+    }
+
+    @Override
+    public boolean isSuccess() {
+        return errorCode == 0;
+    }
+
+    @Override
+    public T getData() {
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ApiResult{" +
+                "errorCode='" + errorCode + '\'' +
+                ", errorInfo='" + errorInfo + '\'' +
+                ", timeStamp='" + timeStamp + '\'' +
+                ", result=" + result +
+                '}';
+    }
+}
+```
+
+(2)进行请求的时候使用`execute(CallBackProxy)`或者`execute(CallClazzProxy`方法进行请求
+
+```
+XHttp.get("/test/testCustomResult")
+            .execute(new CallBackProxy<CustomApiResult<Boolean>, Boolean>(new TipRequestCallBack<Boolean>() {
+                @Override
+                public void onSuccess(Boolean response) throws Throwable {
+                    ToastUtils.toast("请求成功：" + response);
+                }
+            }){});
+```
+
+如果你觉得写一长串比较麻烦，你可以自定义请求继承你需要的请求方式，例如这里是get请求，我们可以这样写:
+
+```
+public class CustomGetRequest extends GetRequest {
+
+    public CustomGetRequest(String url) {
+        super(url);
+    }
+
+    @Override
+    public <T> Observable<T> execute(Type type) {
+        return execute(new CallClazzProxy<CustomApiResult<T>, T>(type) {
+        });
+    }
+
+    @Override
+    public <T> Disposable execute(CallBack<T> callBack) {
+        return execute(new CallBackProxy<CustomApiResult<T>, T>(callBack) {
+        });
+    }
+}
+```
+
+然后我们就可以用自定义的`CustomGetRequest`进行请求了,是不是简化了很多呢。
+
+```
+new CustomGetRequest("/test/testCustomResult")
+        .execute(new TipRequestCallBack<Boolean>() {
+            @Override
+            public void onSuccess(Boolean response) throws Throwable {
+                ToastUtils.toast("请求成功：" + response);
+            }
+        });
+```
+
+
+#### 使用自定义的retrofit接口
+
+如果你对retrofit接口情有独钟，我也提供了相应的api方便调用.
+
+1.定义retrofit接口。例如我定义一个用户添加的接口:
+
+```
+/**
+ * 使用的是retrofit的接口定义
+ */
+public interface UserService {
+    @POST("/user/registerUser/")
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    Observable<ApiResult<Boolean>> registerUser(@Body RequestBody jsonBody);
+
+
+    @POST("/user/registerUser/")
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    Observable<ApiResult> register(@Body RequestBody jsonBody);
+}
+```
+
+2.使用`XHttp.custom()`构建的`CustomRequest`进行请求，你可以使用`apiCall`和`call`进行请求。
+
+* apiCall: 针对的是retrofit定义的接口，返回的是Observable<ApiResult<T>>的情况。对于上面定义的第一个接口`registerUser`。
+
+* call: 针对的是retrofit定义的接口，返回的是Observable<T>的情况。对于上面定义的第二个接口`register`。
+
+使用示例如下:
+
+```
+CustomRequest request = XHttp.custom();
+request.apiCall(request.create(TestApi.UserService.class)
+        .registerUser(HttpUtils.getJsonRequestBody(UserManager.getInstance().getRandomUser())))
+        .subscribeWith(new TipRequestSubscriber<Boolean>() {
+            @Override
+            protected void onSuccess(Boolean aBoolean) {
+                ToastUtils.toast("添加用户成功!");
+            }
+        });
+```
+
+```
+CustomRequest request = XHttp.custom();
+request.call(request.create(TestApi.UserService.class)
+        .register(HttpUtils.getJsonRequestBody(UserManager.getInstance().getRandomUser())))
+        .subscribeWith(new TipRequestSubscriber<ApiResult>() {
+            @Override
+            protected void onSuccess(ApiResult apiResult) {
+                ToastUtils.toast("添加用户成功!");
+                showResult(JsonUtil.toJson(apiResult));
+            }
+        });
+```
+
+
 --------------
 
 ## 混淆配置

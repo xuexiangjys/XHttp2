@@ -156,7 +156,7 @@ public class UserFragment extends XPageFragment implements SmartViewHolder.OnIte
      */
     @SingleClick
     private void addUser(View view) {
-        XHttpRequest req = ApiProvider.getAddUserReq(getRandomUser());
+        XHttpRequest req = ApiProvider.getAddUserReq(UserManager.getInstance().getRandomUser());
         XHttpSDK.executeToMain(req, new ProgressLoadingSubscriber<Boolean>(mIProgressLoader) {
             @Override
             public void onSuccess(Boolean aBoolean) {
@@ -167,14 +167,7 @@ public class UserFragment extends XPageFragment implements SmartViewHolder.OnIte
     }
 
 
-    private User getRandomUser() {
-        User user = new User();
-        user.setAge(StringUtils.toInt(RandomUtils.getRandomNumbers(2), 0));
-        user.setGender((int) (Math.random() * 2 + 1));
-        user.setPhone(RandomUtils.getRandomNumbers(11));
-        user.setName(RandomUtils.getRandomLowerCaseLetters((int) (Math.random() * 8 + 8)));
-        return user;
-    }
+
 
     @Override
     public void onItemLongClick(View itemView, final int position) {

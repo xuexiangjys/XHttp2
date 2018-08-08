@@ -177,5 +177,17 @@ public final class TypeUtils {
     }
 
 
+    /**
+     * 为请求的返回类型加上List包装类
+     * @param type
+     * @return
+     */
+    public static Type getListType(Type type) {
+        return TypeBuilder
+                .newInstance(List.class)
+                .addTypeParam(type)
+                .build();
+    }
+
 
 }

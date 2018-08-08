@@ -101,4 +101,6 @@ dependencies {
     implementation 'com.github.gturedi:stateful-layout:1.2.1'
 
     implementation deps.glide
+
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
 }

@@ -32,11 +32,11 @@ public abstract class CallBack<T> implements IType<T> {
 
     public abstract void onStart();
 
-    public abstract void onCompleted();
+    public abstract void onSuccess(T response) throws Throwable;
 
     public abstract void onError(ApiException e);
 
-    public abstract void onSuccess(T response) throws Throwable;
+    public abstract void onCompleted();
 
     @Override
     public Type getType() {

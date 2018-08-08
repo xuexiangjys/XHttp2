@@ -49,22 +49,27 @@ public class ApiResult<T> {
         return this;
     }
 
-    public T getData() {
-        return Data;
-    }
-
     public ApiResult setData(T data) {
         Data = data;
         return this;
     }
 
     /**
-     * 是否请求成功
+     * 获取请求响应的数据，自定义api的时候需要重写【很关键】
+     *
+     * @return
+     */
+    public T getData() {
+        return Data;
+    }
+
+    /**
+     * 是否请求成功,自定义api的时候需要重写【很关键】
      *
      * @return
      */
     public boolean isSuccess() {
-        return Code == 0;
+        return getCode() == 0;
     }
 
     @Override

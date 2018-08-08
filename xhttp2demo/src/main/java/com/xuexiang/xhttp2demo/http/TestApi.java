@@ -18,11 +18,16 @@ package com.xuexiang.xhttp2demo.http;
 
 import com.xuexiang.xhttp2.annotation.NetMethod;
 import com.xuexiang.xhttp2.annotation.RequestParams;
+import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.model.XHttpRequest;
 import com.xuexiang.xhttp2demo.entity.LoginInfo;
 import com.xuexiang.xhttp2demo.entity.User;
 
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 
 /**
  * 测试api协议
@@ -77,5 +82,31 @@ public class TestApi {
         Observable<LoginInfo> login(String loginName, String password);
 
     }
+
+
+    /**
+     * 使用的是retrofit的接口定义
+     */
+    public interface LoginService {
+        @POST("/authorization/login/")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Observable<ApiResult<LoginInfo>> login(@Body RequestBody jsonBody);
+    }
+
+
+    /**
+     * 使用的是retrofit的接口定义
+     */
+    public interface UserService {
+        @POST("/user/registerUser/")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Observable<ApiResult<Boolean>> registerUser(@Body RequestBody jsonBody);
+
+
+        @POST("/user/registerUser/")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Observable<ApiResult> register(@Body RequestBody jsonBody);
+    }
+
 
 }

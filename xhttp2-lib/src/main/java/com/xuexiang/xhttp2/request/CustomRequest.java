@@ -17,14 +17,17 @@
 package com.xuexiang.xhttp2.request;
 
 
+import com.google.gson.reflect.TypeToken;
 import com.xuexiang.xhttp2.cache.model.CacheResult;
 import com.xuexiang.xhttp2.callback.CallBack;
 import com.xuexiang.xhttp2.callback.CallBackProxy;
 import com.xuexiang.xhttp2.model.ApiResult;
+import com.xuexiang.xhttp2.model.SchedulerType;
 import com.xuexiang.xhttp2.subsciber.CallBackSubscriber;
 import com.xuexiang.xhttp2.transform.HandleErrTransformer;
 import com.xuexiang.xhttp2.transform.HttpResultTransformer;
 import com.xuexiang.xhttp2.transform.HttpSchedulersTransformer;
+import com.xuexiang.xhttp2.transform.func.ApiResultFunc;
 import com.xuexiang.xhttp2.transform.func.CacheResultFunc;
 import com.xuexiang.xhttp2.transform.func.RetryExceptionFunc;
 import com.xuexiang.xhttp2.utils.Utils;
@@ -69,9 +72,15 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
         Utils.checkNotNull(mRetrofit, "请先在调用build()才能使用");
     }
 
+
+    //=================apiCall====================//
+
     /**
-     * 调用call返回一个Observable,针对ApiResult的业务<T>
-     * 举例：如果你给的是一个Observable<ApiResult<AuthModel>> 那么返回的<T>是AuthModel
+     * 针对retrofit定义的接口，返回的是Observable<ApiResult<T>>的情况<br>
+     *
+     * 对ApiResult进行拆包，直接获取数据
+     *
+     * @param observable retrofit定义接口返回的类型
      */
     public <T> Observable<T> apiCall(Observable<ApiResult<T>> observable) {
         checkValidate();
@@ -82,8 +91,23 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
     }
 
     /**
-     * 调用call返回一个Observable<T>
-     * 举例：如果你给的是一个Observable<ApiResult<AuthModel>> 那么返回的<T>是一个ApiResult<AuthModel>
+     * 针对retrofit定义的接口，返回的是Observable<ApiResult<T>>的情况<br>
+     *
+     * 对ApiResult进行拆包，直接获取数据
+     *
+     * @param observable retrofit定义接口返回的类型
+     */
+    public <T> Disposable apiCall(Observable observable, CallBack<T> callBack) {
+        return call(observable, new CallBackProxy<ApiResult<T>, T>(callBack){});
+    }
+
+    //=================call====================//
+    /**
+     * 针对retrofit定义的接口，返回的是Observable<T>的情况<br>
+     *
+     * 不对ApiResult进行拆包，返回服务端响应的ApiResult
+     *
+     * @param observable retrofit定义接口返回的类型
      */
     public <T> Observable<T> call(Observable<T> observable) {
         checkValidate();
@@ -93,19 +117,19 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
                 .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay));
     }
 
+    /**
+     * 针对retrofit定义的接口，返回的是Observable<T>的情况<br>
+     *
+     * 不对ApiResult进行拆包，返回服务端响应的ApiResult
+     *
+     * @param observable retrofit定义接口返回的类型
+     */
     public <T> void call(Observable<T> observable, CallBack<T> callBack) {
         call(observable, new CallBackSubscriber(callBack));
     }
 
     public <R> void call(Observable observable, Observer<R> subscriber) {
-        observable.compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
-                .subscribe(subscriber);
-    }
-
-    //=================apiCall====================//
-
-    public <T> Disposable apiCall(Observable<T> observable, CallBack<T> callBack) {
-        return call(observable, new CallBackProxy<ApiResult<T>, T>(callBack){});
+        call(observable).subscribe(subscriber);
     }
 
     /**
@@ -126,6 +150,16 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
         } else {
             return cacheObservable.subscribeWith(new CallBackSubscriber<CacheResult<T>>(proxy.getCallBack()));
         }
+    }
+
+    @Override
+    protected <T> Observable<CacheResult<T>> toObservable(Observable observable, CallBackProxy<? extends ApiResult<T>, T> proxy) {
+        checkValidate();
+        return observable
+                .compose(new HttpResultTransformer())
+                .compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
+                .compose(mRxCache.transformer(mCacheMode, proxy.getCallBack().getType()))
+                .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay));
     }
 
     @Override

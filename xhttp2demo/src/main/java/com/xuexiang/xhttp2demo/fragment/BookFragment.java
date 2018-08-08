@@ -34,6 +34,9 @@ import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.XHttpProxy;
 import com.xuexiang.xhttp2.callback.SimpleCallBack;
 import com.xuexiang.xhttp2.exception.ApiException;
+import com.xuexiang.xhttp2.model.ApiResult;
+import com.xuexiang.xhttp2.reflect.TypeBuilder;
+import com.xuexiang.xhttp2.utils.TypeUtils;
 import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.adapter.BookAdapter;
 import com.xuexiang.xhttp2demo.http.TestApi;
@@ -46,9 +49,11 @@ import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageFragment;
 import com.xuexiang.xutil.tip.ToastUtils;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -134,7 +139,6 @@ public class BookFragment extends XPageFragment implements SmartViewHolder.OnIte
         }
     }
 
-
     /**
      * 获取用户信息
      *
@@ -142,28 +146,48 @@ public class BookFragment extends XPageFragment implements SmartViewHolder.OnIte
      */
     @SuppressLint("CheckResult")
     private void getBookList(@NonNull final RefreshLayout refreshLayout) {
-        XHttp.get("/book/getAllBook")
+        Observable<List<Book>> observable = XHttp.get("/book/getAllBook")
                 .syncRequest(false)
                 .onMainThread(true)
-                .execute(new SimpleCallBack<List<Book>>() {
-                    @Override
-                    public void onSuccess(List<Book> response) {
-                        refreshLayout.finishRefresh(true);
-                        if (response != null && response.size() > 0) {
-                            mBookAdapter.refresh(response);
-                            mLlStateful.showContent();
-                        } else {
-                            mLlStateful.showEmpty();
-                        }
-                    }
+                .execute(TypeUtils.getListType(Book.class));
 
-                    @Override
-                    public void onError(ApiException e) {
-                        refreshLayout.finishRefresh(false);
-                        mLlStateful.showError(e.getMessage(), null);
-                    }
+        observable.subscribeWith(new TipRequestSubscriber<List<Book>>() {
+            @Override
+            protected void onSuccess(List<Book> response) {
+                refreshLayout.finishRefresh(true);
+                if (response != null && response.size() > 0) {
+                    mBookAdapter.refresh(response);
+                    mLlStateful.showContent();
+                } else {
+                    mLlStateful.showEmpty();
+                }
+            }
 
-                });
+            @Override
+            public void onError(ApiException e) {
+                refreshLayout.finishRefresh(false);
+                mLlStateful.showError(e.getMessage(), null);
+            }
+        });
+//                .execute(new SimpleCallBack<List<Book>>() {
+//                    @Override
+//                    public void onSuccess(List<Book> response) {
+//                        refreshLayout.finishRefresh(true);
+//                        if (response != null && response.size() > 0) {
+//                            mBookAdapter.refresh(response);
+//                            mLlStateful.showContent();
+//                        } else {
+//                            mLlStateful.showEmpty();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(ApiException e) {
+//                        refreshLayout.finishRefresh(false);
+//                        mLlStateful.showError(e.getMessage(), null);
+//                    }
+//
+//                });
     }
 
     @SuppressLint("CheckResult")

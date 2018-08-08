@@ -34,3 +34,6 @@ dependencies {
     implementation 'com.jakewharton:disklrucache:2.0.2'
 
 }
+
+apply from: "https://raw.githubusercontent.com/xuexiangjys/XUtil/master/JitPackUpload.gradle"
+

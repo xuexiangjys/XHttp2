@@ -17,10 +17,8 @@
 package com.xuexiang.xhttp2demo.fragment;
 
 import com.xuexiang.xhttp2.XHttp;
-import com.xuexiang.xhttp2.callback.SimpleCallBack;
-import com.xuexiang.xhttp2.exception.ApiException;
-import com.xuexiang.xhttp2demo.activity.LoginActivity;
 import com.xuexiang.xhttp2demo.entity.User;
+import com.xuexiang.xhttp2demo.http.callback.TipRequestCallBack;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageSimpleListFragment;
 import com.xuexiang.xrouter.launcher.XRouter;
@@ -54,41 +52,29 @@ public class TokenFragment extends XPageSimpleListFragment {
             case 1:
                 XHttp.get("/authorization/getCurrentUser")
                         .accessToken(true)
-                        .execute(new SimpleCallBack<User>() {
+                        .execute(new TipRequestCallBack<User>() {
                             @Override
                             public void onSuccess(User user) throws Throwable {
                                 ToastUtils.toast("当前登录的用户:" + JsonUtil.toJson(user));
-                            }
-                            @Override
-                            public void onError(ApiException e) {
-                                ToastUtils.toast(e.getDisplayMessage());
                             }
                         });
                 break;
             case 2:
                 XHttp.get("/authorization/testLimitedRequest")
-                        .execute(new SimpleCallBack<Boolean>() {
+                        .execute(new TipRequestCallBack<Boolean>() {
                             @Override
                             public void onSuccess(Boolean aBoolean) throws Throwable {
                                 ToastUtils.toast("请求成功！");
-                            }
-                            @Override
-                            public void onError(ApiException e) {
-                                ToastUtils.toast(e.getDisplayMessage());
                             }
                         });
                 break;
             case 3:
                 XHttp.get("/authorization/testQuickRequest")
                         .timeStamp(true)
-                        .execute(new SimpleCallBack<Boolean>() {
+                        .execute(new TipRequestCallBack<Boolean>() {
                             @Override
                             public void onSuccess(Boolean aBoolean) throws Throwable {
                                 ToastUtils.toast("请求成功！");
-                            }
-                            @Override
-                            public void onError(ApiException e) {
-                                ToastUtils.toast(e.getDisplayMessage());
                             }
                         });
                 break;

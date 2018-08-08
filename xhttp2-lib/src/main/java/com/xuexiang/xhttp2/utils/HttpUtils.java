@@ -59,6 +59,37 @@ public final class HttpUtils {
         throw new UnsupportedOperationException("u can't instantiate me...");
     }
 
+
+    /**
+     * 获取json的请求体
+     *
+     * @param object
+     * @return
+     */
+    public static RequestBody getJsonRequestBody(Object object) {
+        return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(object));
+    }
+
+    /**
+     * 获取json的请求体
+     *
+     * @param json
+     * @return
+     */
+    public static RequestBody getJsonRequestBody(String json) {
+        return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+    }
+
+    /**
+     * 获取json的响应体
+     *
+     * @param json
+     * @return
+     */
+    public static ResponseBody getJsonResponseBody(String json) {
+        return ResponseBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+    }
+
     /**
      * 获取响应body的byte流
      *
@@ -206,7 +237,7 @@ public final class HttpUtils {
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 jsonObject.put(entry.getKey(), entry.getValue());
             }
-            return oldRequest.newBuilder().post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toString())).build();
+            return oldRequest.newBuilder().post(HttpUtils.getJsonRequestBody(jsonObject.toString())).build();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -273,6 +304,6 @@ public final class HttpUtils {
      */
     public static Response getErrorResponse(Response oldResponse, int code, String message) {
         ApiResult apiResult = new ApiResult().setCode(code).setMsg(message);
-        return oldResponse.newBuilder().body(ResponseBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(apiResult))).build();
+        return oldResponse.newBuilder().body(HttpUtils.getJsonResponseBody(new Gson().toJson(apiResult))).build();
     }
 }

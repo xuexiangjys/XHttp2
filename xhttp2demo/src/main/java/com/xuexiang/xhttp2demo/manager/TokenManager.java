@@ -74,6 +74,10 @@ public class TokenManager {
         return mLoginUser;
     }
 
+    public boolean isUserLogined() {
+        return mLoginUser != null;
+    }
+
     public TokenManager setLoginUser(User loginUser) {
         mLoginUser = loginUser;
         return this;

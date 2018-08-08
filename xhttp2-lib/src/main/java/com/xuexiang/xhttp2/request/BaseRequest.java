@@ -688,7 +688,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 }
             } else {
                 //获取全局的对象重新设置
-                List<Converter.Factory> listConverterFactory = XHttp.getRetrofit().converterFactories();
+                List<Converter.Factory> listConverterFactory = XHttp.getRetrofitBuilder().converterFactories();
                 for (Converter.Factory factory : listConverterFactory) {
                     retrofitBuilder.addConverterFactory(factory);
                 }
@@ -699,7 +699,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 }
             } else {
                 //获取全局的对象重新设置
-                List<CallAdapter.Factory> listAdapterFactory = XHttp.getRetrofit().callAdapterFactories();
+                List<CallAdapter.Factory> listAdapterFactory = XHttp.getRetrofitBuilder().callAdapterFactories();
                 for (CallAdapter.Factory factory : listAdapterFactory) {
                     retrofitBuilder.addCallAdapterFactory(factory);
                 }
@@ -802,13 +802,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     /**
-     * 执行请求，并订阅请求响应结果
+     * 执行请求，并订阅请求响应结果(CallBack代理)
      *
      * @param proxy
      * @param <T>
      * @return
      */
-    protected <T> Disposable execute(CallBackProxy<? extends ApiResult<T>, T> proxy) {
+    public <T> Disposable execute(CallBackProxy<? extends ApiResult<T>, T> proxy) {
         Observable<CacheResult<T>> observable = build().toObservable(generateRequest(), proxy);
         if (CacheResult.class != proxy.getRawType()) {
             return observable.compose(new ObservableTransformer<CacheResult<T>, T>() {
@@ -829,7 +829,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
      * @param <T>
      * @return
      */
-    protected <T> Observable<T> execute(CallClazzProxy<? extends ApiResult<T>, T> proxy) {
+    public <T> Observable<T> execute(CallClazzProxy<? extends ApiResult<T>, T> proxy) {
         return build().generateRequest()
                 .map(new ApiResultFunc(proxy.getType(), mKeepJson))
                 .compose(new HttpResultTransformer())
