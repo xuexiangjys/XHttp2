@@ -41,9 +41,13 @@
 
 ### 1.1、Demo演示动画
 
-![demo](https://github.com/xuexiangjys/XHttp2/blob/master/img/demo.gif)
+![][demo-gif]
 
 ### 1.2、Demo下载
+
+[![downloads][download-svg]][download-url]
+
+![][download-img]
 
 ### 1.3、api服务安装
 
@@ -907,3 +911,9 @@ https://github.com/zhou-you/RxEasyHttp
 [xh]: https://github.com/xuexiangjys/XHttp2
 [apisvg]: https://img.shields.io/badge/API-14+-brightgreen.svg
 [api]: https://android-arsenal.com/api?level=14
+
+
+[demo-gif]: https://github.com/xuexiangjys/XHttp2/blob/master/img/demo.gif
+[download-svg]: https://img.shields.io/badge/downloads-2.61M-blue.svg
+[download-url]: https://github.com/xuexiangjys/XHttp2/blob/master/apk/xhttp2_demo_1.0.apk?raw=true
+[download-img]: https://github.com/xuexiangjys/XHttp2/blob/master/img/download.png
