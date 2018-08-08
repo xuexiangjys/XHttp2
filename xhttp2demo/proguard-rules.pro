@@ -217,3 +217,8 @@
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
 -keep class com.google.gson.examples.android.model.** { *; }
+
+## 演示demo中使用了gson序列化的对象
+-keep class com.xuexiang.xhttp2demo.entity.** { *; }
+-keep class com.xuexiang.xhttp2demo.http.request.** { *; }
+-keep class com.xuexiang.xhttp2demo.http.** { *; }
