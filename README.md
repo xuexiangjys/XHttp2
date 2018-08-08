@@ -773,6 +773,73 @@ request.call(request.create(TestApi.UserService.class)
         });
 ```
 
+### 缓存策略
+
+目前框架提供了如下8种缓存策略:
+
+* NO_CACHE: 不使用缓存(默认方式)
+
+* DEFAULT: 完全按照HTTP协议的默认缓存规则，走OKhttp的Cache缓存
+
+* FIRST_REMOTE: 先请求网络，请求网络失败后再加载缓存
+
+* FIRST_CACHE: 先加载缓存，缓存没有再去请求网络
+
+* ONLY_REMOTE: 仅加载网络，但数据依然会被缓存
+
+* ONLY_CACHE: 只读取缓存
+
+* CACHE_REMOTE: 先使用缓存，不管是否存在，仍然请求网络，会回调两次
+
+* CACHE_REMOTE_DISTINCT: 先使用缓存，不管是否存在，仍然请求网络，会先把缓存回调给你，等网络请求回来发现数据是一样的就不会再返回，否则再返回（这样做的目的是防止数据是一样的你也需要刷新界面）
+
+对于缓存的实现，提供了磁盘缓存`LruDiskCache`和内存缓存`LruMemoryCache`两种实现，默认使用的是磁盘缓存。
+
+(1)可以先进行缓存的全局性配置，配置缓存的有效期、缓存大小，缓存路径、序列化器等。
+
+```
+XHttp.getInstance()
+        .setIsDiskCache(true) //设置使用磁盘缓存
+        .setCacheTime(60 * 1000) //设置全局缓存有效期为一分钟
+        .setCacheVersion(1) //设置全局缓存的版本
+        .setCacheDirectory(Utils.getDiskCacheDir(this, "XHttp")) //设置全局缓存保存的目录路径
+        .setCacheMode(CacheMode.NO_CACHE) //设置全局的缓存策略
+        .setCacheDiskConverter(new GsonDiskConverter())//默认缓存使用序列化转化
+        .setCacheMaxSize(50 * 1024 * 1024);//设置缓存大小为50M
+```
+
+(2)在进行请求的时候，设置缓存模式和缓存的key即可。如下:
+
+```
+XHttp.get("/book/getAllBook")
+        .timeOut(10 * 1000)//测试局部超时10s
+        .cacheMode(mCacheMode)
+        .cacheKey(CACHE_KEY)//缓存key
+        .retryCount(5)//重试次数
+        .cacheTime(5 * 60)//缓存时间300s，默认-1永久缓存  okhttp和自定义缓存都起作用
+        .cacheDiskConverter(new GsonDiskConverter())//默认使用的是 new SerializableDiskConverter();
+        .timeStamp(true)
+        .execute(new ProgressLoadingCallBack<CacheResult<List<Book>>>(mIProgressLoader) {
+            @Override
+            public void onSuccess(CacheResult<List<Book>> cacheResult) {
+                ToastUtils.toast("请求成功!");
+                String from;
+                if (cacheResult.isFromCache) {
+                    from = "我来自缓存";
+                } else {
+                    from = "我来自远程网络";
+                }
+                showResult(from + "\n" + JsonUtil.toJson(cacheResult.data));
+            }
+
+            @Override
+            public void onError(ApiException e) {
+                super.onError(e);
+                ToastUtils.toast(e.getDisplayMessage());
+            }
+        });
+```
+
 
 --------------
 
