@@ -2,7 +2,7 @@
 
 buildscript {
     
-    apply from: 'https://raw.githubusercontent.com/xuexiangjys/XUtil/master/versions.gradle'
+    apply from: './versions.gradle'
     addRepos(repositories) //增加代码仓库
 
     dependencies {
