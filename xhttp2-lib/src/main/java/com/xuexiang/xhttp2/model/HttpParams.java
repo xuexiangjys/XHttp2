@@ -56,12 +56,17 @@ public class HttpParams implements Serializable {
         put(key, value);
     }
 
+    public HttpParams(Map<String, Object> params) {
+        init();
+        put(params);
+    }
+
     private void init() {
         urlParamsMap = new LinkedHashMap<>();
         fileParamsMap = new LinkedHashMap<>();
     }
 
-    public void put(HttpParams params) {
+    public HttpParams put(HttpParams params) {
         if (params != null) {
             if (params.urlParamsMap != null && !params.urlParamsMap.isEmpty())
                 urlParamsMap.putAll(params.urlParamsMap);
@@ -70,6 +75,7 @@ public class HttpParams implements Serializable {
                 fileParamsMap.putAll(params.fileParamsMap);
             }
         }
+        return this;
     }
 
     //===============存放普通键值对参数=====================//
@@ -79,9 +85,11 @@ public class HttpParams implements Serializable {
      *
      * @param params
      */
-    public void put(Map<String, Object> params) {
-        if (params == null || params.isEmpty()) return;
-        urlParamsMap.putAll(params);
+    public HttpParams put(Map<String, Object> params) {
+        if (params != null && !params.isEmpty()) {
+            urlParamsMap.putAll(params);
+        }
+        return this;
     }
 
     /**
@@ -90,8 +98,9 @@ public class HttpParams implements Serializable {
      * @param key
      * @param value
      */
-    public void put(String key, Object value) {
+    public HttpParams put(String key, Object value) {
         urlParamsMap.put(key, value);
+        return this;
     }
 
     //===============存放文件键值对参数=====================//

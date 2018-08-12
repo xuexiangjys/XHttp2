@@ -51,6 +51,7 @@ import java.io.InputStream;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -421,6 +422,14 @@ public abstract class BaseRequest<R extends BaseRequest> {
      * 设置参数
      */
     public R params(HttpParams params) {
+        mParams.put(params);
+        return (R) this;
+    }
+
+    /**
+     * 设置参数
+     */
+    public R params(Map<String, Object> params) {
         mParams.put(params);
         return (R) this;
     }
