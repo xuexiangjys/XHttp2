@@ -254,7 +254,8 @@ public class EditBookFragment extends XPageFragment {
             return;
         }
 
-        XHttp.downLoad(BookAdapter.getBookImgUrl(book))
+        XHttp.downLoad(BookAdapter.getBookImgUrlWithoutBaseUrl(book))
+                .isUseBaseUrl(true) //设置了这个之后，baseUrl才起作用。如果下载的地址是绝对地址，就可以设置为false。
                 .savePath(PathUtils.getExtPicturesPath())
                 .execute(new DownloadProgressCallBack<String>() {
                     @Override

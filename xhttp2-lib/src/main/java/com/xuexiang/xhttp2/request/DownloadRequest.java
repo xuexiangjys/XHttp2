@@ -16,6 +16,7 @@
 
 package com.xuexiang.xhttp2.request;
 
+import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.callback.CallBack;
 import com.xuexiang.xhttp2.subsciber.DownloadSubscriber;
 import com.xuexiang.xhttp2.transform.HandleErrTransformer;
@@ -52,6 +53,11 @@ public class DownloadRequest extends BaseRequest<DownloadRequest> {
     private String mSaveName;
 
     /**
+     * 是否使用baseUrl
+     */
+    private boolean mIsUseBaseUrl;
+
+    /**
      * 设置下载文件路径<br>
      * SD卡不存在: /data/data/com.xxx.xxx/files;<br>
      * 存在: /storage/emulated/0/Android/data/com.xxx.xxx/files;
@@ -67,6 +73,11 @@ public class DownloadRequest extends BaseRequest<DownloadRequest> {
      */
     public DownloadRequest saveName(String saveName) {
         mSaveName = saveName;
+        return this;
+    }
+
+    public DownloadRequest isUseBaseUrl(boolean isUseBaseUrl) {
+        mIsUseBaseUrl = isUseBaseUrl;
         return this;
     }
 
@@ -89,6 +100,10 @@ public class DownloadRequest extends BaseRequest<DownloadRequest> {
 
     @Override
     protected Observable<ResponseBody> generateRequest() {
-        return mApiManager.downloadFile(mUrl);
+        if (mIsUseBaseUrl) {
+            return mApiManager.downloadFile(XHttp.getBaseUrl() + getUrl());
+        } else {
+            return mApiManager.downloadFile(mUrl);
+        }
     }
 }

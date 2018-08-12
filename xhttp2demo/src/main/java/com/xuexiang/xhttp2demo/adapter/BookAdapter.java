@@ -81,4 +81,8 @@ public class BookAdapter extends BaseRecyclerAdapter<Book> {
     public static String getBookImgUrl(Book book) {
         return getBaseImgUrl() + book.getPicture();
     }
+
+    public static String getBookImgUrlWithoutBaseUrl(Book book) {
+        return "/file/downloadFile/" + book.getPicture();
+    }
 }
