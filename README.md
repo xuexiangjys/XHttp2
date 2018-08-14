@@ -129,6 +129,20 @@ setCookieStore | 设置全局cookie存取规则
 
 ## 如何进行网络请求
 
+需要注意的是，所以请求返回的结果必须要满足以下格式:
+
+```
+{
+    "Code":0, //响应码，0为成功，否则失败
+    "Msg":"", //请求失败的原因说明
+    "Data":{} //返回的数据对象
+}
+```
+
+约定了其中`Code`、`Msg`、`Data`首字母必须大写，否则无法解析成功。
+
+需要自定义返回的实体API请[点击查看](#自定义api请求)
+
 ### 1、使用XHttp默认api进行请求
 
 1.使用XHttp.post、XHttp.get、XHttp.delete、XHttp.put、XHttp.downLoad构建请求。
