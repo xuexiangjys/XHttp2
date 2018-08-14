@@ -16,6 +16,7 @@
 
 package com.xuexiang.xhttp2;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -24,7 +25,6 @@ import com.xuexiang.xhttp2.annotation.ThreadType;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.request.PostRequest;
-import com.xuexiang.xhttp2.utils.TypeUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -56,12 +56,38 @@ public class XHttpProxy implements InvocationHandler {
     /**
      * 网络请求代理
      *
-     * @param threadType
      * @param cls        代理的请求接口
+     * @param isPostJson post请求参数的是否是json形式
      * @param <T>
      * @return
      */
-    public static <T> T proxy(@ThreadType String threadType, Class<T> cls) {
+    public static <T> T proxy(Class<T> cls, boolean isPostJson) {
+        return new XHttpProxy(isPostJson).create(cls);
+    }
+
+    /**
+     * 网络请求代理
+     *
+     * @param cls        代理的请求接口
+     * @param threadType 线程调度类型
+     * @param isPostJson post请求参数的是否是json形式
+     * @param <T>
+     * @return
+     */
+    public static <T> T proxy(Class<T> cls, @ThreadType String threadType, boolean isPostJson) {
+        return new XHttpProxy(threadType, isPostJson).create(cls);
+    }
+
+
+    /**
+     * 网络请求代理
+     *
+     * @param cls        代理的请求接口
+     * @param threadType 线程调度类型
+     * @param <T>
+     * @return
+     */
+    public static <T> T proxy(Class<T> cls, @ThreadType String threadType) {
         return new XHttpProxy(threadType).create(cls);
     }
 
@@ -70,12 +96,45 @@ public class XHttpProxy implements InvocationHandler {
      */
     private String mThreadType;
 
+    /**
+     * post请求参数的形式【默认为json】
+     */
+    private boolean mIsPostJson;
+
+    /**
+     * 构造方法
+     */
     public XHttpProxy() {
-        this(ThreadType.TO_MAIN);
+        this(ThreadType.TO_MAIN, true);
     }
 
+    /**
+     * 构造方法
+     *
+     * @param isPostJson 是否post json
+     */
+    public XHttpProxy(boolean isPostJson) {
+        this(ThreadType.TO_MAIN, isPostJson);
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param threadType 线程调度类型
+     */
     public XHttpProxy(@ThreadType String threadType) {
+        this(threadType, true);
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param threadType 线程调度类型
+     * @param isPostJson 是否post json
+     */
+    public XHttpProxy(@ThreadType String threadType, boolean isPostJson) {
         mThreadType = threadType;
+        mIsPostJson = isPostJson;
     }
 
     public <T> T create(Class<T> cls) {
@@ -90,9 +149,15 @@ public class XHttpProxy implements InvocationHandler {
         } else if (netMethod.ParameterNames().length != method.getGenericParameterTypes().length) {
             throw new ApiException(method.getName() + "方法NetMethod注释与实际参数个数不对应", ApiException.ERROR.NET_METHOD_ANNOTATION_ERROR);
         }
-        String json = getRequestJsonString(method, args, netMethod);
+        Map<String, Object> params = getParamsMap(method, args, netMethod);
         Type type = getReturnType(method);
-        return getPostRequest(netMethod, json).executeForType(type);
+        PostRequest postRequest = getPostRequest(netMethod);
+        if (mIsPostJson) {
+            postRequest.upJson(new Gson().toJson(params));
+        } else {
+            postRequest.params(params);
+        }
+        return postRequest.execute(type);
     }
 
     /**
@@ -105,9 +170,9 @@ public class XHttpProxy implements InvocationHandler {
     private Type getReturnType(Method method) throws ApiException {
         Type type = method.getGenericReturnType();
         if (type instanceof ParameterizedType) {
-            type = TypeUtils.getApiResultType(((ParameterizedType) type).getActualTypeArguments()[0]);
+            type = ((ParameterizedType) type).getActualTypeArguments()[0];
         } else {
-            throw new ApiException(method.getName() + "方法返回值类型不是泛型", ApiException.ERROR.NET_METHOD_ANNOTATION_ERROR);
+            throw new ApiException("接口方法:" + method.getName() + "的返回值类型不是泛型, 必须返回Observable<T>类型", ApiException.ERROR.NET_METHOD_ANNOTATION_ERROR);
         }
         return type;
     }
@@ -116,10 +181,9 @@ public class XHttpProxy implements InvocationHandler {
      * 获取post请求
      *
      * @param apiMethod
-     * @param json
      * @return
      */
-    private PostRequest getPostRequest(NetMethod apiMethod, String json) {
+    private PostRequest getPostRequest(NetMethod apiMethod) {
         String baseUrl = apiMethod.BaseUrl();
         String url = apiMethod.Url();
         long timeout = apiMethod.Timeout();
@@ -139,26 +203,25 @@ public class XHttpProxy implements InvocationHandler {
         return postRequest
                 .threadType(mThreadType)
                 .accessToken(accessToken)
-                .timeOut(timeout)
-                .upJson(json);
+                .timeOut(timeout);
     }
 
     /**
-     * 获取请求json数据
+     * 获取请求参数集合
      *
      * @param method
      * @param args
      * @param apiMethod
      * @return
      */
-    private String getRequestJsonString(Method method, Object[] args, NetMethod apiMethod) {
-        //参数字典填充
+    @NonNull
+    private Map<String, Object> getParamsMap(Method method, Object[] args, NetMethod apiMethod) {
         Map<String, Object> params = new TreeMap<>();
         Type[] parameters = method.getGenericParameterTypes();
         for (int i = 0; i < parameters.length; i++) {
             params.put(apiMethod.ParameterNames()[i], args[i]);
         }
-        return new Gson().toJson(params);
+        return params;
     }
 
     /**

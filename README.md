@@ -215,7 +215,7 @@ XHttp.post("/user/deleteUser")
 
 --------------
 
-### 2、使用XHttpRequest封装的统一请求实体进行请求
+### 2、使用XHttpRequest封装的统一请求实体进行请求【仅支持post请求】
 
 在使用它之前，需要下载/定义对应的实体协议，如下：
 
@@ -290,7 +290,7 @@ XHttpSDK.executeToMain(req, new ProgressLoadingSubscriber<Boolean>(mIProgressLoa
 ```
 --------------
 
-### 3、使用XHttpProxy代理进行请求
+### 3、使用XHttpProxy代理进行请求【仅支持post请求】
 
 在使用它之前，需要下载/定义对应的接口协议，如下：
 
@@ -558,7 +558,7 @@ protected Response responseExpired(Response oldResponse, Chain chain, ExpiredInf
             if (user != null) {
                 final boolean[] isGetNewToken = {false};
                 HttpLog.e("正在重新获取token...");
-                XHttpProxy.proxy(ThreadType.IN_THREAD, TestApi.IAuthorization.class)
+                XHttpProxy.proxy(TestApi.IAuthorization.class, ThreadType.IN_THREAD)
                         .login(user.getLoginName(), user.getPassword())
                         .subscribeWith(new NoTipRequestSubscriber<LoginInfo>() {
                             @Override

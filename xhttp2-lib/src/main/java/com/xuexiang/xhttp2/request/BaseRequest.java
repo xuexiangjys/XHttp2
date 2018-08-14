@@ -853,26 +853,5 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 });
     }
 
-    /**
-     * 执行请求，获取请求响应结果【Observable<T>】
-     *
-     * @param proxy 使用了getCallType
-     * @param <T>
-     * @return
-     */
-    protected <T> Observable<T> executeForType(CallClazzProxy<? extends ApiResult<T>, T> proxy) {
-        return build().generateRequest()
-                .map(new ApiResultFunc(proxy.getCallType(), mKeepJson))
-                .compose(new HttpResultTransformer())
-                .compose(new HttpSchedulersTransformer(mIsSyncRequest, mIsOnMainThread))
-                .compose(mRxCache.transformer(mCacheMode, proxy.getCallType()))
-                .retryWhen(new RetryExceptionFunc(mRetryCount, mRetryDelay, mRetryIncreaseDelay))
-                .compose(new ObservableTransformer() {
-                    @Override
-                    public ObservableSource apply(@NonNull Observable upstream) {
-                        return upstream.map(new CacheResultFunc<T>());
-                    }
-                });
-    }
 }
 

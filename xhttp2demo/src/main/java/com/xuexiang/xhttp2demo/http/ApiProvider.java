@@ -32,4 +32,11 @@ public class ApiProvider {
         return req;
     }
 
+    public static TestApi.UserService_findUsers getUsersReq(int pageNum, int pageSize) {
+        TestApi.UserService_findUsers req = new TestApi.UserService_findUsers();
+        req.pageNum = pageNum;
+        req.pageSize = pageSize;
+        return req;
+    }
+
 }

@@ -20,8 +20,11 @@ import com.xuexiang.xhttp2.annotation.NetMethod;
 import com.xuexiang.xhttp2.annotation.RequestParams;
 import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.model.XHttpRequest;
+import com.xuexiang.xhttp2demo.entity.Book;
 import com.xuexiang.xhttp2demo.entity.LoginInfo;
 import com.xuexiang.xhttp2demo.entity.User;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 import okhttp3.RequestBody;
@@ -51,6 +54,23 @@ public class TestApi {
         }
     }
 
+    @RequestParams(url = "/user/findUsers", accessToken = false)
+    public static class UserService_findUsers extends XHttpRequest {
+        /**
+         *  第几页数
+         */
+        public int pageNum;
+        /**
+         * 每页的数量
+         */
+        public int pageSize;
+
+        @Override
+        protected List<User> getResponseEntityType() {
+            return null;
+        }
+    }
+
 
     /**
      * 订单
@@ -65,6 +85,20 @@ public class TestApi {
          */
         @NetMethod(ParameterNames = {"bookId", "userId", "number"}, Url = "/order/addOrder/", AccessToken = false)
         Observable<Boolean> buyBook(int bookId, int userId, int number);
+    }
+
+    /**
+     * 图书管理
+     */
+    public interface IBook {
+        /**
+         * 获取图书
+         *
+         * @param pageNum 第几页数
+         * @param pageSize 每页的数量
+         */
+        @NetMethod(ParameterNames = {"pageNum", "pageSize"}, Url = "/book/findBooks/", AccessToken = false)
+        Observable<List<Book>> getBooks(int pageNum, int pageSize);
     }
 
 

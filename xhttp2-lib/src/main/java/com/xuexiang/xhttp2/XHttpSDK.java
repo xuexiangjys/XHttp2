@@ -225,21 +225,6 @@ public final class XHttpSDK {
         return post(url, isAccessToken, json, isSyncRequest, toMainThread).execute(type);
     }
 
-    /**
-     * 执行post请求，返回对象
-     *
-     * @param url           请求地址（子地址）
-     * @param isAccessToken 是否验证Token
-     * @param json          请求json参数
-     * @param isSyncRequest 是否是同步请求
-     * @param toMainThread  是否回到主线程
-     * @param type          请求返回的类型
-     * @return
-     */
-    public static <T> Observable<T> executeForType(String url, boolean isAccessToken, String json, boolean isSyncRequest, boolean toMainThread, Type type) {
-        return post(url, isAccessToken, json, isSyncRequest, toMainThread).executeForType(type);
-    }
-
     //==========================================执行post请求，返回对象======================================================//
 
     /**
@@ -251,17 +236,6 @@ public final class XHttpSDK {
      */
     public static <T> Observable<T> execute(PostRequest postRequest, Type type) {
         return postRequest.execute(type);
-    }
-
-    /**
-     * 执行post请求，返回对象
-     *
-     * @param postRequest post请求
-     * @param type        请求返回的类型
-     * @return
-     */
-    public static <T> Observable<T> executeForType(PostRequest postRequest, Type type) {
-        return postRequest.executeForType(type);
     }
 
     /**
@@ -330,7 +304,7 @@ public final class XHttpSDK {
      * @param xHttpRequest 请求实体
      * @return
      */
-    public static <T extends Observable> T executeToMain(XHttpRequest xHttpRequest) {
+    public static Observable executeToMain(XHttpRequest xHttpRequest) {
         return execute(xHttpRequest, false, true);
     }
 
@@ -443,7 +417,7 @@ public final class XHttpSDK {
      * @param xHttpRequest 请求实体
      * @return
      */
-    public static <T extends Observable> T executeToIO(XHttpRequest xHttpRequest) {
+    public static Observable executeToIO(XHttpRequest xHttpRequest) {
         return execute(xHttpRequest, false, false);
     }
 
@@ -522,7 +496,7 @@ public final class XHttpSDK {
      * @param xHttpRequest 请求实体
      * @return
      */
-    public static <T extends Observable> T executeInThread(XHttpRequest xHttpRequest) {
+    public static Observable executeInThread(XHttpRequest xHttpRequest) {
         return execute(xHttpRequest, true, false);
     }
 
@@ -583,9 +557,8 @@ public final class XHttpSDK {
      * @param toMainThread  是否回到主线程
      * @return
      */
-    public static <T extends Observable> T execute(XHttpRequest xHttpRequest, boolean isSyncRequest, boolean toMainThread) {
-        Type type = TypeUtils.getApiResultType(xHttpRequest.parseReturnType());
-        return (T) executeForType(post(xHttpRequest, isSyncRequest, toMainThread), type);
+    public static Observable execute(XHttpRequest xHttpRequest, boolean isSyncRequest, boolean toMainThread) {
+        return execute(post(xHttpRequest, isSyncRequest, toMainThread), xHttpRequest.parseReturnType());
     }
 
     /**
@@ -595,9 +568,8 @@ public final class XHttpSDK {
      * @param xHttpRequest 请求实体
      * @return
      */
-    public static <T extends Observable> T execute(PostRequest postRequest, XHttpRequest xHttpRequest) {
-        Type type = TypeUtils.getApiResultType(xHttpRequest.parseReturnType());
-        return (T) executeForType(postRequest, type);
+    public static Observable execute(PostRequest postRequest, XHttpRequest xHttpRequest) {
+        return execute(postRequest, xHttpRequest.parseReturnType());
     }
 
     /**
@@ -607,8 +579,8 @@ public final class XHttpSDK {
      * @param type        请求返回的类型
      * @return
      */
-    public static <T extends Observable> T executePost(PostRequest postRequest, Type type) {
-        return (T) executeForType(postRequest, type);
+    public static Observable executePost(PostRequest postRequest, Type type) {
+        return execute(postRequest, type);
     }
 
     /**

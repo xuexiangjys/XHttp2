@@ -45,6 +45,10 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
         super(url);
     }
 
+    /**
+     * 使用xHttpRequest来构建post请求
+     * @param xHttpRequest 统一封装的请求实体对象
+     */
     public PostRequest(XHttpRequest xHttpRequest) {
         super(xHttpRequest.getUrl());
         initRequest(xHttpRequest);
@@ -81,11 +85,6 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
 
     public <T> Observable<T> execute(Type type) {
         return execute(new CallClazzProxy<ApiResult<T>, T>(type) {
-        });
-    }
-
-    public <T> Observable<T> executeForType(Type type) {
-        return executeForType(new CallClazzProxy<ApiResult<T>, T>(type) {
         });
     }
 

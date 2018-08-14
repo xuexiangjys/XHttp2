@@ -90,7 +90,7 @@ public class CustomExpiredInterceptor extends BaseExpiredInterceptor {
                 if (user != null) {
                     final boolean[] isGetNewToken = {false};
                     HttpLog.e("正在重新获取token...");
-                    XHttpProxy.proxy(ThreadType.IN_THREAD, TestApi.IAuthorization.class)
+                    XHttpProxy.proxy(TestApi.IAuthorization.class, ThreadType.IN_THREAD)
                             .login(user.getLoginName(), user.getPassword())
                             .subscribeWith(new NoTipRequestSubscriber<LoginInfo>() {
                                 @Override
