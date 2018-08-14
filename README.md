@@ -73,7 +73,7 @@ allprojects {
 ```
 dependencies {
   ...
-  implementation 'com.github.xuexiangjys:XHttp2:1.0.1'
+  implementation 'com.github.xuexiangjys:XHttp2:1.0.2'
   implementation 'com.google.code.gson:gson:2.8.2'
   implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
@@ -925,7 +925,7 @@ https://github.com/zhou-you/RxEasyHttp
 
 ![](https://github.com/xuexiangjys/XPage/blob/master/img/qq_group.jpg)
 
-[xhsvg]: https://img.shields.io/badge/XHttp2-v1.0.1-brightgreen.svg
+[xhsvg]: https://img.shields.io/badge/XHttp2-v1.0.2-brightgreen.svg
 [xh]: https://github.com/xuexiangjys/XHttp2
 [apisvg]: https://img.shields.io/badge/API-14+-brightgreen.svg
 [api]: https://android-arsenal.com/api?level=14
