@@ -327,7 +327,9 @@ CacheMode | CacheMode | CacheMode.NO_CACHE | 设置请求的缓存模式
 
 构建一个XHttpProxy，将定义的api接口传入后，直接调用接口进行请求。
 
-构造XHttpProxy需要传入`ThreadType`,默认是`ThreadType.TO_MAIN`。
+构造XHttpProxy可以传入`isPostJson`来决定请求是上传json数据还是键值对数据, 默认是`true`，上传json数据。
+
+构造XHttpProxy可以传入`ThreadType`,默认是`ThreadType.TO_MAIN`。
 
 * TO_MAIN: executeToMain(main  -> io -> main)
 
@@ -699,8 +701,10 @@ XHttp.get("/test/testCustomResult")
                 public void onSuccess(Boolean response) throws Throwable {
                     ToastUtils.toast("请求成功：" + response);
                 }
-            }){});
+            }){});  //千万注意，这里的{}一定不能去掉，否则解析错误
 ```
+
+【注意】上面提示的{}一定不能去掉，否则解析错误, 会报"ApiResult.class.isAssignableFrom(cls) err!!"的错误。
 
 如果你觉得写一长串比较麻烦，你可以自定义请求继承你需要的请求方式，例如这里是get请求，我们可以这样写:
 

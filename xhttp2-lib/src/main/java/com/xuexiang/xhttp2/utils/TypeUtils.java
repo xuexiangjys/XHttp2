@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 
 /**
  * 类型工具类
@@ -137,7 +137,7 @@ public final class TypeUtils {
     public static <R> Type findNeedType(Class<R> cls) {
         List<Type> typeList = TypeUtils.getAllTypes(cls);
         if (typeList == null || typeList.isEmpty()) {
-            return RequestBody.class;
+            return ResponseBody.class;
         }
         return typeList.get(0);
     }

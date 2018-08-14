@@ -22,8 +22,6 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.xuexiang.xhttp2.exception.ApiException;
-import com.xuexiang.xhttp2.logs.HttpLog;
 import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.utils.TypeUtils;
 
