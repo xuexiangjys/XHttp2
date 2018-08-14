@@ -16,6 +16,8 @@
 
 package com.xuexiang.xhttp2.transform.func;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -32,6 +34,7 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 import io.reactivex.functions.Function;
 import okhttp3.ResponseBody;
@@ -69,66 +72,75 @@ public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
         ApiResult<T> apiResult = new ApiResult<T>();
         apiResult.setCode(-1);
         if (type instanceof ParameterizedType) {//自定义ApiResult
-            Class<T> cls = (Class) ((ParameterizedType) type).getRawType();
-            if (ApiResult.class.isAssignableFrom(cls)) {
-                Type[] params = ((ParameterizedType) type).getActualTypeArguments();
-                Class clazz = TypeUtils.getClass(params[0], 0);
-                try {
-                    String json = responseBody.string();
-                    if (keepJson && clazz.equals(String.class)) {
-                        apiResult.setData((T) json);
-                        apiResult.setCode(0);
-                    } else {
-                        ApiResult result = checkApiResult(json);
-                        if (result != null) {
-                            return result;
-                        } else {
-                            apiResult.setMsg("json is null");
-                        }
-                    }
-                } catch (ApiException e) {
-                    e.printStackTrace();
-                    apiResult.setCode(e.getCode());
-                    apiResult.setMsg(e.getMessage());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    apiResult.setMsg(e.getMessage());
-                } finally {
-                    responseBody.close();
-                }
-            } else {
-                apiResult.setMsg("ApiResult.class.isAssignableFrom(cls) err!!");
-            }
+            apiResult = parseCustomApiResult(responseBody, apiResult);
         } else {//默认ApiResult
+            apiResult = parseApiResult(responseBody, apiResult);
+        }
+        return apiResult;
+    }
+
+    @Nullable
+    private ApiResult<T> parseCustomApiResult(ResponseBody responseBody, ApiResult<T> apiResult) {
+        final Class<T> cls = (Class) ((ParameterizedType) type).getRawType();
+        if (ApiResult.class.isAssignableFrom(cls)) {
+            final Type[] params = ((ParameterizedType) type).getActualTypeArguments();
+            final Class clazz = TypeUtils.getClass(params[0], 0);
+            final Class rawType = TypeUtils.getClass(type, 0);
             try {
                 String json = responseBody.string();
-                Class<T> clazz = TypeUtils.getClass(type, 0);
-                if (clazz.equals(String.class)) {
+                if (keepJson && !List.class.isAssignableFrom(rawType) && clazz.equals(String.class)) {
                     apiResult.setData((T) json);
                     apiResult.setCode(0);
                 } else {
-                    ApiResult result = parseApiResult(json, apiResult);
+                    ApiResult result = gson.fromJson(json, type);
                     if (result != null) {
-                        apiResult = result;
-                        if (apiResult.getData() != null) {
-                            T data = gson.fromJson(apiResult.getData().toString(), clazz);
-                            apiResult.setData(data);
-                        } else {
-                            apiResult.setMsg("ApiResult's data is null");
-                        }
+                        return result;
                     } else {
                         apiResult.setMsg("json is null");
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                apiResult.setMsg(e.getMessage());
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 apiResult.setMsg(e.getMessage());
             } finally {
                 responseBody.close();
             }
+        } else {
+            apiResult.setMsg("ApiResult.class.isAssignableFrom(cls) err!!");
+        }
+        return apiResult;
+    }
+
+    @NonNull
+    private ApiResult<T> parseApiResult(ResponseBody responseBody, ApiResult<T> apiResult) {
+        try {
+            final String json = responseBody.string();
+            final Class<T> clazz = TypeUtils.getClass(type, 0);
+            if (keepJson && clazz.equals(String.class)) {
+                apiResult.setData((T) json);
+                apiResult.setCode(0);
+            } else {
+                final ApiResult result = parseApiResult(json, apiResult);
+                if (result != null) {
+                    apiResult = result;
+                    if (apiResult.getData() != null) {
+                        T data = gson.fromJson(apiResult.getData().toString(), clazz);
+                        apiResult.setData(data);
+                    } else {
+                        apiResult.setMsg("ApiResult's data is null");
+                    }
+                } else {
+                    apiResult.setMsg("json is null");
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            apiResult.setMsg(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            apiResult.setMsg(e.getMessage());
+        } finally {
+            responseBody.close();
         }
         return apiResult;
     }
@@ -156,29 +168,6 @@ public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
             apiResult.setMsg(jsonObject.getString(MSG));
         }
         return apiResult;
-    }
-
-    /**
-     * 检验API规范
-     *
-     * @param json
-     * @return
-     * @throws JSONException
-     * @throws ApiException
-     */
-    private ApiResult checkApiResult(String json) throws JSONException, ApiException {
-        if (TextUtils.isEmpty(json)) {
-            return null;
-        }
-        JSONObject jsonObject = new JSONObject(json);
-        int code = jsonObject.getInt(CODE);
-        String msg = jsonObject.getString(MSG);
-        if (code == 0) {
-            return gson.fromJson(json, type);
-        } else {
-            HttpLog.e("请求不成功， msg：" + msg + ", code:" + code);
-            throw new ApiException(msg, code);
-        }
     }
 
 }
