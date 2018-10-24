@@ -922,7 +922,7 @@ https://github.com/zhou-you/RxEasyHttp
 ## 联系方式
 
 [![](https://img.shields.io/badge/点击一键加入QQ交流群-602082750-blue.svg)](http://shang.qq.com/wpa/qunwpa?idkey=9922861ef85c19f1575aecea0e8680f60d9386080a97ed310c971ae074998887)
-
+ 新手提问前，请先阅读[【提问的智慧】](http://www.binarywang.com/article/smart-questions)
 ![](https://github.com/xuexiangjys/XPage/blob/master/img/qq_group.jpg)
 
 [xhsvg]: https://img.shields.io/badge/XHttp2-v1.0.2-brightgreen.svg
