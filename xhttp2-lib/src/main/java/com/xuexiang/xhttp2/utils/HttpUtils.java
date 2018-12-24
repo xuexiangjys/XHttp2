@@ -30,13 +30,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -161,47 +162,6 @@ public final class HttpUtils {
     }
 
     /**
-     * 解析前：https://xxx.xxx.xxx/app/chairdressing/skinAnalyzePower/skinTestResult?appId=10101
-     * 解析后：https://xxx.xxx.xxx/app/chairdressing/skinAnalyzePower/skinTestResult
-     *
-     * @param url
-     * @return
-     */
-    public static String parseUrl(String url) {
-        if (!"".equals(url) && url.contains("?")) {// 如果URL不是空字符串
-            url = url.substring(0, url.indexOf('?'));
-        }
-        return url;
-    }
-
-    /**
-     * 将参数拼接到url中
-     *
-     * @param url    请求的url
-     * @param params 参数
-     * @return
-     */
-    public static String createUrlFromParams(String url, Map<String, Object> params) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(url);
-            if (url.indexOf('&') > 0 || url.indexOf('?') > 0) sb.append("&");
-            else sb.append("?");
-            for (Map.Entry<String, Object> urlParams : params.entrySet()) {
-                String urlValues = String.valueOf(urlParams.getValue());
-                //对参数进行 utf-8 编码,防止头信息传中文
-                String urlValue = URLEncoder.encode(urlValues, UTF8.name());
-                sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
-            }
-            sb.deleteCharAt(sb.length() - 1);
-            return sb.toString();
-        } catch (UnsupportedEncodingException e) {
-            HttpLog.e(e);
-        }
-        return url;
-    }
-
-    /**
      * 获取注解设置请求key的请求Json
      *
      * @param xHttpRequest
@@ -245,34 +205,6 @@ public final class HttpUtils {
     }
 
     /**
-     * 更新url上的请求参数
-     *
-     * @param oldRequest 拦截的旧请求
-     * @param key        请求的key
-     * @param value      参数值
-     * @return
-     * @throws IOException
-     */
-    public static Request updateUrlParams(Request oldRequest, String key, String value) throws IOException {
-        TreeMap<String, Object> params = new TreeMap<>();
-        params.put(key, value);
-        return updateUrlParams(oldRequest, params);
-    }
-
-    /**
-     * 更新url上的请求参数
-     *
-     * @param oldRequest 拦截的旧请求
-     * @param params     参数
-     * @return
-     * @throws IOException
-     */
-    public static Request updateUrlParams(Request oldRequest, Map<String, Object> params) throws IOException {
-        String url = HttpUtils.createUrlFromParams(HttpUtils.parseUrl(oldRequest.url().toString()), params);
-        return oldRequest.newBuilder().url(url).build();
-    }
-
-    /**
      * 获取post请求的json
      *
      * @param request
@@ -305,5 +237,182 @@ public final class HttpUtils {
     public static Response getErrorResponse(Response oldResponse, int code, String message) {
         ApiResult apiResult = new ApiResult().setCode(code).setMsg(message);
         return oldResponse.newBuilder().body(HttpUtils.getJsonResponseBody(new Gson().toJson(apiResult))).build();
+    }
+
+    //==============url 参数=====================//
+
+    /**
+     * 重置url上的请求参数
+     *
+     * @param oldRequest 拦截的旧请求
+     * @param key        请求的key
+     * @param value      参数值
+     * @return
+     */
+    public static Request resetUrlParams(Request oldRequest, String key, Object value) {
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put(key, value);
+        return resetUrlParams(oldRequest, params);
+    }
+
+    /**
+     * 重置url上的请求参数
+     *
+     * @param oldRequest 拦截的旧请求
+     * @param params     参数
+     * @return
+     */
+    public static Request resetUrlParams(Request oldRequest, Map<String, Object> params) {
+        String url = HttpUtils.createUrlFromParams(HttpUtils.parseUrl(oldRequest.url().toString()), params);
+        return oldRequest.newBuilder().url(url).build();
+    }
+
+    /**
+     * 刷新url上的请求参数
+     *
+     * @param oldRequest 拦截的旧请求
+     * @param key        请求的key
+     * @param value      参数值
+     * @return
+     */
+    public static Request updateUrlParams(Request oldRequest, String key, Object value) {
+        return oldRequest.newBuilder()
+                .url(updateUrlParams(oldRequest.url().toString(), key, value))
+                .build();
+    }
+
+    /**
+     * 刷新url上的请求参数
+     *
+     * @param oldRequest 拦截的旧请求
+     * @param params     刷新的参数集合
+     * @return
+     */
+    public static Request updateUrlParams(Request oldRequest, Map<String, Object> params) {
+        return oldRequest.newBuilder()
+                .url(updateUrlParams(oldRequest.url().toString(), params))
+                .build();
+    }
+
+    /**
+     * 更新url中的参数[保证参数不重复]
+     *
+     * @param url   请求的url
+     * @param key   请求的key
+     * @param value 参数值
+     * @return
+     */
+    public static String updateUrlParams(String url, String key, Object value) {
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put(key, value);
+        return updateUrlParams(url, params);
+    }
+
+    /**
+     * 更新url中的参数[保证参数不重复]
+     *
+     * @param url    请求的url
+     * @param params 更新的参数
+     * @return
+     */
+    public static String updateUrlParams(String url, Map<String, Object> params) {
+        Map<String, String> newParams = new LinkedHashMap<>();
+        Map<String, String> oldParams = getUrlParams(url);
+        if (oldParams != null) {
+            newParams.putAll(oldParams);
+        }
+        for (Map.Entry<String, Object> param : params.entrySet()) {
+            newParams.put(param.getKey(), String.valueOf(param.getValue()));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(parseUrl(url)).append("?");
+
+        try {
+            for (Map.Entry<String, String> param : newParams.entrySet()) {
+                //对参数进行 utf-8 编码,防止头信息传中文
+                String urlValue = URLEncoder.encode(param.getValue(), UTF8.name());
+                sb.append(param.getKey()).append("=").append(urlValue).append("&");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            return sb.toString();
+        } catch (UnsupportedEncodingException e) {
+            HttpLog.e(e);
+        }
+        return url;
+    }
+
+
+    /**
+     * 解析前：https://xxx.xxx.xxx/app/chairdressing/skinAnalyzePower/skinTestResult?appId=10101
+     * 解析后：https://xxx.xxx.xxx/app/chairdressing/skinAnalyzePower/skinTestResult
+     *
+     * @param url
+     * @return
+     */
+    public static String parseUrl(String url) {
+        if (!"".equals(url) && url.contains("?")) {// 如果URL不是空字符串
+            url = url.substring(0, url.indexOf('?'));
+        }
+        return url;
+    }
+
+    /**
+     * 将参数拼接到url中
+     *
+     * @param url    请求的url
+     * @param params 参数
+     * @return
+     */
+    public static String createUrlFromParams(String url, Map<String, Object> params) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append(url);
+            if (url.indexOf('&') > 0 || url.indexOf('?') > 0) {
+                sb.append("&");
+            } else {
+                sb.append("?");
+            }
+            for (Map.Entry<String, Object> urlParams : params.entrySet()) {
+                String urlValues = String.valueOf(urlParams.getValue());
+                //对参数进行 utf-8 编码,防止头信息传中文
+                String urlValue = URLEncoder.encode(urlValues, UTF8.name());
+                sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            return sb.toString();
+        } catch (UnsupportedEncodingException e) {
+            HttpLog.e(e);
+        }
+        return url;
+    }
+
+    /**
+     * 获取URL中参数 并返回Map[LinkedHashMap(有顺序)]
+     *
+     * @param url
+     * @return
+     */
+    public static Map<String, String> getUrlParams(String url) {
+        Map<String, String> params = null;
+        try {
+            String[] urlParts = url.split("\\?");
+            if (urlParts.length > 1) {
+                params = new LinkedHashMap<>();
+                String query = urlParts[1];
+                for (String param : query.split("&")) {
+                    String[] pair = param.split("=");
+                    String key = URLDecoder.decode(pair[0], UTF8.name());
+                    String value = "";
+                    if (pair.length > 1) {
+                        value = URLDecoder.decode(pair[1], UTF8.name());
+                    }
+                    params.put(key, value);
+                }
+            }
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
+        return params;
     }
 }

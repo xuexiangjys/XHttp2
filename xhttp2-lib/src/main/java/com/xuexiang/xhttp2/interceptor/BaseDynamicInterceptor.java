@@ -166,7 +166,7 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
                 String value = URLDecoder.decode(String.valueOf(entry.getValue()), HttpUtils.UTF8.name());
                 bodyBuilder.addEncoded(entry.getKey(), value);
             }
-            String url = HttpUtils.createUrlFromParams(mHttpUrl.url().toString(), newParams);
+            String url = HttpUtils.createUrlFromParams(HttpUtils.parseUrl(mHttpUrl.url().toString()), newParams);
             HttpLog.i(url);
             formBody = bodyBuilder.build();
             request = request.newBuilder().post(formBody).build();
@@ -191,7 +191,7 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
             request = request.newBuilder().post(multipartBody).build();
         } else if (request.body() instanceof RequestBody) {
             TreeMap<String, Object> params = updateDynamicParams(new TreeMap<String, Object>());
-            String url = HttpUtils.createUrlFromParams(mHttpUrl.url().toString(), params);
+            String url = HttpUtils.createUrlFromParams(HttpUtils.parseUrl(mHttpUrl.url().toString()), params);
             request = request.newBuilder().url(url).build();
         }
         return request;
