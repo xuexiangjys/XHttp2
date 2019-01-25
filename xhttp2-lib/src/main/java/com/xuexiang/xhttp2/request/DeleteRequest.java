@@ -16,22 +16,11 @@
 
 package com.xuexiang.xhttp2.request;
 
-import com.google.gson.reflect.TypeToken;
-import com.xuexiang.xhttp2.cache.model.CacheResult;
 import com.xuexiang.xhttp2.callback.CallBack;
 import com.xuexiang.xhttp2.callback.CallBackProxy;
 import com.xuexiang.xhttp2.model.ApiResult;
-import com.xuexiang.xhttp2.subsciber.CallBackSubscriber;
-import com.xuexiang.xhttp2.transform.HttpResultTransformer;
-import com.xuexiang.xhttp2.transform.HttpSchedulersTransformer;
-import com.xuexiang.xhttp2.transform.func.ApiResultFunc;
-import com.xuexiang.xhttp2.transform.func.CacheResultFunc;
-import com.xuexiang.xhttp2.transform.func.RetryExceptionFunc;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;

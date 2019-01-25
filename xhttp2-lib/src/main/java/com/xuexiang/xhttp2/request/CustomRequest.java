@@ -16,18 +16,14 @@
 
 package com.xuexiang.xhttp2.request;
 
-
-import com.google.gson.reflect.TypeToken;
 import com.xuexiang.xhttp2.cache.model.CacheResult;
 import com.xuexiang.xhttp2.callback.CallBack;
 import com.xuexiang.xhttp2.callback.CallBackProxy;
 import com.xuexiang.xhttp2.model.ApiResult;
-import com.xuexiang.xhttp2.model.SchedulerType;
 import com.xuexiang.xhttp2.subsciber.CallBackSubscriber;
 import com.xuexiang.xhttp2.transform.HandleErrTransformer;
 import com.xuexiang.xhttp2.transform.HttpResultTransformer;
 import com.xuexiang.xhttp2.transform.HttpSchedulersTransformer;
-import com.xuexiang.xhttp2.transform.func.ApiResultFunc;
 import com.xuexiang.xhttp2.transform.func.CacheResultFunc;
 import com.xuexiang.xhttp2.transform.func.RetryExceptionFunc;
 import com.xuexiang.xhttp2.utils.Utils;
