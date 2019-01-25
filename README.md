@@ -11,7 +11,7 @@
 ## 特征
 
 * 支持默认、全局、局部三个层次的配置功能。
-* 支持动态配置和自定义底层框架Okhttpclient、Retrofit.
+* 支持动态配置和自定义底层框架OkHttpClient、Retrofit.
 * 加入基础ApiService，减少Api冗余。
 * 支持多种方式访问网络GET、POST、PUT、DELETE等请求协议。
 * 支持网络缓存,六种缓存策略可选,涵盖大多数业务场景。
@@ -36,6 +36,8 @@
 * 结合RxJava，线程切换灵活。
 * 请求实体支持注解配置，配置网络请求接口的url、是否需要验证token以及请求参数的key。
 * 拥有统一的网络请求取消机制。
+
+点击查看[项目设计类图](https://github.com/xuexiangjys/XHttp2/blob/master/img/xhttp_uml.png)。
 
 ## 1、演示（请star支持）
 
