@@ -2,7 +2,7 @@
 
 [![xh][xhsvg]][xh]  [![api][apisvg]][api]
 
-一个功能强悍的网络请求库，使用RxJava2 + Retrofit2 + OKHttp组合进行封装。
+一个功能强悍的网络请求库，使用RxJava2 + Retrofit2 + OKHttp组合进行封装。还不赶紧点击[使用说明文档](https://github.com/xuexiangjys/XHttp2/wiki)，体验一下吧！
 
 ## 关于我
 
@@ -141,7 +141,7 @@ setCookieStore | 设置全局cookie存取规则
 }
 ```
 
-约定了其中`Code`、`Msg`、`Data`首字母必须大写，否则无法解析成功。
+其中`Code`、`Msg`、`Data`建议使用大写字母，当然使用小写字母也没有问题，否则无法解析成功。
 
 需要自定义返回的实体API请[点击查看](#自定义api请求)
 
