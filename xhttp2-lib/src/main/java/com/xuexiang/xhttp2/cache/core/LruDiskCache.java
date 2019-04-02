@@ -46,19 +46,41 @@ public class LruDiskCache extends BaseDiskCache {
      * 磁盘缓存
      */
     private DiskLruCache mDiskLruCache;
+    /**
+     * 磁盘缓存的目录
+     */
+    private File mDiskDir;
+    /**
+     * 缓存版本
+     */
+    private int mAppVersion;
+    /**
+     * 磁盘存储的最大空间
+     */
+    private long mDiskMaxSize;
 
     /**
      * 初始化磁盘缓存
      *
      * @param diskConverter 磁盘转化器
      * @param diskDir       磁盘目录
-     * @param appVersion
+     * @param appVersion    缓存版本
      * @param diskMaxSize   磁盘最大空间
      */
     public LruDiskCache(IDiskConverter diskConverter, File diskDir, int appVersion, long diskMaxSize) {
         mDiskConverter = Utils.checkNotNull(diskConverter, "mDiskConverter ==null");
+        mDiskDir = Utils.checkNotNull(diskDir, "mDiskDir ==null");
+        mAppVersion = appVersion;
+        mDiskMaxSize = diskMaxSize;
+        openCache();
+    }
+
+    /**
+     * 打开磁盘缓存
+     */
+    private void openCache() {
         try {
-            mDiskLruCache = DiskLruCache.open(diskDir, appVersion, 1, diskMaxSize);
+            mDiskLruCache = DiskLruCache.open(mDiskDir, mAppVersion, 1, mDiskMaxSize);
         } catch (IOException e) {
             e.printStackTrace();
             HttpLog.e(e);
@@ -75,7 +97,6 @@ public class LruDiskCache extends BaseDiskCache {
             if (edit == null) {
                 return null;
             }
-
             InputStream source = edit.newInputStream(0);
             T value;
             if (source != null) {
@@ -147,6 +168,7 @@ public class LruDiskCache extends BaseDiskCache {
         boolean status = false;
         try {
             mDiskLruCache.delete();
+            openCache(); //清除缓存后需要重新打开缓存，否则可能无法正常使用
             status = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -162,9 +184,8 @@ public class LruDiskCache extends BaseDiskCache {
         if (existTime > CACHE_NEVER_EXPIRE) {//-1表示永久性存储 不用进行过期校验
             //为什么这么写，请了解DiskLruCache，看它的源码
             File file = new File(mDiskLruCache.getDirectory(), key + "." + 0);
-            if (isCacheDataFailure(file, existTime)) {//没有获取到缓存,或者缓存已经过期!
-                return true;
-            }
+            //没有获取到缓存,或者缓存已经过期!
+            return isCacheDataFailure(file, existTime);
         }
         return false;
     }
