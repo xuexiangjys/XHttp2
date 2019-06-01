@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.xuexiang.rxutil2.lifecycle.RxLifecycle;
 import com.xuexiang.xaop.annotation.Permission;
 import com.xuexiang.xaop.annotation.SingleClick;
@@ -168,9 +169,12 @@ public class EditBookFragment extends XPageFragment {
         mEtDescription.setText(StringUtils.getString(book.getDescription()));
         mEtPrice.setText(String.valueOf(book.getPrice()));
 
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .placeholder(R.drawable.img_default_book);
         Glide.with(getContext())
                 .load(BookAdapter.getBookImgUrl(book))
-                .placeholder(R.drawable.img_default_book)
+                .apply(options)
                 .into(mIvPicture);
     }
 
@@ -211,9 +215,12 @@ public class EditBookFragment extends XPageFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SELECT_PICTURE) {
             mPicturePath = PathUtils.getFilePathByUri(getContext(), data.getData());
+            RequestOptions options = new RequestOptions()
+                    .centerCrop()
+                    .placeholder(R.drawable.img_default_book);
             Glide.with(this)
                     .load(data.getData())
-                    .placeholder(R.drawable.img_default_book)
+                    .apply(options)
                     .into(mIvPicture);
         }
     }

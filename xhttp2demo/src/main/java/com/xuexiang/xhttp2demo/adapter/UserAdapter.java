@@ -16,7 +16,7 @@
 
 package com.xuexiang.xhttp2demo.adapter;
 
-import com.scwang.smartrefresh.layout.adapter.BaseRecyclerAdapter;
+import com.scwang.smartrefresh.layout.adapter.SmartRecyclerAdapter;
 import com.scwang.smartrefresh.layout.adapter.SmartViewHolder;
 import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.entity.User;
@@ -26,7 +26,7 @@ import com.xuexiang.xutil.common.StringUtils;
  * @author xuexiang
  * @since 2018/7/16 下午4:55
  */
-public class UserAdapter extends BaseRecyclerAdapter<User> {
+public class UserAdapter extends SmartRecyclerAdapter<User> {
 
     public UserAdapter() {
         super(R.layout.adapter_list_user_item);

@@ -19,7 +19,8 @@ package com.xuexiang.xhttp2demo.adapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.scwang.smartrefresh.layout.adapter.BaseRecyclerAdapter;
+import com.bumptech.glide.request.RequestOptions;
+import com.scwang.smartrefresh.layout.adapter.SmartRecyclerAdapter;
 import com.scwang.smartrefresh.layout.adapter.SmartViewHolder;
 import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2demo.R;
@@ -30,7 +31,7 @@ import com.xuexiang.xutil.common.StringUtils;
  * @author xuexiang
  * @since 2018/7/17 下午5:25
  */
-public class BookAdapter extends BaseRecyclerAdapter<Book> {
+public class BookAdapter extends SmartRecyclerAdapter<Book> {
 
     private SmartViewHolder.OnViewItemClickListener mOnViewItemClickListener;
 
@@ -42,9 +43,12 @@ public class BookAdapter extends BaseRecyclerAdapter<Book> {
     protected void onBindViewHolder(SmartViewHolder holder, Book model, int position) {
         if (model != null) {
             ImageView picture = holder.findViewById(R.id.iv_picture);
+            RequestOptions options = new RequestOptions()
+                    .centerCrop()
+                    .placeholder(R.drawable.img_default_book);
             Glide.with(picture.getContext())
                     .load(getBookImgUrl(model))
-                    .placeholder(R.drawable.img_default_book)
+                    .apply(options)
                     .into(picture);
 
             holder.text(R.id.tv_book_name, StringUtils.getString(model.getName()));
