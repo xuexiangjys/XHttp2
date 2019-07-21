@@ -223,7 +223,7 @@ public final class XHttp {
         return this;
     }
 
-    //==================BaseUrl、SubUrl设置=====================//
+    //==================baseUrl、SubUrl设置=====================//
 
     /**
      * 全局设置baseUrl

@@ -27,6 +27,7 @@ import com.xuexiang.xhttp2.cache.RxCache;
 import com.xuexiang.xhttp2.cache.converter.IDiskConverter;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
 import com.xuexiang.xhttp2.cache.model.CacheResult;
+import com.xuexiang.xhttp2.callback.CallBack;
 import com.xuexiang.xhttp2.callback.CallBackProxy;
 import com.xuexiang.xhttp2.callback.CallClazzProxy;
 import com.xuexiang.xhttp2.https.HttpsUtils;
@@ -48,6 +49,7 @@ import com.xuexiang.xhttp2.utils.Utils;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +87,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected Context mContext;
     //====请求地址=====//
     protected HttpUrl mHttpUrl;
-    protected String mBaseUrl;                                              //BaseUrl
+    protected String mBaseUrl;                                              //baseUrl
     private String mSubUrl;                                                 //SubUrl,介于BaseUrl和请求url之间
     protected String mUrl;                                                  //请求url
     //====请求行为=====//
@@ -164,6 +166,16 @@ public abstract class BaseRequest<R extends BaseRequest> {
     //===========================================//
     //               请求url设置                  //
     //===========================================//
+    /**
+     * 设置url路径
+     *
+     * @param url
+     * @return
+     */
+    public R url(String url) {
+        mUrl = Utils.checkNotNull(url, "mUrl == null");
+        return (R) this;
+    }
 
     /**
      * 设置基础url路径
@@ -789,6 +801,23 @@ public abstract class BaseRequest<R extends BaseRequest> {
         mRxCache = rxCacheBuilder.build();
         mApiManager = mRetrofit.create(ApiService.class);
         return (R) this;
+    }
+
+    //===================请求执行===============================//
+
+    public <T> Observable<T> execute(Class<T> clazz) {
+        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz) {
+        });
+    }
+
+    public <T> Observable<T> execute(Type type) {
+        return execute(new CallClazzProxy<ApiResult<T>, T>(type) {
+        });
+    }
+
+    public <T> Disposable execute(CallBack<T> callBack) {
+        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
+        });
     }
 
     //==================================================//

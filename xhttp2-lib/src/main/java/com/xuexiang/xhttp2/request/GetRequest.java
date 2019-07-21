@@ -17,15 +17,7 @@
 package com.xuexiang.xhttp2.request;
 
 
-import com.xuexiang.xhttp2.callback.CallBack;
-import com.xuexiang.xhttp2.callback.CallBackProxy;
-import com.xuexiang.xhttp2.callback.CallClazzProxy;
-import com.xuexiang.xhttp2.model.ApiResult;
-
-import java.lang.reflect.Type;
-
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 import okhttp3.ResponseBody;
 
 /**
@@ -39,21 +31,6 @@ public class GetRequest extends BaseRequest<GetRequest> {
 
     public GetRequest(String url) {
         super(url);
-    }
-
-    public <T> Observable<T> execute(Class<T> clazz) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz) {
-        });
-    }
-
-    public <T> Observable<T> execute(Type type) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(type) {
-        });
-    }
-
-    public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
-        });
     }
 
     @Override

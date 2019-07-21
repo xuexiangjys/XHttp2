@@ -36,33 +36,66 @@ import java.lang.annotation.Target;
 @Documented
 public @interface NetMethod {
     /**
+     * JSON
+     */
+    int JSON = 1;
+    /**
+     * 表单(URL?appId=XXX)
+     */
+    int FORM_BODY = 2;
+    /**
+     * 直接拼接到get的url后面（URL/appId）,只有get有效，且只有第一个参数为有效路径
+     */
+    int URL_GET = 3;
+
+    String POST = "post";
+    String GET = "get";
+    String PUT = "put";
+    String DELETE = "delete";
+
+    /**
      * @return 参数名集合
      */
-    String[] ParameterNames() default {};
+    String[] parameterNames() default {};
+
+    /**
+     * @return param的类型，默认是json
+     */
+    int paramType() default JSON;
+
+    /**
+     * @return 请求动作
+     */
+    String action() default POST;
 
     /**
      * @return 基础请求地址
      */
-    String BaseUrl() default "";
+    String baseUrl() default "";
 
     /**
      * @return 请求网络接口地址
      */
-    String Url() default "";
+    String url() default "";
 
     /**
      * @return 请求超时时间
      */
-    long Timeout() default XHttp.DEFAULT_TIMEOUT_MILLISECONDS;
+    long timeout() default XHttp.DEFAULT_TIMEOUT_MILLISECONDS;
+
+    /**
+     * @return 是否保存json
+     */
+    boolean keepJson() default false;
 
     /**
      * @return 请求是否需要验证Token
      */
-    boolean AccessToken() default true;
+    boolean accessToken() default true;
 
     /**
      * @return 缓存模式
      */
-    CacheMode CacheMode() default CacheMode.NO_CACHE;
+    CacheMode cacheMode() default CacheMode.NO_CACHE;
 }
 

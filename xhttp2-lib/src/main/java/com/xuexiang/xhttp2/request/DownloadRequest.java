@@ -81,6 +81,7 @@ public class DownloadRequest extends BaseRequest<DownloadRequest> {
         return this;
     }
 
+    @Override
     public <T> Disposable execute(CallBack<T> callBack) {
         return (Disposable) build().generateRequest().compose(new ObservableTransformer<ResponseBody, ResponseBody>() {
             @Override

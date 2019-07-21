@@ -21,16 +21,7 @@ import android.text.TextUtils;
 
 import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
-import com.xuexiang.xhttp2.callback.CallBack;
-import com.xuexiang.xhttp2.callback.CallBackProxy;
-import com.xuexiang.xhttp2.callback.CallClazzProxy;
-import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.model.XHttpRequest;
-
-import java.lang.reflect.Type;
-
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 
 /**
  * post请求
@@ -76,21 +67,6 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
             timeout = XHttp.DEFAULT_TIMEOUT_MILLISECONDS;
         }
         accessToken(accessToken).timeOut(timeout).upJson(xHttpRequest.toString());
-    }
-
-    public <T> Observable<T> execute(Class<T> clazz) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(clazz) {
-        });
-    }
-
-    public <T> Observable<T> execute(Type type) {
-        return execute(new CallClazzProxy<ApiResult<T>, T>(type) {
-        });
-    }
-
-    public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
-        });
     }
 
 }

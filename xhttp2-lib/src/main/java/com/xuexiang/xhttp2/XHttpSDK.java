@@ -667,7 +667,7 @@ public final class XHttpSDK {
     }
 
 
-    //=================================================================================//
+    //================================网络请求取消=================================================//
 
     /**
      * 注册网络请求的订阅
@@ -677,6 +677,16 @@ public final class XHttpSDK {
      */
     public static Disposable addRequest(Object tagName, Disposable disposable) {
         return XHttpRequestPool.get().add(tagName, disposable);
+    }
+
+    /**
+     * 注册网络请求的订阅
+     *
+     * @param tagName
+     * @param disposable
+     */
+    public static Disposable addRequest(Disposable disposable, Object tagName) {
+        return XHttpRequestPool.get().add(disposable, tagName);
     }
 
     /**

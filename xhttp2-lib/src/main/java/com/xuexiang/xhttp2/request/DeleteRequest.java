@@ -16,12 +16,7 @@
 
 package com.xuexiang.xhttp2.request;
 
-import com.xuexiang.xhttp2.callback.CallBack;
-import com.xuexiang.xhttp2.callback.CallBackProxy;
-import com.xuexiang.xhttp2.model.ApiResult;
-
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
@@ -36,11 +31,6 @@ public class DeleteRequest extends BaseBodyRequest<DeleteRequest> {
 
     public DeleteRequest(String url) {
         super(url);
-    }
-
-    public <T> Disposable execute(CallBack<T> callBack) {
-        return execute(new CallBackProxy<ApiResult<T>, T>(callBack) {
-        });
     }
 
     @Override

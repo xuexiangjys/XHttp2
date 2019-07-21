@@ -17,6 +17,7 @@
 package com.xuexiang.xhttp2.exception;
 
 import android.net.ParseException;
+import android.text.TextUtils;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializer;
@@ -87,7 +88,11 @@ public class ApiException extends Exception {
         ApiException ex;
         if (e instanceof HttpException) {
             HttpException httpException = (HttpException) e;
-            ex = new ApiException(httpException.getMessage(), httpException.code());
+            if (!TextUtils.isEmpty(httpException.message())) {
+                ex = new ApiException(httpException.message(), httpException.code());
+            } else {
+                ex = new ApiException(httpException.getMessage(), httpException.code());
+            }
             return ex;
         } else if (e instanceof ServerException) {
             ServerException resultException = (ServerException) e;

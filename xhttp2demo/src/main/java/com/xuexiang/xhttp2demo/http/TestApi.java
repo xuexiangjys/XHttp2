@@ -32,6 +32,8 @@ import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
+import static com.xuexiang.xhttp2.annotation.NetMethod.FORM_BODY;
+
 /**
  * 测试api协议
  *
@@ -83,7 +85,7 @@ public class TestApi {
          * @param userId 用户ID
          * @param number 购买数量
          */
-        @NetMethod(ParameterNames = {"bookId", "userId", "number"}, Url = "/order/addOrder/", AccessToken = false)
+        @NetMethod(parameterNames = {"bookId", "userId", "number"}, url = "/order/addOrder/", accessToken = false)
         Observable<Boolean> buyBook(int bookId, int userId, int number);
     }
 
@@ -97,7 +99,7 @@ public class TestApi {
          * @param pageNum 第几页数
          * @param pageSize 每页的数量
          */
-        @NetMethod(ParameterNames = {"pageNum", "pageSize"}, Url = "/book/findBooks/", AccessToken = false)
+        @NetMethod(parameterNames = {"pageNum", "pageSize"}, paramType = FORM_BODY, url = "/book/findBooks/", accessToken = false)
         Observable<List<Book>> getBooks(int pageNum, int pageSize);
     }
 
@@ -112,7 +114,7 @@ public class TestApi {
          * @param loginName 用户名
          * @param password 密码
          */
-        @NetMethod(ParameterNames = {"loginName", "password"}, Url = "/authorization/login/", AccessToken = false)
+        @NetMethod(parameterNames = {"loginName", "password"}, url = "/authorization/login/", accessToken = false)
         Observable<LoginInfo> login(String loginName, String password);
 
     }

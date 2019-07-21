@@ -77,7 +77,7 @@ public class TestApiFragment extends XPageFragment {
         clearLog();
         switch (view.getId()) {
             case R.id.btn_test_list_1:
-                XHttpProxy.proxy(TestApi.IBook.class, false)
+                XHttpProxy.proxy(TestApi.IBook.class)
                         .getBooks(1, 4)
                         .subscribeWith(new TipRequestSubscriber<List<Book>>() {
                             @Override
