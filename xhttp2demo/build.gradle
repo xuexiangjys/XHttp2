@@ -83,7 +83,7 @@ dependencies {
     annotationProcessor 'com.github.xuexiangjys.XRouter:xrouter-compiler:1.0.1'
     //XPage
     implementation 'com.github.xuexiangjys.XPage:xpage-lib:2.2.6'
-    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:2.2.5'
+    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:2.2.6'
     //butterKnife的sdk
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'

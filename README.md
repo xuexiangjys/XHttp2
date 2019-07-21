@@ -1,6 +1,9 @@
 # XHttp2
 
-[![xh][xhsvg]][xh]  [![api][apisvg]][api]
+[![](https://jitpack.io/v/xuexiangjys/XHttp2.svg)](https://jitpack.io/#xuexiangjys/XHttp2)
+[![api][apisvg]][api]
+[![I](https://img.shields.io/github/issues/xuexiangjys/XHttp2.svg)](https://github.com/xuexiangjys/XHttp2/issues)
+[![Star](https://img.shields.io/github/stars/xuexiangjys/XHttp2.svg)](https://github.com/xuexiangjys/XHttp2)
 
 一个功能强悍的网络请求库，使用RxJava2 + Retrofit2 + OKHttp组合进行封装。还不赶紧点击[使用说明文档](https://github.com/xuexiangjys/XHttp2/wiki)，体验一下吧！
 
