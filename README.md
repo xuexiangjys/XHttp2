@@ -174,7 +174,7 @@ setCookieStore | 设置全局cookie存取规则
 方法名 | 类型 | 默认值 | 备注
 :-|:-:|:-:|:-
 baseUrl | String | ／ | 设置该请求的baseUrl
-timeOut | long | 10000 | 设置超时时间
+timeOut | long | 15000 | 设置超时时间
 accessToken | boolean | false | 是否需要验证token
 threadType | String | ／ | 设置请求的线程调度类型
 syncRequest | boolean | false | 设置是否是同步请求（不开子线程）
