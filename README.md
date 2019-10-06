@@ -94,7 +94,8 @@ allprojects {
 ```
 dependencies {
   ...
-  implementation 'com.github.xuexiangjys:XHttp2:1.0.2'
+  implementation 'com.github.xuexiangjys:XHttp2:1.0.3'
+
   implementation 'com.google.code.gson:gson:2.8.2'
   implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
@@ -311,23 +312,39 @@ XHttpSDK.executeToMain(req, new ProgressLoadingSubscriber<Boolean>(mIProgressLoa
 ```
 ---
 
-### 3、使用XHttpProxy代理进行请求【仅支持post请求】
+### 3、使用XHttpProxy代理进行请求
 
 在使用它之前，需要下载/定义对应的接口协议，如下：
 
 ```
 /**
- * 订单
+ * 图书管理
  */
-public interface IOrder {
+public interface IBook {
     /**
      * 购买书
      *
-     * @param bookId 用户名
-     * @param userId 密码
+     * @param bookId 图书ID
+     * @param userId 用户ID
+     * @param number 购买数量
      */
-    @NetMethod(ParameterNames = {"bookId", "userId", "number"}, Url = "/order/addOrder/")
+    @NetMethod(parameterNames = {"bookId", "userId", "number"}, url = "/order/addOrder/", accessToken = false)
     Observable<Boolean> buyBook(int bookId, int userId, int number);
+    /**
+     * 获取图书
+     *
+     * @param pageNum 第几页数
+     * @param pageSize 每页的数量
+     */
+    @NetMethod(parameterNames = {"pageNum", "pageSize"}, paramType = FORM_BODY, url = "/book/findBooks/", accessToken = false)
+    Observable<List<Book>> getBooks(int pageNum, int pageSize);
+
+    /**
+     * 获取所有图书
+     *
+     */
+    @NetMethod(action = GET, url = "/book/getAllBook", accessToken = false)
+    Observable<List<Book>> getAllBooks();
 }
 ```
 
@@ -337,18 +354,19 @@ public interface IOrder {
 
 注解参数 | 类型 | 默认值 | 备注
 :-|:-:|:-:|:-
-ParameterNames | String\[\] | {} | 参数名集合
-BaseUrl | String | "" | 设置该请求的baseUrl
-Url | String | "" | 请求网络接口地址
-Timeout | long | 10000 | 设置超时时间
-AccessToken | boolean | true | 设置是否需要验证token
-CacheMode | CacheMode | CacheMode.NO_CACHE | 设置请求的缓存模式
+parameterNames | String\[\] | {} | 参数名集合
+paramType | int | JSON=1 | param的类型
+action | String | POST="post" | 请求动作
+baseUrl | String | "" | 设置该请求的baseUrl
+url | String | "" | 请求网络接口地址
+timeout | long | 15000 | 设置超时时间
+keepJson | boolean | false | 是否保存json
+accessToken | boolean | true | 设置是否需要验证token
+cacheMode | CacheMode | CacheMode.NO_CACHE | 设置请求的缓存模式
 
 2.使用XHttpProxy进行请求。
 
 构建一个XHttpProxy，将定义的api接口传入后，直接调用接口进行请求。
-
-构造XHttpProxy可以传入`isPostJson`来决定请求是上传json数据还是键值对数据, 默认是`true`，上传json数据。
 
 构造XHttpProxy可以传入`ThreadType`,默认是`ThreadType.TO_MAIN`。
 

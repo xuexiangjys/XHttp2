@@ -97,16 +97,24 @@ public class TestApiFragment extends XPageFragment {
                 });
                 break;
             case R.id.btn_test_keep_json:
-                XHttp.get("/book/getAllBook")
-                        .keepJson(true)
-                        .execute(new TipRequestCallBack<String>() {
+//                XHttp.get("/book/getAllBook")
+//                        .keepJson(true)
+//                        .execute(new TipRequestCallBack<String>() {
+//                            @Override
+//                            public void onSuccess(String response) throws Throwable {
+//                                ToastUtils.toast("查询成功！");
+//                                showResult(response);
+//                            }
+//                        });
+                XHttpProxy.proxy(TestApi.IBook.class)
+                        .getAllBooks()
+                        .subscribeWith(new TipRequestSubscriber<List<Book>>() {
                             @Override
-                            public void onSuccess(String response) throws Throwable {
+                            protected void onSuccess(List<Book> books) {
                                 ToastUtils.toast("查询成功！");
-                                showResult(response);
+                                showResult(JsonUtil.toJson(books));
                             }
                         });
-
                 break;
         }
     }

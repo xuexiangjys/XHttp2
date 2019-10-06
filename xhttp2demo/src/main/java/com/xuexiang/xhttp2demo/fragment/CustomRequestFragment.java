@@ -17,6 +17,7 @@
 package com.xuexiang.xhttp2demo.fragment;
 
 import android.annotation.SuppressLint;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
@@ -68,7 +69,7 @@ public class CustomRequestFragment extends XPageFragment {
 
     @Override
     protected void initViews() {
-
+        tvResultInfo.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
 
     @Override
@@ -103,7 +104,7 @@ public class CustomRequestFragment extends XPageFragment {
                 if (TokenManager.getInstance().isUserLogined()) {
                     //使用retrofit自身定义的接口进行请求
                     XHttp.custom(TestApi.LoginService.class)
-                            .login(HttpUtils.getJsonRequestBody(TokenManager.getInstance().getLoginUser()))
+                            .login(TokenManager.getInstance().getLoginUser())
                             .compose(RxSchedulerUtils.<ApiResult<LoginInfo>>_io_main_o())
                             .subscribeWith(new TipRequestSubscriber<ApiResult<LoginInfo>>() {
                                 @Override
@@ -118,6 +119,7 @@ public class CustomRequestFragment extends XPageFragment {
                 }
                 break;
             case R.id.btn_retrofit_2:
+                //apiCall进行拆包
                 request.apiCall(request.create(TestApi.UserService.class)
                         .registerUser(HttpUtils.getJsonRequestBody(UserManager.getInstance().getRandomUser())))
                         .subscribeWith(new TipRequestSubscriber<Boolean>() {
@@ -128,8 +130,9 @@ public class CustomRequestFragment extends XPageFragment {
                         });
                 break;
             case R.id.btn_retrofit_3:
+                //call不进行拆包
                 request.call(request.create(TestApi.UserService.class)
-                        .register(HttpUtils.getJsonRequestBody(UserManager.getInstance().getRandomUser())))
+                        .register(UserManager.getInstance().getRandomUser()))
                         .subscribeWith(new TipRequestSubscriber<ApiResult>() {
                             @Override
                             protected void onSuccess(ApiResult apiResult) {
@@ -139,6 +142,7 @@ public class CustomRequestFragment extends XPageFragment {
                         });
                 break;
             case R.id.btn_retrofit_4:
+                //apiCall进行拆包
                 request.apiCall(request.create(TestApi.UserService.class)
                         .registerUser(HttpUtils.getJsonRequestBody(UserManager.getInstance().getRandomUser())), new SimpleCallBack<Boolean>() {
                     @Override
@@ -153,8 +157,9 @@ public class CustomRequestFragment extends XPageFragment {
                 });
                 break;
             case R.id.btn_retrofit_5:
+                //call不进行拆包
                 request.call(request.create(TestApi.UserService.class)
-                        .register(HttpUtils.getJsonRequestBody(UserManager.getInstance().getRandomUser())), new TipRequestCallBack<ApiResult>() {
+                        .register(UserManager.getInstance().getRandomUser()), new TipRequestCallBack<ApiResult>() {
                     @Override
                     public void onSuccess(ApiResult response) throws Throwable {
                         ToastUtils.toast("添加用户成功!");

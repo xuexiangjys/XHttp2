@@ -16,7 +16,6 @@
 
 package com.xuexiang.xhttp2.interceptor;
 
-import com.xuexiang.xhttp2.logs.HttpLog;
 import com.xuexiang.xhttp2.model.ExpiredInfo;
 
 import okhttp3.Response;
@@ -32,8 +31,6 @@ public abstract class BaseExpiredInterceptor extends BaseResponseInterceptor {
 
     @Override
     protected Response onAfterRequest(Response response, Chain chain, String bodyString) {
-//        HttpLog.i("[ExpiredInterceptor]  host:" + chain.request().url().toString() + "\n  body:" + bodyString);
-
         ExpiredInfo expiredInfo = isResponseExpired(response, bodyString);
         if (expiredInfo.isExpired()) {
             Response tmp = responseExpired(response, chain, expiredInfo);

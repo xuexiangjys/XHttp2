@@ -67,7 +67,7 @@ public final class XHttp {
     private volatile static XHttp sInstance = null;
     private static Application sContext;
 
-    public static final int DEFAULT_TIMEOUT_MILLISECONDS = 15000;             //默认的超时时间
+    public static final int DEFAULT_TIMEOUT_MILLISECONDS = 15000;     //默认的超时时间
     public static final int DEFAULT_RETRY_COUNT = 0;                  //默认重试次数
     public static final int DEFAULT_RETRY_INCREASE_DELAY = 0;         //默认重试叠加时间
     public static final int DEFAULT_RETRY_DELAY = 500;                //默认重试延时

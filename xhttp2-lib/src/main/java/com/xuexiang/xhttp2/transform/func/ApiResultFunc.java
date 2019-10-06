@@ -49,27 +49,27 @@ import static com.xuexiang.xhttp2.model.ApiResult.MSG;
  * @since 2018/5/22 下午4:45
  */
 public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
-    private Type type;
-    private Gson gson;
+    private Type mType;
+    private Gson mGson;
     /**
      * 是否保持原有的json
      */
-    private boolean keepJson;
+    private boolean mKeepJson;
 
     public ApiResultFunc(Type type, boolean keepJson) {
-        gson = new GsonBuilder()
+        mGson = new GsonBuilder()
                 .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
                 .serializeNulls()
                 .create();
-        this.type = type;
-        this.keepJson = keepJson;
+        mType = type;
+        mKeepJson = keepJson;
     }
 
     @Override
     public ApiResult<T> apply(ResponseBody responseBody) throws Exception {
-        ApiResult<T> apiResult = new ApiResult<T>();
+        ApiResult<T> apiResult = new ApiResult<>();
         apiResult.setCode(-1);
-        if (type instanceof ParameterizedType) {//自定义ApiResult
+        if (mType instanceof ParameterizedType) {//自定义ApiResult
             apiResult = parseCustomApiResult(responseBody, apiResult);
         } else {//默认ApiResult
             apiResult = parseApiResult(responseBody, apiResult);
@@ -79,18 +79,18 @@ public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
 
     @Nullable
     private ApiResult<T> parseCustomApiResult(ResponseBody responseBody, ApiResult<T> apiResult) {
-        final Class<T> cls = (Class) ((ParameterizedType) type).getRawType();
+        final Class<T> cls = (Class) ((ParameterizedType) mType).getRawType();
         if (ApiResult.class.isAssignableFrom(cls)) {
-            final Type[] params = ((ParameterizedType) type).getActualTypeArguments();
+            final Type[] params = ((ParameterizedType) mType).getActualTypeArguments();
             final Class clazz = TypeUtils.getClass(params[0], 0);
-            final Class rawType = TypeUtils.getClass(type, 0);
+            final Class rawType = TypeUtils.getClass(mType, 0);
             try {
                 String json = responseBody.string();
-                if (keepJson && !List.class.isAssignableFrom(rawType) && clazz.equals(String.class)) {
+                if (mKeepJson && !List.class.isAssignableFrom(rawType) && clazz.equals(String.class)) {
                     apiResult.setData((T) json);
                     apiResult.setCode(0);
                 } else {
-                    ApiResult result = gson.fromJson(json, type);
+                    ApiResult result = mGson.fromJson(json, mType);
                     if (result != null) {
                         return result;
                     } else {
@@ -113,8 +113,8 @@ public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
     private ApiResult<T> parseApiResult(ResponseBody responseBody, ApiResult<T> apiResult) {
         try {
             final String json = responseBody.string();
-            final Class<T> clazz = TypeUtils.getClass(type, 0);
-            if (keepJson && clazz.equals(String.class)) {
+            final Class<T> clazz = TypeUtils.getClass(mType, 0);
+            if (mKeepJson && clazz.equals(String.class)) {
                 apiResult.setData((T) json);
                 apiResult.setCode(0);
             } else {
@@ -122,7 +122,7 @@ public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
                 if (result != null) {
                     apiResult = result;
                     if (apiResult.getData() != null) {
-                        T data = gson.fromJson(apiResult.getData().toString(), clazz);
+                        T data = mGson.fromJson(apiResult.getData().toString(), clazz);
                         apiResult.setData(data);
                     } else {
                         apiResult.setMsg("ApiResult's data is null");

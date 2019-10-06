@@ -31,7 +31,11 @@ import com.xuexiang.xhttp2demo.http.TestApi;
 import com.xuexiang.xhttp2demo.http.subscriber.NoTipRequestSubscriber;
 import com.xuexiang.xhttp2demo.manager.TokenManager;
 import com.xuexiang.xrouter.launcher.XRouter;
+import com.xuexiang.xutil.common.StringUtils;
 import com.xuexiang.xutil.net.JSONUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -63,7 +67,7 @@ public class CustomExpiredInterceptor extends BaseExpiredInterceptor {
 
     @Override
     protected ExpiredInfo isResponseExpired(Response oldResponse, String bodyString) {
-        int code = JSONUtils.getInt(bodyString, ApiResult.CODE, 0);
+        int code = JSONUtils.getInt(bodyString.toLowerCase(), "code", 0);
         ExpiredInfo expiredInfo = new ExpiredInfo(code);
         switch (code) {
             case TOKEN_INVALID:
@@ -122,7 +126,6 @@ public class CustomExpiredInterceptor extends BaseExpiredInterceptor {
         }
         return null;
     }
-
 
     /**
      * 失效类型
