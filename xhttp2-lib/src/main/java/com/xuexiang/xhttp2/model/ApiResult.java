@@ -16,6 +16,8 @@
 
 package com.xuexiang.xhttp2.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * 提供的默认的标注返回api
  *
@@ -27,8 +29,11 @@ public class ApiResult<T> {
     public final static String MSG = "Msg";
     public final static String DATA = "Data";
 
+    @SerializedName(value = CODE, alternate = {"code"})
     private int Code;
+    @SerializedName(value = MSG, alternate = {"msg"})
     private String Msg;
+    @SerializedName(value = DATA, alternate = {"data"})
     private T Data;
 
     public int getCode() {

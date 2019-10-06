@@ -71,19 +71,19 @@ dependencies {
     implementation 'com.github.xuexiangjys.SmartRefreshLayout:refresh-layout:1.1.5'
 
     //XUtil
-    implementation 'com.github.xuexiangjys.XUtil:xutil-core:1.1.5'
-    implementation 'com.github.xuexiangjys.XUtil:xutil-sub:1.1.5'
+    implementation 'com.github.xuexiangjys.XUtil:xutil-core:1.1.6'
+    implementation 'com.github.xuexiangjys.XUtil:xutil-sub:1.1.6'
     //rxutil2
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
     implementation 'com.github.xuexiangjys:rxutil2:1.1.5'
     //XAOP
-    implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:1.0.3'
+    implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:1.0.5'
     //XRouter
     implementation 'com.github.xuexiangjys.XRouter:xrouter-runtime:1.0.1'
     annotationProcessor 'com.github.xuexiangjys.XRouter:xrouter-compiler:1.0.1'
     //XPage
-    implementation 'com.github.xuexiangjys.XPage:xpage-lib:2.2.6'
-    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:2.2.6'
+    implementation 'com.github.xuexiangjys.XPage:xpage-lib:2.2.7'
+    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:2.2.7'
     //butterKnife的sdk
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
