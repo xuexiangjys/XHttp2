@@ -799,15 +799,15 @@ public interface UserService {
 
     @POST("/user/registerUser/")
     @Headers({"Content-Type: application/json", "Accept: application/json"})
-    Observable<ApiResult> register(@Body RequestBody jsonBody);
+    Observable<ApiResult> register(@Body User user);
 }
 ```
 
 2.使用`XHttp.custom()`构建的`CustomRequest`进行请求，你可以使用`apiCall`和`call`进行请求。
 
-* apiCall: 针对的是retrofit定义的接口，返回的是Observable<ApiResult<T>>的情况。对于上面定义的第一个接口`registerUser`。
+* apiCall: 针对的是retrofit定义的接口，返回的是Observable<ApiResult<T>>的情况，对ApiResult进行拆包，直接获取数据。对于上面定义的第一个接口`registerUser`。
 
-* call: 针对的是retrofit定义的接口，返回的是Observable<T>的情况。对于上面定义的第二个接口`register`。
+* call: 针对的是retrofit定义的接口，返回的是Observable<T>的情况，不对ApiResult进行拆包。对于上面定义的第二个接口`register`。
 
 使用示例如下:
 
@@ -964,6 +964,12 @@ https://github.com/zhou-you/RxEasyHttp
 > 你的打赏是我维护的动力，我将会列出所有打赏人员的清单在下方作为凭证，打赏前请留下打赏项目的备注！
 
 ![](https://github.com/xuexiangjys/Resource/blob/master/img/pay/alipay.jpeg) &emsp; ![](https://github.com/xuexiangjys/Resource/blob/master/img/pay/weixinpay.jpeg)
+
+感谢下面小伙伴的打赏：
+
+姓名 | 金额 | 方式
+:-|:-|:-
+*声 | 50￥ | 微信
 
 ## 联系方式
 

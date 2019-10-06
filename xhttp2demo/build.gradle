@@ -89,9 +89,9 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     //XHttp
-    implementation project(':xhttp2-lib')
+//    implementation project(':xhttp2-lib')
 
-//    implementation 'com.github.xuexiangjys:XHttp2:1.0.0'
+    implementation 'com.github.xuexiangjys:XHttp2:1.0.3'
 
     //RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
