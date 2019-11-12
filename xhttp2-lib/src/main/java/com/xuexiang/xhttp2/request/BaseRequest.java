@@ -211,6 +211,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return mSubUrl + mUrl;
     }
 
+    /**
+     * @return 获取基础地址
+     */
+    public String getBaseUrl() {
+        return mBaseUrl;
+    }
+
     //===========================================//
     //               请求校验                     //
     //===========================================//

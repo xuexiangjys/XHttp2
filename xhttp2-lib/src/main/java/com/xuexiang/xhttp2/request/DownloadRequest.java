@@ -102,7 +102,7 @@ public class DownloadRequest extends BaseRequest<DownloadRequest> {
     @Override
     protected Observable<ResponseBody> generateRequest() {
         if (mIsUseBaseUrl) {
-            return mApiManager.downloadFile(XHttp.getBaseUrl() + getUrl());
+            return mApiManager.downloadFile(getBaseUrl() + getUrl());
         } else {
             return mApiManager.downloadFile(mUrl);
         }
