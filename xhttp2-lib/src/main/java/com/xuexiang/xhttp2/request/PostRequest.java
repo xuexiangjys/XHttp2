@@ -29,7 +29,6 @@ import com.xuexiang.xhttp2.model.XHttpRequest;
  * @author xuexiang
  * @since 2018/6/25 下午8:48
  */
-@SuppressWarnings(value = {"unchecked", "deprecation"})
 public class PostRequest extends BaseBodyRequest<PostRequest> {
 
     public PostRequest(String url) {

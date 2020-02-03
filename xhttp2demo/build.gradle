@@ -82,16 +82,16 @@ dependencies {
     implementation 'com.github.xuexiangjys.XRouter:xrouter-runtime:1.0.1'
     annotationProcessor 'com.github.xuexiangjys.XRouter:xrouter-compiler:1.0.1'
     //XPage
-    implementation 'com.github.xuexiangjys.XPage:xpage-lib:2.2.7'
-    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:2.2.7'
+    implementation 'com.github.xuexiangjys.XPage:xpage-lib:2.2.9'
+    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:2.2.9'
     //butterKnife的sdk
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     //XHttp
-//    implementation project(':xhttp2-lib')
+    implementation project(':xhttp2-lib')
 
-    implementation 'com.github.xuexiangjys:XHttp2:1.0.3'
+//    implementation 'com.github.xuexiangjys:XHttp2:1.0.3'
 
     //RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.12'

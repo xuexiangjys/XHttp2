@@ -42,7 +42,7 @@ import retrofit2.http.Body;
  * @author xuexiang
  * @since 2018/6/24 下午11:16
  */
-@SuppressWarnings(value = {"unchecked", "deprecation"})
+@SuppressWarnings(value = {"unchecked"})
 public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseRequest<R> {
     protected String mString;                                   //上传的文本内容
     protected MediaType mMediaType;                                   //上传文本的类型

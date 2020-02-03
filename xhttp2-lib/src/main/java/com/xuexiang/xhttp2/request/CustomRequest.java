@@ -42,7 +42,7 @@ import okhttp3.ResponseBody;
  * @author xuexiang
  * @since 2018/6/25 下午8:16
  */
-@SuppressWarnings(value={"unchecked", "deprecation"})
+@SuppressWarnings(value={"unchecked"})
 public class CustomRequest extends BaseRequest<CustomRequest> {
 
     public CustomRequest() {
@@ -78,7 +78,7 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
      *
      * @param observable retrofit定义接口返回的类型
      */
-    public <T> Observable<T> apiCall(Observable<ApiResult<T>> observable) {
+    public <T> Observable<T> apiCall(Observable<? extends ApiResult<T>> observable) {
         checkValidate();
         return observable
                 .compose(new HttpResultTransformer())

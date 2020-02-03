@@ -83,21 +83,31 @@ public class CustomRequestFragment extends XPageFragment {
         CustomRequest request = XHttp.custom();
         switch (view.getId()) {
             case R.id.btn_custom_request:
-//                new CustomGetRequest("/test/testCustomResult")
-//                        .execute(new TipRequestCallBack<Boolean>() {
-//                            @Override
-//                            public void onSuccess(Boolean response) throws Throwable {
-//                                ToastUtils.toast("请求成功：" + response);
-//                            }
-//                        });
-
-                XHttp.get("/test/testCustomResult")
-                        .execute(new CallBackProxy<CustomApiResult<Boolean>, Boolean>(new TipRequestCallBack<Boolean>() {
+                new CustomGetRequest("/test/testCustomResult")
+                        .execute(new TipRequestCallBack<Boolean>() {
                             @Override
                             public void onSuccess(Boolean response) throws Throwable {
                                 ToastUtils.toast("请求成功：" + response);
                             }
-                        }){});
+                        });
+
+//                request.apiCall(request.create(TestApi.UserService.class)
+//                        .testCustomResult())
+//                        .subscribeWith(new TipRequestSubscriber<Boolean>() {
+//                            @Override
+//                            protected void onSuccess(Boolean response) {
+//                                ToastUtils.toast("请求成功：" + response);
+//                            }
+//                        });
+
+
+//                XHttp.get("/test/testCustomResult")
+//                        .execute(new CallBackProxy<CustomApiResult<Boolean>, Boolean>(new TipRequestCallBack<Boolean>() {
+//                            @Override
+//                            public void onSuccess(Boolean response) throws Throwable {
+//                                ToastUtils.toast("请求成功：" + response);
+//                            }
+//                        }){});
 
                 break;
             case R.id.btn_retrofit_1:

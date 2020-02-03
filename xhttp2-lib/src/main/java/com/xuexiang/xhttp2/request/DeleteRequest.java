@@ -26,7 +26,6 @@ import okhttp3.ResponseBody;
  * @author xuexiang
  * @since 2018/6/25 上午1:39
  */
-@SuppressWarnings(value = {"unchecked", "deprecation"})
 public class DeleteRequest extends BaseBodyRequest<DeleteRequest> {
 
     public DeleteRequest(String url) {
