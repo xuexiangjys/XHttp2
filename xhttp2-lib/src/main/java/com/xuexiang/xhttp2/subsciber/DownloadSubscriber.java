@@ -17,6 +17,8 @@
 package com.xuexiang.xhttp2.subsciber;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
 import com.xuexiang.xhttp2.callback.CallBack;
@@ -28,6 +30,7 @@ import com.xuexiang.xhttp2.utils.Utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -80,8 +83,54 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
 
     @Override
     protected void onSuccess(ResponseBody responseBody) {
-        writeResponseBodyToDisk(path, name, responseBody);
+        if (Utils.isScopedStorageMode() && Utils.isPublicPath(path)) {
+            writeResponseBodyToDisk29Api(path, name, responseBody);
+        } else {
+            writeResponseBodyToDisk(path, name, responseBody);
+        }
     }
+
+
+    /**
+     * 将响应的请求直接写入到磁盘中
+     *
+     * @param path 保存的文件目录
+     * @param name 保存的文件名
+     * @param body 文件响应
+     */
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void writeResponseBodyToDisk29Api(String path, String name, okhttp3.ResponseBody body) {
+        name = checkFileName(name, body);
+        HttpLog.i("path:-->" + path + ", name:" + name);
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            byte[] bytes = new byte[1024 * 128];
+            final long fileSize = body.contentLength();
+            long downloadSize = 0;
+            HttpLog.i("file length: " + fileSize);
+            inputStream = body.byteStream();
+            outputStream = Utils.getOutputStream(path, name, body.contentType());
+            final CallBack callBack = mCallBack;
+            int read;
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+                downloadSize += read;
+                //下载进度
+                updateDownLoadProgress(fileSize, downloadSize, callBack);
+            }
+            outputStream.flush();
+            HttpLog.i("file downloaded: " + downloadSize + " of " + fileSize);
+
+            handleDownLoadFinished(Utils.getFilePath(path, name), callBack);
+        } catch (Throwable e) {
+            onError(e);
+        } finally {
+            Utils.closeIO(outputStream, inputStream);
+        }
+    }
+
+
 
     /**
      * 将响应的请求直接写入到磁盘中
@@ -97,7 +146,7 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
         HttpLog.i("path:-->" + path);
         File downLoadFile = new File(path);
         InputStream inputStream = null;
-        FileOutputStream outputStream = null;
+        OutputStream outputStream = null;
         try {
             byte[] bytes = new byte[1024 * 128];
             final long fileSize = body.contentLength();

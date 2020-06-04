@@ -18,6 +18,7 @@ package com.xuexiang.xhttp2demo.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.subsciber.ProgressDialogLoader;
 import com.xuexiang.xhttp2.subsciber.ProgressLoadingSubscriber;
 import com.xuexiang.xhttp2.subsciber.impl.IProgressLoader;
+import com.xuexiang.xhttp2.utils.Utils;
 import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.adapter.BookAdapter;
 import com.xuexiang.xhttp2demo.entity.Book;
@@ -46,11 +48,16 @@ import com.xuexiang.xpage.base.XPageFragment;
 import com.xuexiang.xpage.utils.TitleBar;
 import com.xuexiang.xrouter.annotation.AutoWired;
 import com.xuexiang.xrouter.launcher.XRouter;
+import com.xuexiang.xutil.XUtil;
 import com.xuexiang.xutil.app.PathUtils;
 import com.xuexiang.xutil.common.StringUtils;
 import com.xuexiang.xutil.file.FileUtils;
 import com.xuexiang.xutil.net.JsonUtil;
 import com.xuexiang.xutil.tip.ToastUtils;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -79,6 +86,7 @@ public class EditBookFragment extends XPageFragment {
     ImageView mIvPicture;
 
     String mPicturePath;
+    Uri mPictureUri;
 
     private IProgressLoader mIProgressLoader;
 
@@ -214,6 +222,7 @@ public class EditBookFragment extends XPageFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SELECT_PICTURE) {
+            mPictureUri = data.getData();
             mPicturePath = PathUtils.getFilePathByUri(getContext(), data.getData());
             RequestOptions options = new RequestOptions()
                     .centerCrop()
@@ -226,35 +235,64 @@ public class EditBookFragment extends XPageFragment {
     }
 
     @SuppressLint("CheckResult")
+    @Permission(PermissionConsts.STORAGE)
     private void uploadPicture() {
         if (StringUtils.isEmpty(mPicturePath)) {
             ToastUtils.toast("请先选择需要上传的图片!");
             selectPicture();
             return;
         }
-
         mIProgressLoader.updateMessage("上传中...");
-        XHttp.post("/book/uploadBookPicture")
-                .params("bookId", book.getBookId())
-                .uploadFile("file", FileUtils.getFileByPath(mPicturePath), new IProgressResponseCallBack() {
-                    @Override
-                    public void onResponseProgress(long bytesWritten, long contentLength, boolean done) {
+        if (Utils.isScopedStorageMode() && Utils.isPublicPath(mPicturePath)) {
+            XHttp.post("/book/uploadBookPicture")
+                    .params("bookId", book.getBookId())
+                    .uploadFile("file", getInputStreamByUri(mPictureUri), FileUtils.getFileByPath(mPicturePath).getName(), new IProgressResponseCallBack() {
+                        @Override
+                        public void onResponseProgress(long bytesWritten, long contentLength, boolean done) {
 
-                    }
-                }).execute(Boolean.class)
-                .compose(RxLifecycle.with(this).<Boolean>bindToLifecycle())
-                .subscribeWith(new ProgressLoadingSubscriber<Boolean>(mIProgressLoader) {
-                    @Override
-                    public void onSuccess(Boolean aBoolean) {
-                        mIsEditSuccess = true;
-                        ToastUtils.toast("图片上传" + (aBoolean ? "成功" : "失败") + "！");
-                    }
-                });
+                        }
+                    }).execute(Boolean.class)
+                    .compose(RxLifecycle.with(this).<Boolean>bindToLifecycle())
+                    .subscribeWith(new ProgressLoadingSubscriber<Boolean>(mIProgressLoader) {
+                        @Override
+                        public void onSuccess(Boolean aBoolean) {
+                            mIsEditSuccess = true;
+                            ToastUtils.toast("图片上传" + (aBoolean ? "成功" : "失败") + "！");
+                        }
+                    });
+        } else {
+            XHttp.post("/book/uploadBookPicture")
+                    .params("bookId", book.getBookId())
+                    .uploadFile("file", FileUtils.getFileByPath(mPicturePath), new IProgressResponseCallBack() {
+                        @Override
+                        public void onResponseProgress(long bytesWritten, long contentLength, boolean done) {
+
+                        }
+                    }).execute(Boolean.class)
+                    .compose(RxLifecycle.with(this).<Boolean>bindToLifecycle())
+                    .subscribeWith(new ProgressLoadingSubscriber<Boolean>(mIProgressLoader) {
+                        @Override
+                        public void onSuccess(Boolean aBoolean) {
+                            mIsEditSuccess = true;
+                            ToastUtils.toast("图片上传" + (aBoolean ? "成功" : "失败") + "！");
+                        }
+                    });
+        }
+    }
+
+    private InputStream getInputStreamByUri(Uri uri) {
+        try {
+            return XUtil.getContext().getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
      * 下载图片
      */
+    @Permission(PermissionConsts.STORAGE)
     private void downloadBookPicture() {
         if (StringUtils.isEmpty(book.getPicture())) {
             ToastUtils.toast("未上传图书封面！");
@@ -272,6 +310,7 @@ public class EditBookFragment extends XPageFragment {
 
                     @Override
                     public void onError(ApiException e) {
+                        e.printStackTrace();
                         ToastUtils.toast(e.getMessage());
                         HProgressDialogUtils.cancel();
                     }

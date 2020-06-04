@@ -17,18 +17,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp"
     android:layout_height="300dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp">
 
-    <ImageView
-        android:id="@+id/iv_picture"
-        android:padding="10dp"
-        android:layout_width="195dp"
-        android:layout_height="250dp"
-        android:src="@drawable/img_default_book"/>
+    <LinearLayout
+        android:layout_width="98dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_picture"
+            android:layout_width="98dp"
+            android:layout_height="125dp"
+            android:padding="10dp"
+            android:src="@drawable/img_default_book" />
+
+        <TextView
+            android:id="@+id/tv_price"
+            style="@style/Text_Content_Style"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:textColor="@android:color/holo_red_light"
+            tools:text="¥50" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -61,47 +77,33 @@
             tools:text="《设计模式:可复用面向对象软件的基础》是引导读者走出软件设计迷宫的指路明灯，凝聚了软件开发界几十年设计经验的结晶。四位顶尖的面向对象领域专家精心选取了具有价值的设计实践，加以分类整理和命名，并用简洁而易于重用的形式表达出来。" />
 
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="30dp">
 
             <TextView
-                android:id="@+id/tv_price"
-                style="@style/Text_Content_Style"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="20dp"
-                android:textColor="@android:color/holo_red_light"
-                tools:text="¥50" />
-
-            <TextView
                 android:id="@+id/tv_sales_volume"
                 style="@style/Text_Content_Style"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="30dp"
+                android:layout_gravity="start"
                 tools:text="销量：50" />
 
             <TextView
                 android:id="@+id/tv_score"
                 style="@style/Text_Content_Style"
-                android:layout_alignParentTop="true"
-                android:layout_toStartOf="@+id/tv_sales_volume"
-                android:layout_marginEnd="20dp"
+                android:layout_gravity="end"
                 tools:text="评分：4星" />
 
-        </RelativeLayout>
+        </FrameLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="end|center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="60dp">
 
             <TextView
                 android:id="@+id/tv_mark"
                 style="@style/Text_Content_Style"
                 android:layout_marginEnd="35dp"
+                android:layout_gravity="start|center_vertical"
                 android:drawableStart="@drawable/icon_mark"
                 android:drawablePadding="8dp"
                 tools:text="45" />
@@ -110,9 +112,10 @@
                 android:id="@+id/sb_buy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="点击购买"/>
+                android:layout_gravity="end|center_vertical"
+                android:text="点击购买" />
 
-        </LinearLayout>
+        </FrameLayout>
 
 
     </LinearLayout>
