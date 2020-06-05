@@ -17,6 +17,7 @@
 package com.xuexiang.xhttp2.subsciber;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
@@ -25,9 +26,11 @@ import com.xuexiang.xhttp2.callback.CallBack;
 import com.xuexiang.xhttp2.callback.DownloadProgressCallBack;
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.logs.HttpLog;
+import com.xuexiang.xhttp2.utils.PathUtils;
 import com.xuexiang.xhttp2.utils.Utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -103,6 +106,7 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
         name = checkFileName(name, body);
         HttpLog.i("path:-->" + path + ", name:" + name);
         InputStream inputStream = null;
+        Uri fileUri;
         OutputStream outputStream = null;
         try {
             byte[] bytes = new byte[1024 * 128];
@@ -110,7 +114,11 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
             long downloadSize = 0;
             HttpLog.i("file length: " + fileSize);
             inputStream = body.byteStream();
-            outputStream = Utils.getOutputStream(path, name, body.contentType());
+            fileUri = Utils.getFileUri(path, name, body.contentType());
+            if (fileUri == null) {
+                throw new FileNotFoundException("fileUri is null!");
+            }
+            outputStream = Utils.openOutputStream(fileUri);
             final CallBack callBack = mCallBack;
             int read;
             while ((read = inputStream.read(bytes)) != -1) {
@@ -122,7 +130,7 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
             outputStream.flush();
             HttpLog.i("file downloaded: " + downloadSize + " of " + fileSize);
 
-            handleDownLoadFinished(Utils.getFilePath(path, name), callBack);
+            handleDownLoadFinished(PathUtils.getFilePathByUri(fileUri), callBack);
         } catch (Throwable e) {
             onError(e);
         } finally {

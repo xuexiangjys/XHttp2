@@ -49,15 +49,18 @@ public final class Utils {
         throw new UnsupportedOperationException("u can't instantiate me...");
     }
 
-    private static final String[] PUBLIC_DIRECTORY = new String[]{
-            getExtDownloadsPath(),
-            getExtPicturesPath(),
-            getExtDcimPath(),
-            getExtMoviesPath(),
-            getExtMusicPath()
-    };
+    private static final String EXT_STORAGE_PATH = getExtStoragePath();
 
-    private static final String EXT_STORAGE_PATH = getExtStoragePath() + File.separator;
+    private static final String EXT_STORAGE_DIR = EXT_STORAGE_PATH + File.separator;
+
+    private static final String APP_EXT_STORAGE_PATH = EXT_STORAGE_DIR + "Android";
+
+    private static final String EXT_DOWNLOADS_PATH = getExtDownloadsPath();
+
+    private static final String EXT_PICTURES_PATH = getExtPicturesPath();
+
+    private static final String EXT_DCIM_PATH = getExtDCIMPath();
+
 
     /**
      * 检查是否为null
@@ -186,12 +189,7 @@ public final class Utils {
         if (isEmpty(filePath)) {
             return false;
         }
-        for (String s : PUBLIC_DIRECTORY) {
-            if (filePath.startsWith(s)) {
-                return true;
-            }
-        }
-        return false;
+        return filePath.startsWith(EXT_STORAGE_PATH) && !filePath.startsWith(APP_EXT_STORAGE_PATH);
     }
 
     /**
@@ -224,33 +222,9 @@ public final class Utils {
      *
      * @return 照片和视频目录
      */
-    public static String getExtDcimPath() {
+    public static String getExtDCIMPath() {
         return Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                .getAbsolutePath();
-    }
-
-    /**
-     * 获取视频目录
-     * <pre>path: /storage/emulated/0/Movies</pre>
-     *
-     * @return 视频目录
-     */
-    public static String getExtMoviesPath() {
-        return Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
-                .getAbsolutePath();
-    }
-
-    /**
-     * 获取音乐目录
-     * <pre>path: /storage/emulated/0/Music</pre>
-     *
-     * @return 音乐目录
-     */
-    public static String getExtMusicPath() {
-        return Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
                 .getAbsolutePath();
     }
 
@@ -274,6 +248,21 @@ public final class Utils {
         return s == null || s.length() == 0;
     }
 
+    /**
+     * String转Long（防止崩溃）
+     *
+     * @param value
+     * @param defValue 默认值
+     * @return
+     */
+    public static long toLong(final String value, final long defValue) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return defValue;
+    }
 
     /**
      * 获取文件保存到外部公共下载目录的uri
@@ -286,9 +275,10 @@ public final class Utils {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public static Uri getDownloadFileUri(String dirPath, String fileName, MediaType mediaType) {
         ContentValues values = new ContentValues();
+        values.put(MediaStore.Downloads.TITLE, fileName);
         values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
         values.put(MediaStore.Downloads.MIME_TYPE, mediaType.toString());
-        values.put(MediaStore.Downloads.RELATIVE_PATH, dirPath.substring(EXT_STORAGE_PATH.length()));
+        values.put(MediaStore.Downloads.RELATIVE_PATH, getRelativePath(dirPath));
         return getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
     }
 
@@ -309,7 +299,7 @@ public final class Utils {
         values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
         values.put(MediaStore.Images.Media.MIME_TYPE, mediaType.toString());
         values.put(MediaStore.Images.Media.ORIENTATION, 0);
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, dirPath.substring(EXT_STORAGE_PATH.length()));
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, getRelativePath(dirPath));
         if ("image".equals(mediaType.type())) {
             return getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         } else if ("audio".equals(mediaType.type())) {
@@ -317,8 +307,31 @@ public final class Utils {
         } else if ("video".equals(mediaType.type())) {
             return getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
         } else {
-            return getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);
+            return getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         }
+    }
+
+    /**
+     * 获取外部公共普通文件的uri
+     *
+     * @param dirPath   文件目录
+     * @param fileName  文件名
+     * @param mediaType 文件类型
+     * @return 普通文件的uri
+     */
+    public static Uri getNormalFileUri(String dirPath, String fileName, MediaType mediaType) {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DATA, getFilePath(dirPath, fileName));
+        values.put(MediaStore.Images.Media.MIME_TYPE, mediaType.toString());
+        return getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);
+    }
+
+    private static String getRelativePath(String dirPath) {
+        int index = dirPath.indexOf(EXT_STORAGE_DIR);
+        if (index != -1) {
+            return dirPath.substring(EXT_STORAGE_DIR.length());
+        }
+        return dirPath;
     }
 
     /**
@@ -331,20 +344,36 @@ public final class Utils {
      */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public static OutputStream getOutputStream(String dirPath, String fileName, MediaType mediaType) throws FileNotFoundException {
-        Uri uri;
-        if (dirPath.startsWith(Utils.getExtDownloadsPath())) {
-            uri = Utils.getDownloadFileUri(dirPath, fileName, mediaType);
-        } else {
-            uri = Utils.getMediaFileUri(dirPath, fileName, mediaType);
-        }
-        return getContentResolver().openOutputStream(uri);
+        Uri uri = getFileUri(dirPath, fileName, mediaType);
+        return openOutputStream(uri);
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public static Uri getFileUri(String dirPath, String fileName, MediaType mediaType) {
+        Uri uri;
+        if (dirPath.startsWith(EXT_DOWNLOADS_PATH)) {
+            uri = getDownloadFileUri(dirPath, fileName, mediaType);
+        } else if (dirPath.startsWith(EXT_PICTURES_PATH) || dirPath.startsWith(EXT_DCIM_PATH)) {
+            uri = getMediaFileUri(dirPath, fileName, mediaType);
+        } else {
+            uri = getNormalFileUri(dirPath, fileName, mediaType);
+        }
+        return uri;
+    }
+
+    /**
+     * 从uri资源符中获取输入流
+     *
+     * @param uri 文本资源符
+     * @return InputStream
+     */
+    public static OutputStream openOutputStream(Uri uri) throws FileNotFoundException {
+        return getContentResolver().openOutputStream(uri);
     }
 
     private static ContentResolver getContentResolver() {
         return XHttp.getContext().getContentResolver();
     }
-
 
     /**
      * 获取文件的路径
