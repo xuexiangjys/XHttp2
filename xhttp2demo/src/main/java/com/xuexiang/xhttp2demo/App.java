@@ -40,7 +40,6 @@ public class App extends Application {
     }
 
     private void initLibs() {
-        XUtil.init(this);
         XUtil.debug(true);
         XAOP.init(this);
 
