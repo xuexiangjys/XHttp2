@@ -16,7 +16,7 @@
 
 package com.xuexiang.xhttp2.callback;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.internal.$Gson$Types;
 import com.xuexiang.xhttp2.cache.model.CacheResult;

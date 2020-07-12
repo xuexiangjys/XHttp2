@@ -16,7 +16,7 @@
 
 package com.xuexiang.xhttp2.annotation;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

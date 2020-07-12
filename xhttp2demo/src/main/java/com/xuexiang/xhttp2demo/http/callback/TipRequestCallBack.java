@@ -16,7 +16,7 @@
 
 package com.xuexiang.xhttp2demo.http.callback;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.xuexiang.xhttp2.callback.SimpleCallBack;
 import com.xuexiang.xhttp2.exception.ApiException;

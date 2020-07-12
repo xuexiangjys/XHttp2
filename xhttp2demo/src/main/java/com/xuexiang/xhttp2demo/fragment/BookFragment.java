@@ -19,11 +19,12 @@ package com.xuexiang.xhttp2demo.fragment;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gturedi.views.StatefulLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -32,16 +33,13 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.XHttpProxy;
-import com.xuexiang.xhttp2.callback.SimpleCallBack;
 import com.xuexiang.xhttp2.exception.ApiException;
-import com.xuexiang.xhttp2.model.ApiResult;
-import com.xuexiang.xhttp2.reflect.TypeBuilder;
 import com.xuexiang.xhttp2.utils.TypeUtils;
 import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.adapter.BookAdapter;
+import com.xuexiang.xhttp2demo.entity.Book;
 import com.xuexiang.xhttp2demo.http.TestApi;
 import com.xuexiang.xhttp2demo.http.subscriber.TipRequestSubscriber;
-import com.xuexiang.xhttp2demo.entity.Book;
 import com.xuexiang.xhttp2demo.manager.UserManager;
 import com.xuexiang.xhttp2demo.utils.DialogUtils;
 import com.xuexiang.xhttp2demo.utils.RouterUtils;
@@ -49,7 +47,6 @@ import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageFragment;
 import com.xuexiang.xutil.tip.ToastUtils;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import butterknife.BindView;

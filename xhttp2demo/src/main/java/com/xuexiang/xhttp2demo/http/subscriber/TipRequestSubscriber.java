@@ -17,7 +17,7 @@
 package com.xuexiang.xhttp2demo.http.subscriber;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.model.XHttpRequest;

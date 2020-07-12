@@ -12,7 +12,7 @@ android {
         targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -55,6 +55,11 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     
 }
 
@@ -65,9 +70,9 @@ dependencies {
     androidTestImplementation deps.espresso.core
 
     //SmartRefreshLayout
-    implementation deps.support.app_compat
-    implementation deps.support.recyclerview
-    implementation deps.support.design
+    implementation deps.androidx.appcompat
+    implementation deps.androidx.recyclerview
+    implementation deps.androidx.design
     implementation 'com.github.xuexiangjys.SmartRefreshLayout:refresh-layout:1.1.5'
 
     //XUtil
@@ -77,25 +82,25 @@ dependencies {
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
     implementation 'com.github.xuexiangjys:rxutil2:1.1.5'
     //XAOP
-    implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:1.0.5'
+    implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:x1.0.5'
     //XRouter
     implementation 'com.github.xuexiangjys.XRouter:xrouter-runtime:1.0.1'
     annotationProcessor 'com.github.xuexiangjys.XRouter:xrouter-compiler:1.0.1'
     //XPage
-    implementation 'com.github.xuexiangjys.XPage:xpage-lib:2.3.0'
-    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:2.3.0'
+    implementation 'com.github.xuexiangjys.XPage:xpage-lib:3.0.0'
+    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:3.0.0'
     //butterKnife的sdk
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 
     //XHttp
-//    implementation project(':xhttp2-lib')
+    implementation project(':xhttp2-lib')
 
-    implementation 'com.github.xuexiangjys:XHttp2:1.0.4'
+//    implementation 'com.github.xuexiangjys:XHttp2:1.0.4'
 
     //RxJava
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     //OkHttp的依赖包
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     //Gson序列化反序列化的依赖包

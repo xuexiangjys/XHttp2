@@ -19,11 +19,12 @@ package com.xuexiang.xhttp2demo.fragment;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gturedi.views.StatefulLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -41,16 +42,14 @@ import com.xuexiang.xhttp2.subsciber.ProgressLoadingSubscriber;
 import com.xuexiang.xhttp2.subsciber.impl.IProgressLoader;
 import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.adapter.UserAdapter;
-import com.xuexiang.xhttp2demo.http.ApiProvider;
 import com.xuexiang.xhttp2demo.entity.User;
+import com.xuexiang.xhttp2demo.http.ApiProvider;
 import com.xuexiang.xhttp2demo.manager.UserManager;
 import com.xuexiang.xhttp2demo.utils.DialogUtils;
 import com.xuexiang.xhttp2demo.utils.RouterUtils;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageFragment;
 import com.xuexiang.xpage.utils.TitleBar;
-import com.xuexiang.xutil.common.RandomUtils;
-import com.xuexiang.xutil.common.StringUtils;
 import com.xuexiang.xutil.tip.ToastUtils;
 
 import java.util.List;

@@ -82,7 +82,7 @@ import static com.xuexiang.xhttp2.XHttp.DEFAULT_CACHE_NEVER_EXPIRE;
  * @author xuexiang
  * @since 2018/5/23 上午10:03
  */
-@SuppressWarnings(value = {"unchecked"})
+@SuppressWarnings(value={"unchecked"})
 public abstract class BaseRequest<R extends BaseRequest> {
     protected Context mContext;
     //====请求地址=====//

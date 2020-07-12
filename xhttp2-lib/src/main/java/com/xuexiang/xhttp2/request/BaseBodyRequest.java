@@ -42,7 +42,7 @@ import retrofit2.http.Body;
  * @author xuexiang
  * @since 2018/6/24 下午11:16
  */
-@SuppressWarnings(value = {"unchecked"})
+@SuppressWarnings(value={"unchecked"})
 public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseRequest<R> {
     protected String mString;                                   //上传的文本内容
     protected MediaType mMediaType;                                   //上传文本的类型
@@ -270,11 +270,9 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
         Utils.checkNotNull(requestBody, "requestBody==null fileWrapper.file must is File/InputStream/byte[]");
         if (fileWrapper.responseCallBack != null) {
             UploadProgressRequestBody uploadProgressRequestBody = new UploadProgressRequestBody(requestBody, fileWrapper.responseCallBack);
-            MultipartBody.Part part = MultipartBody.Part.createFormData(key, fileWrapper.fileName, uploadProgressRequestBody);
-            return part;
+            return MultipartBody.Part.createFormData(key, fileWrapper.fileName, uploadProgressRequestBody);
         } else {
-            MultipartBody.Part part = MultipartBody.Part.createFormData(key, fileWrapper.fileName, requestBody);
-            return part;
+            return MultipartBody.Part.createFormData(key, fileWrapper.fileName, requestBody);
         }
     }
 

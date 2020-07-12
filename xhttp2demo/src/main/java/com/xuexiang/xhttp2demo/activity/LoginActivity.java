@@ -18,10 +18,11 @@ package com.xuexiang.xhttp2demo.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.annotation.Nullable;
 
 import com.xuexiang.xhttp2.XHttpProxy;
 import com.xuexiang.xhttp2.exception.ApiException;
@@ -32,7 +33,6 @@ import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.entity.LoginInfo;
 import com.xuexiang.xhttp2demo.http.TestApi;
 import com.xuexiang.xhttp2demo.manager.TokenManager;
-import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.utils.TitleBar;
 import com.xuexiang.xpage.utils.TitleUtils;
 import com.xuexiang.xrouter.annotation.Router;
