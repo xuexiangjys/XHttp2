@@ -82,39 +82,106 @@ import static com.xuexiang.xhttp2.XHttp.DEFAULT_CACHE_NEVER_EXPIRE;
  * @author xuexiang
  * @since 2018/5/23 上午10:03
  */
-@SuppressWarnings(value={"unchecked"})
+@SuppressWarnings(value = {"unchecked"})
 public abstract class BaseRequest<R extends BaseRequest> {
+
     protected Context mContext;
     //====请求地址=====//
     protected HttpUrl mHttpUrl;
-    protected String mBaseUrl;                                              //baseUrl
-    private String mSubUrl;                                                 //SubUrl,介于BaseUrl和请求url之间
-    protected String mUrl;                                                  //请求url
+    /**
+     * baseUrl, 基础服务器地址
+     */
+    protected String mBaseUrl;
+    /**
+     * SubUrl,介于BaseUrl和请求url之间
+     */
+    private String mSubUrl;
+    /**
+     * 请求url
+     */
+    protected String mUrl;
     //====请求行为=====//
-    protected boolean mIsSyncRequest = false;                                //是否是同步请求
-    protected boolean mIsOnMainThread = true;                                //响应是否回到主线程
-    protected boolean mKeepJson = false;                                    //是否返回原始的json格式
+    /**
+     * 是否是同步请求
+     */
+    protected boolean mIsSyncRequest = false;
+    /**
+     * 响应是否回到主线程
+     */
+    protected boolean mIsOnMainThread = true;
+    /**
+     * 是否返回原始的json格式
+     */
+    protected boolean mKeepJson = false;
     //====请求校验=====//
-    private boolean mSign = false;                                          //是否需要签名
-    private boolean mTimeStamp = false;                                     //是否需要追加时间戳
-    private boolean mAccessToken = false;                                   //是否需要追加token
+    /**
+     * 是否需要签名
+     */
+    private boolean mSign = false;
+    /**
+     * 是否需要追加时间戳
+     */
+    private boolean mTimeStamp = false;
+    /**
+     * 是否需要追加token
+     */
+    private boolean mAccessToken = false;
     //====请求超时重试=====//
-    protected long mReadTimeOut;                                            //读超时
-    protected long mWriteTimeOut;                                           //写超时
-    protected long mConnectTimeout;                                         //链接超时
-    protected int mRetryCount;                                              //重试次数默认3次
-    protected int mRetryDelay;                                              //延迟xxms重试
-    protected int mRetryIncreaseDelay;                                      //叠加延迟
+    /**
+     * 读超时
+     */
+    protected long mReadTimeOut;
+    /**
+     * 写超时
+     */
+    protected long mWriteTimeOut;
+    /**
+     * 链接超时
+     */
+    protected long mConnectTimeout;
+    /**
+     * 重试次数默认3次
+     */
+    protected int mRetryCount;
+    /**
+     * 延迟xxms重试
+     */
+    protected int mRetryDelay;
+    /**
+     * 叠加延迟
+     */
+    protected int mRetryIncreaseDelay;
     //====请求头，公共参数的设置=====//
-    protected HttpHeaders mHeaders = new HttpHeaders();                     //添加的header
-    protected HttpParams mParams = new HttpParams();                        //添加的param
+    /**
+     * 添加的header
+     */
+    protected HttpHeaders mHeaders = new HttpHeaders();
+    /**
+     * 添加的param
+     */
+    protected HttpParams mParams = new HttpParams();
     //====请求缓存=====//
-    protected RxCache mRxCache;                                             //rxCache缓存
+    /**
+     * rxCache缓存
+     */
+    protected RxCache mRxCache;
     protected Cache mCache;
-    protected CacheMode mCacheMode;                                         //默认无缓存
-    protected long mCacheTime;                                              //缓存时间
-    protected String mCacheKey;                                             //缓存Key
-    protected IDiskConverter mDiskConverter;                                //设置RxCache磁盘转换器
+    /**
+     * 缓存模式, 默认无缓存
+     */
+    protected CacheMode mCacheMode;
+    /**
+     * 缓存时间
+     */
+    protected long mCacheTime;
+    /**
+     * 缓存Key
+     */
+    protected String mCacheKey;
+    /**
+     * 设置RxCache磁盘转换器
+     */
+    protected IDiskConverter mDiskConverter;
     //====OkHttpClient的拦截器、代理等=====//
     protected OkHttpClient mOkHttpClient;
     protected Proxy mProxy;
@@ -122,14 +189,20 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected final List<Interceptor> mInterceptors = new ArrayList<>();
     //====Retrofit的Api、Factory=====//
     protected Retrofit mRetrofit;
-    protected ApiService mApiManager;                                       //通用的的api接口
+    /**
+     * 通用的的api接口
+     */
+    protected ApiService mApiManager;
     protected List<Converter.Factory> mConverterFactories = new ArrayList<>();
     protected List<CallAdapter.Factory> mAdapterFactories = new ArrayList<>();
     //====Https设置=====//
     protected HttpsUtils.SSLParams mSSLParams;
     protected HostnameVerifier mHostnameVerifier;
     //====Cookie设置=====//
-    protected List<Cookie> mCookies = new ArrayList<>();                    //用户手动添加的Cookie
+    /**
+     * 用户手动添加的Cookie
+     */
+    protected List<Cookie> mCookies = new ArrayList<>();
 
     /**
      * 构建基础请求
@@ -144,28 +217,41 @@ public abstract class BaseRequest<R extends BaseRequest> {
         if (!TextUtils.isEmpty(mBaseUrl)) {
             mHttpUrl = HttpUrl.parse(mBaseUrl);
         }
-        mCacheMode = XHttp.getCacheMode();                                //添加缓存模式
-        mCacheTime = XHttp.getCacheTime();                                //缓存时间
-        mRetryCount = XHttp.getRetryCount();                              //超时重试次数
-        mRetryDelay = XHttp.getRetryDelay();                              //超时重试延时
-        mRetryIncreaseDelay = XHttp.getRetryIncreaseDelay();              //超时重试叠加延时
-        //OKHttp  mCache
+        // 添加缓存模式
+        mCacheMode = XHttp.getCacheMode();
+        // 缓存时间
+        mCacheTime = XHttp.getCacheTime();
+        // 超时重试次数
+        mRetryCount = XHttp.getRetryCount();
+        // 超时重试延时
+        mRetryDelay = XHttp.getRetryDelay();
+        // 超时重试叠加延时
+        mRetryIncreaseDelay = XHttp.getRetryIncreaseDelay();
+        // OKHttp  mCache
         mCache = XHttp.getHttpCache();
-        //默认添加 Accept-Language
+        // 默认添加 Accept-Language
         String acceptLanguage = HttpHeaders.getAcceptLanguage();
-        if (!TextUtils.isEmpty(acceptLanguage))
+        if (!TextUtils.isEmpty(acceptLanguage)) {
             headers(HttpHeaders.HEAD_KEY_ACCEPT_LANGUAGE, acceptLanguage);
-        //默认添加 User-Agent
+        }
+        // 默认添加 User-Agent
         String userAgent = HttpHeaders.getUserAgent();
-        if (!TextUtils.isEmpty(userAgent)) headers(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
-        //添加公共请求参数
-        if (XHttp.getCommonParams() != null) mParams.put(XHttp.getCommonParams());
-        if (XHttp.getCommonHeaders() != null) mHeaders.put(XHttp.getCommonHeaders());
+        if (!TextUtils.isEmpty(userAgent)) {
+            headers(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
+        }
+        // 添加公共请求参数
+        if (XHttp.getCommonParams() != null) {
+            mParams.put(XHttp.getCommonParams());
+        }
+        if (XHttp.getCommonHeaders() != null) {
+            mHeaders.put(XHttp.getCommonHeaders());
+        }
     }
 
     //===========================================//
     //               请求url设置                  //
     //===========================================//
+
     /**
      * 设置url路径
      *
@@ -669,17 +755,27 @@ public abstract class BaseRequest<R extends BaseRequest> {
             return builder;
         } else {
             final OkHttpClient.Builder newClientBuilder = XHttp.getOkHttpClient().newBuilder();
-            if (mReadTimeOut > 0)
+            if (mReadTimeOut > 0) {
                 newClientBuilder.readTimeout(mReadTimeOut, TimeUnit.MILLISECONDS);
-            if (mWriteTimeOut > 0)
+            }
+            if (mWriteTimeOut > 0) {
                 newClientBuilder.writeTimeout(mWriteTimeOut, TimeUnit.MILLISECONDS);
-            if (mConnectTimeout > 0)
+            }
+            if (mConnectTimeout > 0) {
                 newClientBuilder.connectTimeout(mConnectTimeout, TimeUnit.MILLISECONDS);
-            if (mHostnameVerifier != null) newClientBuilder.hostnameVerifier(mHostnameVerifier);
-            if (mSSLParams != null)
+            }
+            if (mHostnameVerifier != null) {
+                newClientBuilder.hostnameVerifier(mHostnameVerifier);
+            }
+            if (mSSLParams != null) {
                 newClientBuilder.sslSocketFactory(mSSLParams.sSLSocketFactory, mSSLParams.trustManager);
-            if (mProxy != null) newClientBuilder.proxy(mProxy);
-            if (mCookies.size() > 0) XHttp.getCookieJar().addCookies(mCookies);
+            }
+            if (mProxy != null) {
+                newClientBuilder.proxy(mProxy);
+            }
+            if (mCookies.size() > 0) {
+                XHttp.getCookieJar().addCookies(mCookies);
+            }
             for (Interceptor interceptor : mInterceptors) {
                 if (interceptor instanceof BaseDynamicInterceptor) {
                     ((BaseDynamicInterceptor) interceptor).sign(mSign).timeStamp(mTimeStamp).accessToken(mAccessToken);

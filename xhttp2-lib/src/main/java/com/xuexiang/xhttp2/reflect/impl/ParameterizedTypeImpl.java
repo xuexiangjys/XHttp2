@@ -52,18 +52,22 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         }
     }
 
+    @Override
     public Type[] getActualTypeArguments() {
         return this.args;
     }
 
+    @Override
     public Type getRawType() {
         return raw;
     }
 
+    @Override
     public Type getOwnerType() {
         return owner;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(raw.getName());
@@ -105,6 +109,7 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         return sb.toString();
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -116,6 +121,7 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         }
     }
 
+    @Override
     public int hashCode() {
         int result = raw.hashCode();
         result = 31 * result + Arrays.hashCode(args);

@@ -21,6 +21,7 @@ import com.xuexiang.xhttp2.utils.HttpUtils;
 import java.io.IOException;
 
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -41,7 +42,7 @@ public abstract class BaseInterceptor implements Interceptor {
             request = chain.request();
         }
         Response response = chain.proceed(request);
-        boolean isText = HttpUtils.isText(response.body().contentType());
+        boolean isText = HttpUtils.isText(getMediaType(response));
         if (!isText) {
             return response;
         }
@@ -54,11 +55,18 @@ public abstract class BaseInterceptor implements Interceptor {
         return response;
     }
 
+    private MediaType getMediaType(Response response) {
+        if (response.body() != null) {
+            return response.body().contentType();
+        }
+        return null;
+    }
+
     /**
      * 请求拦截
      *
-     * @param request
-     * @param chain
+     * @param request 请求
+     * @param chain   拦截链
      * @return {@code null} : 不进行拦截处理
      */
     protected abstract Request onBeforeRequest(Request request, Chain chain);
@@ -66,9 +74,9 @@ public abstract class BaseInterceptor implements Interceptor {
     /**
      * 响应拦截
      *
-     * @param response
-     * @param chain
-     * @param bodyString
+     * @param response   响应
+     * @param chain      拦截链
+     * @param bodyString 响应内容
      * @return {@code null} : 不进行拦截处理
      */
     protected abstract Response onAfterRequest(Response response, Chain chain, String bodyString);

@@ -102,7 +102,9 @@ public class UploadProgressRequestBody extends RequestBody {
         @Override
         public void write(Buffer source, long byteCount) throws IOException {
             super.write(source, byteCount);
-            if (contentLength <= 0) contentLength = contentLength(); //获得contentLength的值，后续不再调用
+            if (contentLength <= 0) {
+                contentLength = contentLength(); //获得contentLength的值，后续不再调用
+            }
             //增加当前写入的字节数
             bytesWritten += byteCount;
 

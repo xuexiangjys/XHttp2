@@ -32,38 +32,40 @@ import java.lang.ref.WeakReference;
  * @since 2018/6/21 上午1:58
  */
 public abstract class UIProgressResponseCallBack implements IProgressResponseCallBack {
+
     private static final int RESPONSE_UPDATE = 0x02;
 
-    //处理UI层的Handler子类
+    /**
+     * 处理UI层的Handler子类
+     */
     private static class UIHandler extends Handler {
         //弱引用
         private final WeakReference<UIProgressResponseCallBack> mUIProgressResponseListenerWeakReference;
 
         public UIHandler(Looper looper, UIProgressResponseCallBack uiProgressResponseListener) {
             super(looper);
-            mUIProgressResponseListenerWeakReference = new WeakReference<UIProgressResponseCallBack>(uiProgressResponseListener);
+            mUIProgressResponseListenerWeakReference = new WeakReference<>(uiProgressResponseListener);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case RESPONSE_UPDATE:
-                    UIProgressResponseCallBack uiProgressResponseListener = mUIProgressResponseListenerWeakReference.get();
-                    if (uiProgressResponseListener != null) {
-                        //获得进度实体类
-                        ProgressModel progressModel = (ProgressModel) msg.obj;
-                        //回调抽象方法
-                        uiProgressResponseListener.onUIResponseProgress(progressModel.getCurrentBytes(), progressModel.getContentLength(), progressModel.isDone());
-                    }
-                    break;
-                default:
-                    super.handleMessage(msg);
-                    break;
+            if (msg.what == RESPONSE_UPDATE) {
+                UIProgressResponseCallBack uiProgressResponseListener = mUIProgressResponseListenerWeakReference.get();
+                if (uiProgressResponseListener != null) {
+                    //获得进度实体类
+                    ProgressModel progressModel = (ProgressModel) msg.obj;
+                    //回调抽象方法
+                    uiProgressResponseListener.onUIResponseProgress(progressModel.getCurrentBytes(), progressModel.getContentLength(), progressModel.isDone());
+                }
+            } else {
+                super.handleMessage(msg);
             }
         }
     }
 
-    //主线程Handler
+    /**
+     * 主线程Handler
+     */
     private final Handler mHandler = new UIHandler(Looper.getMainLooper(), this);
 
     @Override

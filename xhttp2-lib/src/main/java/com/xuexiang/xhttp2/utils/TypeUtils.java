@@ -54,7 +54,9 @@ public final class TypeUtils {
         Type type = params[0];
         Type finalNeedType;
         if (params.length > 1) {//这个类似是：CacheResult<SkinTestResult> 2层
-            if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
+            if (!(type instanceof ParameterizedType)) {
+                throw new IllegalStateException("没有填写泛型参数");
+            }
             finalNeedType = ((ParameterizedType) type).getActualTypeArguments()[0];
             //Type rawType = ((ParameterizedType) type).getRawType();
         } else {//这个类似是:SkinTestResult  1层

@@ -72,7 +72,9 @@ public class HttpLoggingInterceptor implements Interceptor {
     }
 
     public HttpLoggingInterceptor setLevel(Level level) {
-        if (level == null) throw new NullPointerException("level == null. Use Level.NONE instead.");
+        if (level == null) {
+            throw new NullPointerException("level == null. Use Level.NONE instead.");
+        }
         this.level = level;
         return this;
     }
@@ -231,6 +233,8 @@ public class HttpLoggingInterceptor implements Interceptor {
     }
 
     protected void onError(Throwable t) {
-        if (isPrintStack) t.printStackTrace();
+        if (isPrintStack) {
+            t.printStackTrace();
+        }
     }
 }

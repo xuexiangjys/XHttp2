@@ -295,7 +295,9 @@ public final class XHttp {
      * 全局设置超时重试次数
      */
     public XHttp setRetryCount(int retryCount) {
-        if (retryCount < 0) throw new IllegalArgumentException("mRetryCount must >= 0");
+        if (retryCount < 0) {
+            throw new IllegalArgumentException("mRetryCount must >= 0");
+        }
         mRetryCount = retryCount;
         return this;
     }
@@ -311,7 +313,9 @@ public final class XHttp {
      * 全局设置超时重试延迟时间
      */
     public XHttp setRetryDelay(int retryDelay) {
-        if (retryDelay < 0) throw new IllegalArgumentException("mRetryDelay must > 0");
+        if (retryDelay < 0) {
+            throw new IllegalArgumentException("mRetryDelay must > 0");
+        }
         mRetryDelay = retryDelay;
         return this;
     }
@@ -327,8 +331,9 @@ public final class XHttp {
      * 全局设置超时重试延迟叠加时间
      */
     public XHttp setRetryIncreaseDelay(int retryIncreaseDelay) {
-        if (retryIncreaseDelay < 0)
+        if (retryIncreaseDelay < 0) {
             throw new IllegalArgumentException("mRetryIncreaseDelay must >= 0");
+        }
         mRetryIncreaseDelay = retryIncreaseDelay;
         return this;
     }
@@ -383,7 +388,9 @@ public final class XHttp {
      * 设置全局的缓存过期时间
      */
     public XHttp setCacheTime(long cacheTime) {
-        if (cacheTime <= -1) cacheTime = DEFAULT_CACHE_NEVER_EXPIRE;
+        if (cacheTime <= -1) {
+            cacheTime = DEFAULT_CACHE_NEVER_EXPIRE;
+        }
         mCacheTime = cacheTime;
         return this;
     }
@@ -414,8 +421,9 @@ public final class XHttp {
      * 全局设置缓存的版本，默认为1，缓存的版本号
      */
     public XHttp setCacheVersion(int cacheVersion) {
-        if (cacheVersion < 0)
+        if (cacheVersion < 0) {
             throw new IllegalArgumentException("cache version must > 0");
+        }
         mRxCacheBuilder.appVersion(cacheVersion);
         return this;
     }
@@ -465,7 +473,9 @@ public final class XHttp {
      * 添加全局公共请求参数
      */
     public XHttp addCommonParams(HttpParams commonParams) {
-        if (mCommonParams == null) mCommonParams = new HttpParams();
+        if (mCommonParams == null) {
+            mCommonParams = new HttpParams();
+        }
         mCommonParams.put(commonParams);
         return this;
     }
@@ -474,7 +484,9 @@ public final class XHttp {
      * 添加全局公共请求参数
      */
     public XHttp addCommonHeaders(HttpHeaders commonHeaders) {
-        if (mCommonHeaders == null) mCommonHeaders = new HttpHeaders();
+        if (mCommonHeaders == null) {
+            mCommonHeaders = new HttpHeaders();
+        }
         mCommonHeaders.put(commonHeaders);
         return this;
     }

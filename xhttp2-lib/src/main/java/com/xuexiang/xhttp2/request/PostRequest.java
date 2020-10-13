@@ -62,7 +62,8 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
         if (!CacheMode.NO_CACHE.equals(cacheMode)) {
             cacheMode(cacheMode).cacheKey(url);
         }
-        if (timeout <= 0) {   //如果超时时间小于等于0，使用默认的超时时间
+        //如果超时时间小于等于0，使用默认的超时时间
+        if (timeout <= 0) {
             timeout = XHttp.DEFAULT_TIMEOUT_MILLISECONDS;
         }
         accessToken(accessToken).timeOut(timeout).upJson(xHttpRequest.toString());

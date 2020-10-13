@@ -86,8 +86,9 @@ public final class Utils {
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context.getApplicationContext().getSystemService(
                 Context.CONNECTIVITY_SERVICE);
-        if (null == manager)
+        if (null == manager) {
             return false;
+        }
         NetworkInfo info = manager.getActiveNetworkInfo();
         return null != info && info.isAvailable();
     }
@@ -98,7 +99,9 @@ public final class Utils {
      * @param closeables closeables
      */
     public static void closeIO(final Closeable... closeables) {
-        if (closeables == null) return;
+        if (closeables == null) {
+            return;
+        }
         for (Closeable closeable : closeables) {
             if (closeable != null) {
                 try {

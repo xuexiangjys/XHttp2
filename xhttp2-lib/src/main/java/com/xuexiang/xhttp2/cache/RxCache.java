@@ -119,7 +119,7 @@ public final class RxCache {
      * @param cacheMode 缓存类型
      * @param type      缓存clazz
      */
-    @SuppressWarnings(value = {"unchecked", "deprecation"})
+    @SuppressWarnings(value = {"unchecked"})
     public <T> ObservableTransformer<T, CacheResult<T>> transformer(final CacheMode cacheMode, final Type type) {
         final IStrategy strategy = loadStrategy(cacheMode);//获取缓存策略
         return new ObservableTransformer<T, CacheResult<T>>() {
@@ -415,7 +415,6 @@ public final class RxCache {
             return new RxCache(this);
         }
 
-        @SuppressWarnings("deprecation")
         private static long calculateDiskCacheSize(File dir) {
             long size = 0;
             try {

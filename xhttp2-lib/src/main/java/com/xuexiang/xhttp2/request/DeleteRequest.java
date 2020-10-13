@@ -34,14 +34,18 @@ public class DeleteRequest extends BaseBodyRequest<DeleteRequest> {
 
     @Override
     protected Observable<ResponseBody> generateRequest() {
-        if (mRequestBody != null) { //自定义的请求体
+        if (mRequestBody != null) {
+            // 自定义的请求体
             return mApiManager.deleteBody(getUrl(), mRequestBody);
-        } else if (mJson != null) {//Json
+        } else if (mJson != null) {
+            // Json
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), mJson);
             return mApiManager.deleteJson(getUrl(), body);
-        } else if (mObject != null) {//自定义的请求object
+        } else if (mObject != null) {
+            // 自定义的请求object
             return mApiManager.deleteBody(getUrl(), mObject);
-        } else if (mString != null) {//文本内容
+        } else if (mString != null) {
+            // 文本内容
             RequestBody body = RequestBody.create(mMediaType, mString);
             return mApiManager.deleteBody(getUrl(), body);
         } else {

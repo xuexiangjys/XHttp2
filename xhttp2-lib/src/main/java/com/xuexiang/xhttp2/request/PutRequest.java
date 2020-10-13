@@ -34,14 +34,18 @@ public class PutRequest extends BaseBodyRequest<PutRequest> {
 
     @Override
     protected Observable<ResponseBody> generateRequest() {
-        if (mRequestBody != null) { //自定义的请求体
+        // 自定义的请求体
+        if (mRequestBody != null) {
             return mApiManager.putBody(getUrl(), mRequestBody);
-        } else if (mJson != null) {//Json
+        } else if (mJson != null) {
+            // Json
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), mJson);
             return mApiManager.putJson(getUrl(), body);
-        } else if (mObject != null) {//自定义的请求object
+        } else if (mObject != null) {
+            // 自定义的请求object
             return mApiManager.putBody(getUrl(), mObject);
-        } else if (mString != null) {//文本内容
+        } else if (mString != null) {
+            // 文本内容
             RequestBody body = RequestBody.create(mMediaType, mString);
             return mApiManager.putBody(getUrl(), body);
         } else {

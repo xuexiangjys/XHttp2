@@ -19,7 +19,9 @@ package com.xuexiang.xhttp2.subsciber;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Build;
+
 import androidx.annotation.RequiresApi;
+
 import android.text.TextUtils;
 
 import com.xuexiang.xhttp2.callback.CallBack;
@@ -39,6 +41,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import okhttp3.MediaType;
 
 import static com.xuexiang.xhttp2.exception.ApiException.ERROR.DOWNLOAD_ERROR;
 
@@ -137,7 +140,6 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
             Utils.closeIO(outputStream, inputStream);
         }
     }
-
 
 
     /**
@@ -248,7 +250,7 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
      * @return
      */
     private String checkFileName(String name, okhttp3.ResponseBody body) {
-        HttpLog.d("contentType:>>>>" + body.contentType().toString());
+        HttpLog.d("contentType:>>>>" + body.contentType());
         if (!TextUtils.isEmpty(name)) {//text/html; charset=utf-8
             if (!name.contains(".")) {
                 name = name + getFileSuffix(body);
@@ -262,9 +264,9 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
     /**
      * 检查文件的保存路径
      *
-     * @param path
-     * @param name
-     * @return
+     * @param path 保存目录路径
+     * @param name 保存的文件名
+     * @return 文件的保存路径
      */
     private String checkFilePath(String path, String name) {
         if (path == null) {
@@ -287,8 +289,12 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
      * @return
      */
     private String getFileSuffix(okhttp3.ResponseBody body) {
+        MediaType contentType = body.contentType();
+        if (contentType == null) {
+            return ".txt";
+        }
         String fileSuffix;
-        String type = body.contentType().toString();
+        String type = contentType.toString();
         if (type.equals(APK_CONTENT_TYPE)) {
             fileSuffix = ".apk";
         } else if (type.equals(PNG_CONTENT_TYPE)) {
@@ -298,7 +304,7 @@ public class DownloadSubscriber<ResponseBody extends okhttp3.ResponseBody> exten
         } else if (type.equals(MP4_CONTENT_TYPE)) {
             fileSuffix = ".mp4";
         } else {
-            fileSuffix = "." + body.contentType().subtype();
+            fileSuffix = "." + contentType.subtype();
         }
         return fileSuffix;
     }

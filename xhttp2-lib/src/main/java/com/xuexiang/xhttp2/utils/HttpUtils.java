@@ -119,6 +119,9 @@ public final class HttpUtils {
     @NonNull
     public static String getResponseBodyString(Response response) throws IOException {
         ResponseBody responseBody = response.body();
+        if (responseBody == null) {
+            return "";
+        }
         BufferedSource source = responseBody.source();
         source.request(Long.MAX_VALUE); // Buffer the entire body.
         Buffer buffer = source.buffer();
@@ -137,7 +140,7 @@ public final class HttpUtils {
      * @return
      */
     public static boolean isText(MediaType mediaType) {
-        return mediaType != null && (mediaType.type() != null && mediaType.type().equals("text") || mediaType.subtype() != null && mediaType.subtype().equals("json"));
+        return mediaType != null && (mediaType.type() != null && "text".equals(mediaType.type()) || mediaType.subtype() != null && "json".equals(mediaType.subtype()));
     }
 
     /**
@@ -147,7 +150,7 @@ public final class HttpUtils {
         if (mediaType == null) {
             return false;
         }
-        if (mediaType.type() != null && mediaType.type().equals("text")) {
+        if (mediaType.type() != null && "text".equals(mediaType.type())) {
             return true;
         }
         String subtype = mediaType.subtype();

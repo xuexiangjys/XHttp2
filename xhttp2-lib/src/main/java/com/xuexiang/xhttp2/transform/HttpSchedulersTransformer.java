@@ -53,18 +53,20 @@ public class HttpSchedulersTransformer<T> implements ObservableTransformer<T, T>
     /**
      * 获取线程的类型
      *
-     * @param isSyncRequest
-     * @param isOnMainThread
+     * @param isSyncRequest  是否是同步请求
+     * @param isOnMainThread 是否回到主线程
      * @return
      */
     private SchedulerType getSchedulerType(boolean isSyncRequest, boolean isOnMainThread) {
-        if (isSyncRequest) { //同步请求
+        if (isSyncRequest) {
+            // 同步请求
             if (isOnMainThread) {
                 return SchedulerType._main;
             } else {
                 return SchedulerType._io;
             }
-        } else { //异步请求,开启io线程
+        } else {
+            // 异步请求,开启io线程
             if (isOnMainThread) {
                 return SchedulerType._io_main;
             } else {

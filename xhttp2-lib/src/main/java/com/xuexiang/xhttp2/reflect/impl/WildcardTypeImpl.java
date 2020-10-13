@@ -55,14 +55,17 @@ public class WildcardTypeImpl implements WildcardType {
 
     }
 
+    @Override
     public Type[] getUpperBounds() {
         return upper;
     }
 
+    @Override
     public Type[] getLowerBounds() {
         return lower;
     }
 
+    @Override
     public String toString() {
         return upper.length > 0 ? (upper[0] == Object.class ? "?" : getTypeString("? extends ", upper)) : getTypeString("? super ", lower);
     }
@@ -82,6 +85,7 @@ public class WildcardTypeImpl implements WildcardType {
         return sb.toString();
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -93,6 +97,7 @@ public class WildcardTypeImpl implements WildcardType {
         }
     }
 
+    @Override
     public int hashCode() {
         int result = Arrays.hashCode(upper);
         result = 31 * result + Arrays.hashCode(lower);

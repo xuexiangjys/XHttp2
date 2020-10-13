@@ -74,13 +74,14 @@ public class CustomLoggingInterceptor extends HttpLoggingInterceptor {
 
     @Override
     protected Response logForResponse(Response response, long tookMs) {
-        Response.Builder builder = response.newBuilder();
-        Response clone = builder.build();
+        Response clone = response.newBuilder().build();
         ResponseBody responseBody = clone.body();
-
         log("<-- " + clone.code() + ' ' + clone.message() + ' ' + clone.request().url() + " (" + tookMs + "ms）");
         try {
             if (HttpHeaders.hasBody(clone)) {
+                if (responseBody == null) {
+                    return response;
+                }
                 if (HttpUtils.isPlaintext(responseBody.contentType())) {
                     String body = responseBody.string();
                     log("\t出参:" + body);

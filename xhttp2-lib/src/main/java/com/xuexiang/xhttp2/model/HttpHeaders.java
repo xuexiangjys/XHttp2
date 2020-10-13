@@ -174,9 +174,11 @@ public class HttpHeaders implements Serializable {
 
     public static String getCacheControl(String cacheControl, String pragma) {
         // first http1.1, second http1.0
-        if (cacheControl != null) return cacheControl;
-        else if (pragma != null) return pragma;
-        else return null;
+        if (cacheControl != null) {
+            return cacheControl;
+        } else {
+            return pragma;
+        }
     }
 
     public static void setAcceptLanguage(String language) {
@@ -192,8 +194,9 @@ public class HttpHeaders implements Serializable {
             String language = locale.getLanguage();
             String country = locale.getCountry();
             StringBuilder acceptLanguageBuilder = new StringBuilder(language);
-            if (!TextUtils.isEmpty(country))
+            if (!TextUtils.isEmpty(country)) {
                 acceptLanguageBuilder.append('-').append(country).append(',').append(language).append(";q=0.8");
+            }
             acceptLanguage = acceptLanguageBuilder.toString();
             return acceptLanguage;
         }
@@ -265,7 +268,9 @@ public class HttpHeaders implements Serializable {
     }
 
     private static long parseGMTToMillis(String gmtTime) throws ParseException {
-        if (TextUtils.isEmpty(gmtTime)) return 0;
+        if (TextUtils.isEmpty(gmtTime)) {
+            return 0;
+        }
         SimpleDateFormat formatter = new SimpleDateFormat(FORMAT_HTTP_DATA, Locale.US);
         formatter.setTimeZone(GMT_TIME_ZONE);
         Date date = formatter.parse(gmtTime);

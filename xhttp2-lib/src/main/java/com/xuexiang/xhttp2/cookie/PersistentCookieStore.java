@@ -80,13 +80,13 @@ public class PersistentCookieStore {
         if (!cookies.containsKey(url.host())) {
             cookies.put(url.host(), new ConcurrentHashMap<String, Cookie>());
         }
-       // 删除已经有的.
+        // 删除已经有的.
         if (cookies.containsKey(url.host())) {
             cookies.get(url.host()).remove(name);
         }
         // 添加新的进去
         cookies.get(url.host()).put(name, cookie);
-       // 是否保存到 SP 中
+        // 是否保存到 SP 中
         if (cookie.persistent()) {
             SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
             prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
@@ -114,8 +114,13 @@ public class PersistentCookieStore {
 
     public List<Cookie> get(HttpUrl url) {
         ArrayList<Cookie> ret = new ArrayList<>();
-        if (cookies.containsKey(url.host()))
-            ret.addAll(cookies.get(url.host()).values());
+        ConcurrentHashMap<String, Cookie> tmp;
+        if (cookies.containsKey(url.host())) {
+            tmp = cookies.get(url.host());
+            if (tmp != null) {
+                ret.addAll(tmp.values());
+            }
+        }
         return ret;
     }
 
@@ -148,9 +153,13 @@ public class PersistentCookieStore {
 
     public List<Cookie> getCookies() {
         ArrayList<Cookie> ret = new ArrayList<>();
-        for (String key : cookies.keySet())
-            ret.addAll(cookies.get(key).values());
-
+        ConcurrentHashMap<String, Cookie> tmp;
+        for (String key : cookies.keySet()) {
+            tmp = cookies.get(key);
+            if (tmp != null) {
+                ret.addAll(tmp.values());
+            }
+        }
         return ret;
     }
 
@@ -158,8 +167,9 @@ public class PersistentCookieStore {
      * cookies to string
      */
     protected String encodeCookie(SerializableOkHttpCookies cookie) {
-        if (cookie == null)
+        if (cookie == null) {
             return null;
+        }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(os);

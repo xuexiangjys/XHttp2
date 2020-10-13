@@ -44,14 +44,34 @@ import retrofit2.http.Body;
  */
 @SuppressWarnings(value={"unchecked"})
 public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseRequest<R> {
-    protected String mString;                                   //上传的文本内容
-    protected MediaType mMediaType;                                   //上传文本的类型
-    protected String mJson;                                     //上传的Json
-    protected byte[] mBytes;                                       //上传的字节数据
-    protected Object mObject;                                   //上传的对象
-    protected RequestBody mRequestBody;                         //自定义的请求体
-
-    private UploadType mUploadType = UploadType.PART;           //文件上传方式
+    /**
+     * 上传的文本内容
+     */
+    protected String mString;
+    /**
+     * 上传文本的类型
+     */
+    protected MediaType mMediaType;
+    /**
+     * 上传的Json
+     */
+    protected String mJson;
+    /**
+     * 上传的字节数据
+     */
+    protected byte[] mBytes;
+    /**
+     * 上传的对象
+     */
+    protected Object mObject;
+    /**
+     * 自定义的请求体
+     */
+    protected RequestBody mRequestBody;
+    /**
+     * 文件上传方式
+     */
+    private UploadType mUploadType = UploadType.PART;
 
     /**
      * 构建请求

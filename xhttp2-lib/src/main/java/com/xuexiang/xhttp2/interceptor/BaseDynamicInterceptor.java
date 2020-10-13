@@ -53,9 +53,18 @@ import okhttp3.Response;
 public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> implements Interceptor {
     private HttpUrl mHttpUrl;
 
-    private boolean mIsSign = false;    //是否需要签名
-    private boolean mTimeStamp = false;    //是否需要追加时间戳
-    private boolean mAccessToken = false;    //是否需要添加token
+    /**
+     * 是否需要签名
+     */
+    private boolean mIsSign = false;
+    /**
+     * 是否需要追加时间戳
+     */
+    private boolean mTimeStamp = false;
+    /**
+     * 是否需要添加token
+     */
+    private boolean mAccessToken = false;
 
     public BaseDynamicInterceptor() {
     }
@@ -90,10 +99,10 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        if (request.method().equals("GET")) {
+        if ("GET".equals(request.method())) {
             mHttpUrl = HttpUrl.parse(HttpUtils.parseUrl(request.url().toString()));
             request = addGetParamsSign(request);
-        } else if (request.method().equals("POST")) {
+        } else if ("POST".equals(request.method())) {
             mHttpUrl = request.url();
             request = addPostParamsSign(request);
         }

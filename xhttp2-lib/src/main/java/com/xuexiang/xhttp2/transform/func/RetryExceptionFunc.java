@@ -79,8 +79,9 @@ public class RetryExceptionFunc implements Function<Observable<? extends Throwab
         }).flatMap(new Function<Wrapper, ObservableSource<?>>() {
             @Override
             public ObservableSource<?> apply(@NonNull Wrapper wrapper) throws Exception {
-                if (wrapper.index > 1)
+                if (wrapper.index > 1) {
                     HttpLog.i("重试次数：" + (wrapper.index));
+                }
                 int errCode = 0;
                 if (wrapper.throwable instanceof ApiException) {
                     ApiException exception = (ApiException) wrapper.throwable;

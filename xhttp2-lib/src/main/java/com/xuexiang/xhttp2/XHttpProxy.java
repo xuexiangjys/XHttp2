@@ -117,7 +117,6 @@ public class XHttpProxy implements InvocationHandler {
             } else {
                 request.params(params);
             }
-            return request.execute(type);
         } else {
             if (netMethod.paramType() == NetMethod.URL_GET) {
                 if (args.length > 0) {
@@ -127,8 +126,8 @@ public class XHttpProxy implements InvocationHandler {
             } else {
                 request.params(params);
             }
-            return request.execute(type);
         }
+        return request.execute(type);
     }
 
     /**

@@ -45,7 +45,7 @@ android {
     if (isNeedPackage.toBoolean()) {
         applicationVariants.all { variant ->
             variant.outputs.all {
-                if (variant.buildType.name.equals('release')) {
+                if (variant.buildType.name == 'release') {
                     outputFileName = "xhttp2_demo_${defaultConfig.versionName}.apk"
                 }
             }
