@@ -983,7 +983,7 @@ https://github.com/zhou-you/RxEasyHttp
 
 > 你的打赏是我维护的动力，我将会列出所有打赏人员的清单在下方作为凭证，打赏前请留下打赏项目的备注！
 
-![alipay.jpeg](https://img.rruu.net/image/5f47eeb8bcdf5) &emsp; ![weixinpay.jpeg](https://img.rruu.net/image/5f47eeb1c8a08)
+![pay.png](https://img.rruu.net/image/5f871d00045da)
 
 感谢下面小伙伴的打赏：
 
@@ -995,7 +995,9 @@ https://github.com/zhou-you/RxEasyHttp
 
 [![](https://img.shields.io/badge/点击一键加入QQ交流群-602082750-blue.svg)](http://shang.qq.com/wpa/qunwpa?idkey=9922861ef85c19f1575aecea0e8680f60d9386080a97ed310c971ae074998887)
 
-![winxin.jpg](https://img.rruu.net/image/5f47ee9f6b02d)
+> 更多资讯内容，欢迎扫描关注我的个人微信公众号:【我的Android开源之旅】
+
+![gzh_weixin.jpg](https://img.rruu.net/image/5f871cfff3194)
 
 [demo-gif]: https://img.rruu.net/image/5f7dc798ea8d9
 [download-svg]: https://img.shields.io/badge/downloads-2.61M-blue.svg
