@@ -87,11 +87,20 @@ public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
             try {
                 String json = responseBody.string();
                 if (mKeepJson && !List.class.isAssignableFrom(rawType) && clazz.equals(String.class)) {
-                    apiResult.setData((T) json);
+                    apiResult.setData((T) (json == null ? "" : json));
                     apiResult.setCode(0);
                 } else {
                     ApiResult result = mGson.fromJson(json, mType);
                     if (result != null) {
+                        if (result.getData() == null) {
+                            if (List.class.isAssignableFrom(rawType)) {
+                                result.setData(new ArrayList<>());
+                            } else if (clazz.equals(String.class)) {
+                                result.setData("");
+                            } else {
+                                result.setData(clazz.newInstance());
+                            }
+                        }
                         return result;
                     } else {
                         apiResult.setMsg("json is null");
