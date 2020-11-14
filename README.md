@@ -98,7 +98,7 @@ allprojects {
 ```
 dependencies {
   ...
-  implementation 'com.github.xuexiangjys:XHttp2:2.0.0'
+  implementation 'com.github.xuexiangjys:XHttp2:2.0.1'
 
   implementation 'com.google.code.gson:gson:2.8.5'
   implementation 'com.squareup.okhttp3:okhttp:3.10.0'
@@ -166,6 +166,7 @@ addCallAdapterFactory | 设置全局CallAdapter.Factory,默认RxJavaCallAdapterF
 setHostnameVerifier | 设置https的全局访问规则
 setCertificates | 设置https的全局自签名证书
 setCookieStore | 设置全局cookie存取规则
+setStrictMode | 设置严格模式，在严格模式下，json返回的data数据不能为null
 
 ---
 
@@ -990,6 +991,7 @@ https://github.com/zhou-you/RxEasyHttp
 姓名 | 金额 | 方式
 :-|:-|:-
 *声 | 50￥ | 微信
+**东 | 5￥ | 支付宝
 
 ## 联系方式
 
