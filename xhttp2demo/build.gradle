@@ -76,13 +76,13 @@ dependencies {
     implementation 'com.github.xuexiangjys.SmartRefreshLayout:refresh-layout:1.1.5'
 
     //XUtil
-    implementation 'com.github.xuexiangjys.XUtil:xutil-core:1.1.8'
-    implementation 'com.github.xuexiangjys.XUtil:xutil-sub:1.1.8'
+    implementation 'com.github.xuexiangjys.XUtil:xutil-core:2.0.0'
+    implementation 'com.github.xuexiangjys.XUtil:xutil-sub:2.0.0'
     //rxutil2
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
     implementation 'com.github.xuexiangjys:rxutil2:1.1.5'
     //XAOP
-    implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:x1.0.5'
+    implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:1.1.0'
     //XRouter
     implementation 'com.github.xuexiangjys.XRouter:xrouter-runtime:1.0.1'
     annotationProcessor 'com.github.xuexiangjys.XRouter:xrouter-compiler:1.0.1'
@@ -94,9 +94,9 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 
     //XHttp
-//    implementation project(':xhttp2-lib')
+    implementation project(':xhttp2-lib')
 
-    implementation 'com.github.xuexiangjys:XHttp2:2.0.0'
+//    implementation 'com.github.xuexiangjys:XHttp2:2.0.0'
 
     //RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.0'

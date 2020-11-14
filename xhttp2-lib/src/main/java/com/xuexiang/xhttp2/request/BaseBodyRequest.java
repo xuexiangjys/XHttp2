@@ -42,7 +42,7 @@ import retrofit2.http.Body;
  * @author xuexiang
  * @since 2018/6/24 下午11:16
  */
-@SuppressWarnings(value={"unchecked"})
+@SuppressWarnings(value = {"unchecked"})
 public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseRequest<R> {
     /**
      * 上传的文本内容
@@ -212,26 +212,33 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
 
     @Override
     protected Observable<ResponseBody> generateRequest() {
-        if (mRequestBody != null) { //自定义的请求体
+        if (mRequestBody != null) {
+            // 自定义的请求体
             return mApiManager.postBody(getUrl(), mRequestBody);
-        } else if (mJson != null) {//上传的Json
+        } else if (mJson != null) {
+            // 上传的Json
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), mJson);
             return mApiManager.postJson(getUrl(), body);
-        } else if (mObject != null) {//自定义的请求object
+        } else if (mObject != null) {
+            // 自定义的请求object
             return mApiManager.postBody(getUrl(), mObject);
-        } else if (mString != null) {//上传的文本内容
+        } else if (mString != null) {
+            // 上传的文本内容
             RequestBody body = RequestBody.create(mMediaType, mString);
             return mApiManager.postBody(getUrl(), body);
-        } else if (mBytes != null) {//上传的字节数据
+        } else if (mBytes != null) {
+            // 上传的字节数据
             RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), mBytes);
             return mApiManager.postBody(getUrl(), body);
         }
         if (mParams.fileParamsMap.isEmpty()) {
             return mApiManager.post(getUrl(), mParams.urlParamsMap);
         } else {
-            if (mUploadType == UploadType.PART) {//part方式上传
+            if (mUploadType == UploadType.PART) {
+                // part方式上传
                 return uploadFilesWithParts();
-            } else {//body方式上传
+            } else {
+                // body方式上传
                 return uploadFilesWithBodys();
             }
         }

@@ -19,6 +19,7 @@ package com.xuexiang.xhttp2.utils;
 import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.reflect.TypeBuilder;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -168,6 +169,7 @@ public final class TypeUtils {
 
     /**
      * 为请求的返回类型加上ApiResult包装类
+     *
      * @param type
      * @return
      */
@@ -181,6 +183,7 @@ public final class TypeUtils {
 
     /**
      * 为请求的返回类型加上List包装类
+     *
      * @param type
      * @return
      */
@@ -189,6 +192,42 @@ public final class TypeUtils {
                 .newInstance(List.class)
                 .addTypeParam(type)
                 .build();
+    }
+
+
+    /**
+     * 反射构建实例
+     *
+     * @param clazz 类
+     * @param args  构造函数的参数集合
+     * @return
+     * @throws Exception
+     */
+    public static <T> T newInstance(Class<T> clazz, Object... args)
+            throws Exception {
+        Class<?>[] argsClass = getClasses(args);
+        Constructor<?> cons = clazz.getDeclaredConstructor(argsClass);
+        cons.setAccessible(true);
+        return (T) cons.newInstance(args);
+    }
+
+    /**
+     * 获取参数的类集合
+     *
+     * @param args 参数
+     * @return
+     */
+    private static Class<?>[] getClasses(Object... args) {
+        Class<?>[] argsClass;
+        if (args != null && args.length > 0) {
+            argsClass = new Class[args.length];
+            for (int i = 0, j = args.length; i < j; i++) {
+                argsClass[i] = args[i].getClass();
+            }
+        } else {
+            argsClass = new Class[0];
+        }
+        return argsClass;
     }
 
 

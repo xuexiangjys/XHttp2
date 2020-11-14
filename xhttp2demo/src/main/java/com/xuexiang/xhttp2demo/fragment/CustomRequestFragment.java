@@ -177,6 +177,8 @@ public class CustomRequestFragment extends XPageFragment {
                     }
                 });
                 break;
+            default:
+                break;
         }
     }
 

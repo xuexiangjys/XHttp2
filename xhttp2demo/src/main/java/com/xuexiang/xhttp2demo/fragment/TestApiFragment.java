@@ -20,6 +20,8 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.SwitchCompat;
+
 import com.xuexiang.xaop.annotation.MainThread;
 import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.XHttpProxy;
@@ -52,6 +54,8 @@ public class TestApiFragment extends XPageFragment {
 
     @BindView(R.id.tv_result_info)
     TextView mTvResultInfo;
+    @BindView(R.id.switch_strict_mode)
+    SwitchCompat switchStrictMode;
 
     private IProgressLoader mIProgressLoader;
 
@@ -69,10 +73,12 @@ public class TestApiFragment extends XPageFragment {
 
     @Override
     protected void initListeners() {
+        switchStrictMode.setChecked(XHttp.getInstance().isInStrictMode());
+        switchStrictMode.setOnCheckedChangeListener((buttonView, isChecked) -> XHttp.getInstance().setStrictMode(isChecked));
 
     }
 
-    @OnClick({R.id.btn_test_list_1, R.id.btn_test_list_2, R.id.btn_test_keep_json})
+    @OnClick({R.id.btn_test_list_1, R.id.btn_test_list_2, R.id.btn_test_keep_json, R.id.btn_test_data_null})
     public void onViewClicked(View view) {
         clearLog();
         switch (view.getId()) {
@@ -116,6 +122,17 @@ public class TestApiFragment extends XPageFragment {
                             }
                         });
                 break;
+            case R.id.btn_test_data_null:
+                XHttp.get("/test/testDataNull")
+                        .execute(new TipRequestCallBack<Void>() {
+                            @Override
+                            public void onSuccess(Void response) throws Throwable {
+                                ToastUtils.toast("请求成功:" + response);
+                            }
+                        });
+                break;
+            default:
+                break;
         }
     }
 
@@ -127,4 +144,5 @@ public class TestApiFragment extends XPageFragment {
     private void clearLog() {
         mTvResultInfo.setText("");
     }
+
 }

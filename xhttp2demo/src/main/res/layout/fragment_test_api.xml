@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018 xuexiangjys(xuexiangjys@163.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,20 +53,45 @@
                 android:text="请求获取json" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="严格模式:" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_strict_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp" />
+
+            <Button
+                android:id="@+id/btn_test_data_null"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="测试data返回为null" />
+
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/tv_result_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:padding="10dp"
             android:background="@android:color/white"
             android:lineSpacingExtra="9dp"
-            android:singleLine="false"
-            android:scrollbars="vertical" />
+            android:padding="10dp"
+            android:scrollbars="vertical"
+            android:singleLine="false" />
 
     </LinearLayout>
 
