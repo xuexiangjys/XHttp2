@@ -13,21 +13,25 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    configurations.all {
+        resolutionStrategy.force deps.rxjava2
+    }
 }
 
 dependencies {
     compileOnly deps.androidx.appcompat
 
     //使用retrofit的依赖包
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
 
     //RxJava
-    compileOnly 'io.reactivex.rxjava2:rxjava:2.2.0'
-    compileOnly 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    compileOnly deps.rxjava2
+    compileOnly deps.rxandroid
     //OkHttp的依赖包
-    compileOnly 'com.squareup.okhttp3:okhttp:3.10.0'
+    compileOnly 'com.squareup.okhttp3:okhttp:3.14.9'
     //Gson序列化反序列化的依赖包
     compileOnly deps.gson
 
