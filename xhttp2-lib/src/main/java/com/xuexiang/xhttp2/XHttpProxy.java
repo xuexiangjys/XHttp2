@@ -16,8 +16,9 @@
 
 package com.xuexiang.xhttp2;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.xuexiang.xhttp2.annotation.NetMethod;
@@ -26,7 +27,6 @@ import com.xuexiang.xhttp2.cache.model.CacheMode;
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.request.BaseBodyRequest;
 import com.xuexiang.xhttp2.request.BaseRequest;
-import com.xuexiang.xhttp2.request.PostRequest;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -133,7 +133,7 @@ public class XHttpProxy implements InvocationHandler {
     /**
      * 获取网络请求接口返回值的类型
      *
-     * @param method
+     * @param method 方法信息
      * @return
      * @throws ApiException
      */
@@ -148,21 +148,19 @@ public class XHttpProxy implements InvocationHandler {
     }
 
     /**
-     * 获取post请求
+     * 获取请求实体
      *
-     * @param apiMethod
-     * @return
+     * @param apiMethod 请求信息
+     * @return 请求实体
      */
     private BaseRequest getHttpRequest(NetMethod apiMethod) {
-        String action = apiMethod.action();
         String baseUrl = apiMethod.baseUrl();
         String url = apiMethod.url();
         long timeout = apiMethod.timeout();
-        boolean accessToken = apiMethod.accessToken();
         CacheMode cacheMode = apiMethod.cacheMode();
 
         BaseRequest request;
-        switch (action) {
+        switch (apiMethod.action()) {
             case POST:
                 request = XHttp.post(url);
                 break;
@@ -181,14 +179,19 @@ public class XHttpProxy implements InvocationHandler {
         }
         if (!CacheMode.NO_CACHE.equals(cacheMode)) {
             request.cacheMode(cacheMode).cacheKey(url);
+            long cacheTime = apiMethod.cacheTime();
+            if (cacheTime != NetMethod.NOT_SET_CACHE_TIME) {
+                request.cacheTime(cacheTime);
+            }
         }
-        if (timeout <= 0) {   //如果超时时间小于等于0，使用默认的超时时间
+        //如果超时时间小于等于0，使用默认的超时时间
+        if (timeout <= 0) {
             timeout = XHttp.DEFAULT_TIMEOUT_MILLISECONDS;
         }
         return request
                 .threadType(mThreadType)
                 .keepJson(apiMethod.keepJson())
-                .accessToken(accessToken)
+                .accessToken(apiMethod.accessToken())
                 .timeOut(timeout);
     }
 
@@ -196,10 +199,10 @@ public class XHttpProxy implements InvocationHandler {
     /**
      * 获取请求参数集合
      *
-     * @param method
-     * @param args
-     * @param apiMethod
-     * @return
+     * @param method    请求方法
+     * @param args      请求参数
+     * @param apiMethod 请求信息
+     * @return 请求参数集合
      */
     @NonNull
     private Map<String, Object> getParamsMap(Method method, Object[] args, NetMethod apiMethod) {
@@ -214,10 +217,11 @@ public class XHttpProxy implements InvocationHandler {
     /**
      * 获取请求参数集合
      *
-     * @param method
-     * @param args
-     * @param apiMethod
-     * @return
+     * @param method    请求方法
+     * @param args      请求参数
+     * @param apiMethod 请求信息
+     * @param index     参数索引
+     * @return 请求参数集合
      */
     @NonNull
     private Map<String, Object> getParamsMap(Method method, Object[] args, NetMethod apiMethod, int index) {
@@ -229,14 +233,4 @@ public class XHttpProxy implements InvocationHandler {
         return params;
     }
 
-    /**
-     * 更新线程调度状态
-     *
-     * @param postRequest
-     * @return
-     */
-    private PostRequest updateThreadType(PostRequest postRequest) {
-        postRequest.threadType(mThreadType);
-        return postRequest;
-    }
 }

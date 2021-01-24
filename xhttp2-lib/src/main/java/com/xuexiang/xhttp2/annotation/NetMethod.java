@@ -54,6 +54,12 @@ public @interface NetMethod {
     String DELETE = "delete";
 
     /**
+     * -1代表永久有效，-2就代表不设置,使用全局缓存有效时间
+     */
+    long NOT_SET_CACHE_TIME = -2;
+
+
+    /**
      * @return 参数名集合
      */
     String[] parameterNames() default {};
@@ -97,5 +103,10 @@ public @interface NetMethod {
      * @return 缓存模式
      */
     CacheMode cacheMode() default CacheMode.NO_CACHE;
+
+    /**
+     * @return 缓存有效时间
+     */
+    long cacheTime() default NOT_SET_CACHE_TIME;
 }
 

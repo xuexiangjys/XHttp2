@@ -86,7 +86,7 @@ public final class XHttp {
     /**
      * 默认缓存失效时间：永久有效
      */
-    public static final int DEFAULT_CACHE_NEVER_EXPIRE = -1;
+    public static final long DEFAULT_CACHE_NEVER_EXPIRE = -1;
 
     //======url地址=====//
     /**
