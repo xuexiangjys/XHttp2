@@ -17,6 +17,7 @@
 package com.xuexiang.xhttp2.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.xuexiang.xhttp2.utils.ApiUtils;
 
 /**
  * 提供的默认的标注返回api
@@ -71,10 +72,10 @@ public class ApiResult<T> {
     /**
      * 是否请求成功,自定义api的时候需要重写【很关键】
      *
-     * @return
+     * @return true: 请求成功；false：请求失败
      */
     public boolean isSuccess() {
-        return getCode() == 0;
+        return getCode() == ApiUtils.getSuccessCode();
     }
 
     @Override

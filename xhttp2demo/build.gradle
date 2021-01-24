@@ -14,6 +14,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [moduleName: project.getName()]
@@ -72,6 +75,7 @@ dependencies {
     androidTestImplementation deps.runner
     androidTestImplementation deps.espresso.core
 
+    implementation deps.androidx.multidex
     //SmartRefreshLayout
     implementation deps.androidx.appcompat
     implementation deps.androidx.recyclerview
@@ -90,8 +94,8 @@ dependencies {
     implementation 'com.github.xuexiangjys.XRouter:xrouter-runtime:1.0.1'
     annotationProcessor 'com.github.xuexiangjys.XRouter:xrouter-compiler:1.0.1'
     //XPage
-    implementation 'com.github.xuexiangjys.XPage:xpage-lib:3.0.0'
-    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:3.0.0'
+    implementation 'com.github.xuexiangjys.XPage:xpage-lib:3.1.1'
+    annotationProcessor 'com.github.xuexiangjys.XPage:xpage-compiler:3.1.1'
     //butterKnife的sdk
     implementation deps.butterknife.runtime
     annotationProcessor deps.butterknife.compiler
@@ -105,7 +109,7 @@ dependencies {
     implementation deps.rxjava2
     implementation deps.rxandroid
     //OkHttp的依赖包
-    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
+    implementation 'com.squareup.okhttp3:okhttp:4.8.1'
     //Gson序列化反序列化的依赖包
     implementation deps.gson
     //retrofit

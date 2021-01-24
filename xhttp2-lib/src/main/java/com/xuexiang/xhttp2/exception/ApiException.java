@@ -22,7 +22,6 @@ import android.text.TextUtils;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
-import com.xuexiang.xhttp2.model.ApiResult;
 
 import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
@@ -78,10 +77,6 @@ public class ApiException extends Exception {
      */
     public String getDetailMessage() {
         return "Code:" + mCode + ", Message:" + getMessage();
-    }
-
-    public static boolean isSuccess(ApiResult apiResult) {
-        return apiResult != null && apiResult.isSuccess();
     }
 
     public static ApiException handleException(Throwable e) {

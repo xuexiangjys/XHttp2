@@ -16,9 +16,9 @@
 
 package com.xuexiang.xhttp2.transform.func;
 
-import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.exception.ServerException;
 import com.xuexiang.xhttp2.model.ApiResult;
+import com.xuexiang.xhttp2.utils.ApiUtils;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
@@ -33,7 +33,7 @@ public class HttpResultFuc<T> implements Function<ApiResult<T>, T> {
 
     @Override
     public T apply(@NonNull ApiResult<T> response) throws Exception {
-        if (ApiException.isSuccess(response)) {
+        if (ApiUtils.isRequestSuccess(response)) {
             return response.getData();
         } else {
             throw new ServerException(response.getCode(), response.getMsg());

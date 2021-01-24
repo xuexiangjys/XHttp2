@@ -3,20 +3,16 @@ package com.xuexiang.xhttp2demo;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.multidex.MultiDex;
+
 import com.xuexiang.xaop.XAOP;
 import com.xuexiang.xhttp2.XHttpSDK;
 import com.xuexiang.xhttp2demo.http.interceptor.CustomDynamicInterceptor;
 import com.xuexiang.xhttp2demo.http.interceptor.CustomExpiredInterceptor;
-import com.xuexiang.xhttp2demo.http.interceptor.CustomLoggingInterceptor;
 import com.xuexiang.xhttp2demo.utils.SettingSPUtils;
-import com.xuexiang.xpage.Xhttp2demoPageConfig;
+import com.xuexiang.xpage.PageConfig;
 import com.xuexiang.xrouter.launcher.XRouter;
 import com.xuexiang.xutil.XUtil;
-import com.xuexiang.xpage.PageConfig;
-import com.xuexiang.xpage.PageConfiguration;
-import com.xuexiang.xpage.model.PageInfo;
-
-import java.util.List;
 
 /**
  * ================================================
@@ -31,6 +27,13 @@ import java.util.List;
 public class App extends Application {
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        //解决4.x运行崩溃的问题
+        MultiDex.install(this);
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
 
@@ -43,12 +46,7 @@ public class App extends Application {
         XUtil.debug(true);
         XAOP.init(this);
 
-        PageConfig.getInstance().setPageConfiguration(new PageConfiguration() {
-            @Override
-            public List<PageInfo> registerPages(Context context) {
-                return Xhttp2demoPageConfig.getInstance().getPages();
-            }
-        }).debug("PageLog").enableWatcher(false).init(this);
+        PageConfig.getInstance().debug("PageLog").init(this);
 
         initXRouter();
     }
