@@ -29,8 +29,8 @@ import com.xuexiang.xhttp2.logs.HttpLog;
 import com.xuexiang.xhttp2.model.XHttpRequest;
 import com.xuexiang.xhttp2.request.PostRequest;
 import com.xuexiang.xhttp2.subsciber.BaseSubscriber;
+import com.xuexiang.xhttp2.utils.ApiUtils;
 import com.xuexiang.xhttp2.utils.HttpUtils;
-import com.xuexiang.xhttp2.utils.TypeUtils;
 import com.xuexiang.xhttp2.utils.Utils;
 
 import java.lang.reflect.Type;
@@ -148,6 +148,16 @@ public final class XHttpSDK {
     public static void debug(HttpLoggingInterceptor loggingInterceptor) {
         XHttp.getInstance().debug(loggingInterceptor);
     }
+
+    /**
+     * 设置请求成功的code码
+     *
+     * @param successCode 标识请求成功的结果码
+     */
+    public static void setSuccessCode(int successCode) {
+        ApiUtils.setSuccessCode(successCode);
+    }
+
     //==============================================通用Post请求===============================================//
 
     /**

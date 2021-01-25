@@ -184,6 +184,8 @@ setStrictMode | 设置严格模式，在严格模式下，json返回的data数�
 
 其中`Code`、`Msg`、`Data`建议使用大写字母，当然使用小写字母也没有问题，否则无法解析成功。
 
+***【注意】这里`Code`为0才代表请求成功，如果你的Code码不是0代表成功，你可以使用`XHttpSDK.setSuccessCode`设置代表成功的值。***
+
 需要自定义返回的实体API请[点击查看](#自定义api请求)
 
 ### 1、使用XHttp默认api进行请求
