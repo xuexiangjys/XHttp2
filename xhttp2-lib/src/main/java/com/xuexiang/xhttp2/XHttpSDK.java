@@ -19,6 +19,7 @@ package com.xuexiang.xhttp2;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.xuexiang.xhttp2.annotation.NetMethod;
 import com.xuexiang.xhttp2.annotation.RequestParams;
 import com.xuexiang.xhttp2.annotation.ThreadType;
 import com.xuexiang.xhttp2.cache.converter.GsonDiskConverter;
@@ -654,6 +655,10 @@ public final class XHttpSDK {
         }
         if (!CacheMode.NO_CACHE.equals(cacheMode)) {
             postRequest.cacheMode(cacheMode).cacheKey(url);
+            long cacheTime = requestParams.cacheTime();
+            if (cacheTime != NetMethod.NOT_SET_CACHE_TIME) {
+                postRequest.cacheTime(cacheTime);
+            }
         }
         if (timeout <= 0) {   //如果超时时间小于等于0，使用默认的超时时间
             timeout = XHttp.DEFAULT_TIMEOUT_MILLISECONDS;
@@ -662,6 +667,7 @@ public final class XHttpSDK {
                 .accessToken(accessToken)
                 .timeOut(timeout)
                 .upJson(json)
+                .keepJson(requestParams.keepJson())
                 .syncRequest(isSyncRequest)
                 .onMainThread(toMainThread);
     }

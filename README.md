@@ -287,8 +287,10 @@ public static class UserService_AddUser extends XHttpRequest {
 baseUrl | String | "" | 设置该请求的baseUrl
 url | String | "" | 请求网络接口地址
 timeout | long | 15000 | 设置超时时间
+keepJson | boolean | false | 是否保存json
 accessToken | boolean | true | 设置是否需要验证token
 cacheMode | CacheMode | CacheMode.NO_CACHE | 设置请求的缓存模式
+cacheTime | long | -2(使用全局设置） | 设置缓存有效时间
 
 * @ParamKey
 
@@ -384,6 +386,7 @@ timeout | long | 15000 | 设置超时时间
 keepJson | boolean | false | 是否保存json
 accessToken | boolean | true | 设置是否需要验证token
 cacheMode | CacheMode | CacheMode.NO_CACHE | 设置请求的缓存模式
+cacheTime | long | -2(使用全局设置） | 设置缓存有效时间
 
 2.使用XHttpProxy进行请求。
 

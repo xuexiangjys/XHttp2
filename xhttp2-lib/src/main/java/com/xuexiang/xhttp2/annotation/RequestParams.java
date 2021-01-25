@@ -49,6 +49,11 @@ public @interface RequestParams {
     long timeout() default XHttp.DEFAULT_TIMEOUT_MILLISECONDS;
 
     /**
+     * @return 是否保存json
+     */
+    boolean keepJson() default false;
+
+    /**
      * @return 请求是否需要验证Token
      */
     boolean accessToken() default true;
@@ -57,5 +62,10 @@ public @interface RequestParams {
      * @return 缓存模式
      */
     CacheMode cacheMode() default CacheMode.NO_CACHE;
+
+    /**
+     * @return 缓存有效时间
+     */
+    long cacheTime() default NetMethod.NOT_SET_CACHE_TIME;
 
 }
