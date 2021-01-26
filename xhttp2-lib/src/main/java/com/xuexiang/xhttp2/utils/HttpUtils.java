@@ -56,10 +56,21 @@ public final class HttpUtils {
 
     public static final Charset UTF8 = Charset.forName("UTF-8");
 
+    private static Gson sGson = new Gson();
+
     private HttpUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
     }
 
+    /**
+     * 把单个指定类型的对象 转换为 JSON 字符串
+     *
+     * @param src 需要序列化的对象
+     * @return JSON 字符串
+     */
+    public static String toJson(Object src) {
+        return sGson.toJson(src);
+    }
 
     /**
      * 获取json的请求体
@@ -68,7 +79,7 @@ public final class HttpUtils {
      * @return
      */
     public static RequestBody getJsonRequestBody(Object object) {
-        return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(object));
+        return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), HttpUtils.toJson(object));
     }
 
     /**
@@ -99,10 +110,13 @@ public final class HttpUtils {
      */
     @Nullable
     public static byte[] getResponseBody(@NonNull Response response) {
-        ResponseBody responseBody = response.body();
+        ResponseBody body = response.body();
+        if (body == null) {
+            return null;
+        }
         byte[] source = null;
         try {
-            source = responseBody.bytes();
+            source = body.bytes();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -183,7 +197,7 @@ public final class HttpUtils {
                 params.put(field.getName(), field.get(xHttpRequest));
             }
         }
-        return new Gson().toJson(params);
+        return HttpUtils.toJson(params);
     }
 
     /**
@@ -216,6 +230,9 @@ public final class HttpUtils {
         try {
             final Request copy = request.newBuilder().build();
             final Buffer buffer = new Buffer();
+            if (copy.body() == null) {
+                return "";
+            }
             copy.body().writeTo(buffer);
             Charset charset = UTF8;
             MediaType contentType = copy.body().contentType();
@@ -232,14 +249,14 @@ public final class HttpUtils {
     /**
      * 获得错误的返回
      *
-     * @param oldResponse
-     * @param code
-     * @param message
+     * @param oldResponse 旧返回
+     * @param code        错误码
+     * @param message     错误信息
      * @return
      */
     public static Response getErrorResponse(Response oldResponse, int code, String message) {
         ApiResult apiResult = new ApiResult().setCode(code).setMsg(message);
-        return oldResponse.newBuilder().body(HttpUtils.getJsonResponseBody(new Gson().toJson(apiResult))).build();
+        return oldResponse.newBuilder().body(HttpUtils.getJsonResponseBody(HttpUtils.toJson(apiResult))).build();
     }
 
     //==============url 参数=====================//
@@ -354,7 +371,8 @@ public final class HttpUtils {
      * @return
      */
     public static String parseUrl(String url) {
-        if (!"".equals(url) && url.contains("?")) {// 如果URL不是空字符串
+        // 如果URL不是空字符串
+        if (!"".equals(url) && url.contains("?")) {
             url = url.substring(0, url.indexOf('?'));
         }
         return url;
@@ -418,4 +436,5 @@ public final class HttpUtils {
         }
         return params;
     }
+
 }

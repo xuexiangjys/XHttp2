@@ -20,13 +20,14 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.Gson;
 import com.xuexiang.xhttp2.annotation.NetMethod;
 import com.xuexiang.xhttp2.annotation.ThreadType;
+import com.xuexiang.xhttp2.cache.RxCache;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
 import com.xuexiang.xhttp2.exception.ApiException;
 import com.xuexiang.xhttp2.request.BaseBodyRequest;
 import com.xuexiang.xhttp2.request.BaseRequest;
+import com.xuexiang.xhttp2.utils.HttpUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -110,10 +111,10 @@ public class XHttpProxy implements InvocationHandler {
 
         Map<String, Object> params = getParamsMap(method, args, netMethod);
         Type type = getReturnType(method);
-        BaseRequest request = getHttpRequest(netMethod);
+        BaseRequest request = getHttpRequest(method, args, netMethod);
         if (request instanceof BaseBodyRequest) {
             if (netMethod.paramType() == NetMethod.JSON) {
-                ((BaseBodyRequest) request).upJson(new Gson().toJson(params));
+                ((BaseBodyRequest) request).upJson(HttpUtils.toJson(params));
             } else {
                 request.params(params);
             }
@@ -150,10 +151,12 @@ public class XHttpProxy implements InvocationHandler {
     /**
      * 获取请求实体
      *
+     * @param method    请求方法
+     * @param args      请求参数
      * @param apiMethod 请求信息
      * @return 请求实体
      */
-    private BaseRequest getHttpRequest(NetMethod apiMethod) {
+    private BaseRequest getHttpRequest(Method method, Object[] args, NetMethod apiMethod) {
         String baseUrl = apiMethod.baseUrl();
         String url = apiMethod.url();
         long timeout = apiMethod.timeout();
@@ -178,7 +181,7 @@ public class XHttpProxy implements InvocationHandler {
             request.baseUrl(baseUrl);
         }
         if (!CacheMode.NO_CACHE.equals(cacheMode)) {
-            request.cacheMode(cacheMode).cacheKey(url);
+            request.cacheMode(cacheMode).cacheKey(getCacheKey(method, args, apiMethod));
             long cacheTime = apiMethod.cacheTime();
             if (cacheTime != NetMethod.NOT_SET_CACHE_TIME) {
                 request.cacheTime(cacheTime);
@@ -231,6 +234,19 @@ public class XHttpProxy implements InvocationHandler {
             params.put(apiMethod.parameterNames()[i], args[i]);
         }
         return params;
+    }
+
+    /**
+     * 根据网络请求的请求接口方法，自动生成缓存的Key
+     *
+     * @param method    请求方法
+     * @param args      请求参数
+     * @param apiMethod 请求信息
+     * @return 缓存的key
+     */
+    @NonNull
+    private String getCacheKey(Method method, Object[] args, NetMethod apiMethod) {
+        return RxCache.getICacheKeyCreator().getCacheKey(method, args, apiMethod);
     }
 
 }

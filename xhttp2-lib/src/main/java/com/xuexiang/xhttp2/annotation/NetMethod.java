@@ -58,6 +58,10 @@ public @interface NetMethod {
      */
     long NOT_SET_CACHE_TIME = -2;
 
+    /**
+     * 所有请求参数都作为缓存key的索引
+     */
+    int ALL_PARAMS_INDEX = -1;
 
     /**
      * @return 参数名集合
@@ -103,6 +107,11 @@ public @interface NetMethod {
      * @return 缓存模式
      */
     CacheMode cacheMode() default CacheMode.NO_CACHE;
+
+    /**
+     * @return 作为缓存key的请求参数索引，默认是-1，也就是全部参数
+     */
+    int cacheKeyIndex() default ALL_PARAMS_INDEX;
 
     /**
      * @return 缓存有效时间

@@ -18,6 +18,7 @@ package com.xuexiang.xhttp2demo.http;
 
 import com.xuexiang.xhttp2.annotation.NetMethod;
 import com.xuexiang.xhttp2.annotation.RequestParams;
+import com.xuexiang.xhttp2.cache.model.CacheMode;
 import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.model.XHttpRequest;
 import com.xuexiang.xhttp2demo.entity.Book;
@@ -62,7 +63,7 @@ public class TestApi {
     @RequestParams(url = "/user/findUsers", accessToken = false)
     public static class UserService_findUsers extends XHttpRequest {
         /**
-         *  第几页数
+         * 第几页数
          */
         public int pageNum;
         /**
@@ -99,15 +100,14 @@ public class TestApi {
         /**
          * 获取图书
          *
-         * @param pageNum 第几页数
+         * @param pageNum  第几页数
          * @param pageSize 每页的数量
          */
-        @NetMethod(parameterNames = {"pageNum", "pageSize"}, paramType = FORM_BODY, url = "/book/findBooks/", accessToken = false)
+        @NetMethod(parameterNames = {"pageNum", "pageSize"}, paramType = FORM_BODY, url = "/book/findBooks/", cacheMode = CacheMode.FIRST_CACHE, cacheTime = 120, accessToken = false)
         Observable<List<Book>> getBooks(int pageNum, int pageSize);
 
         /**
          * 获取所有图书
-         *
          */
         @NetMethod(action = GET, url = "/book/getAllBook", accessToken = false)
         Observable<List<Book>> getAllBooks();
@@ -122,7 +122,7 @@ public class TestApi {
          * 登录获取token
          *
          * @param loginName 用户名
-         * @param password 密码
+         * @param password  密码
          */
         @NetMethod(parameterNames = {"loginName", "password"}, url = "/authorization/login/", accessToken = false)
         Observable<LoginInfo> login(String loginName, String password);

@@ -19,10 +19,16 @@ package com.xuexiang.xhttp2;
 import android.app.Application;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.xuexiang.xhttp2.annotation.NetMethod;
 import com.xuexiang.xhttp2.annotation.RequestParams;
 import com.xuexiang.xhttp2.annotation.ThreadType;
+import com.xuexiang.xhttp2.cache.RxCache;
 import com.xuexiang.xhttp2.cache.converter.GsonDiskConverter;
+import com.xuexiang.xhttp2.cache.key.ICacheKeyCreator;
+import com.xuexiang.xhttp2.cache.key.IObjectSerializer;
+import com.xuexiang.xhttp2.cache.key.Strings;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
 import com.xuexiang.xhttp2.interceptor.HttpLoggingInterceptor;
 import com.xuexiang.xhttp2.logs.HttpLog;
@@ -156,6 +162,24 @@ public final class XHttpSDK {
      */
     public static void setSuccessCode(int successCode) {
         ApiUtils.setSuccessCode(successCode);
+    }
+
+    /**
+     * 设置Object转化为String的序列化器【自动生成缓存key时使用】
+     *
+     * @param sISerializer Object转化为String的序列化器
+     */
+    public static void setISerializer(@NonNull IObjectSerializer sISerializer) {
+        Strings.setISerializer(sISerializer);
+    }
+
+    /**
+     * 设置缓存Key的生成器
+     *
+     * @param sICacheKeyCreator 缓存Key的生成器
+     */
+    public static void setICacheKeyCreator(@NonNull ICacheKeyCreator sICacheKeyCreator) {
+        RxCache.setICacheKeyCreator(sICacheKeyCreator);
     }
 
     //==============================================通用Post请求===============================================//

@@ -16,9 +16,9 @@
 
 package com.xuexiang.xhttp2.model;
 
-import com.google.gson.Gson;
 import com.xuexiang.xhttp2.annotation.RequestParams;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
+import com.xuexiang.xhttp2.utils.HttpUtils;
 import com.xuexiang.xhttp2.utils.Utils;
 
 import java.lang.reflect.Method;
@@ -35,7 +35,7 @@ public abstract class XHttpRequest {
 
     @Override
     public String toString() {
-        return new Gson().toJson(this);
+        return HttpUtils.toJson(this);
     }
 
     /**

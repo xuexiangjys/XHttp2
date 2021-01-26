@@ -24,6 +24,8 @@ import com.xuexiang.xhttp2.cache.converter.SerializableDiskConverter;
 import com.xuexiang.xhttp2.cache.core.CacheCore;
 import com.xuexiang.xhttp2.cache.core.LruDiskCache;
 import com.xuexiang.xhttp2.cache.core.LruMemoryCache;
+import com.xuexiang.xhttp2.cache.key.DefaultCacheKeyCreator;
+import com.xuexiang.xhttp2.cache.key.ICacheKeyCreator;
 import com.xuexiang.xhttp2.cache.model.CacheMode;
 import com.xuexiang.xhttp2.cache.model.CacheResult;
 import com.xuexiang.xhttp2.cache.stategy.IStrategy;
@@ -73,20 +75,46 @@ import io.reactivex.exceptions.Exceptions;
  * 2018/6/20 下午7:26
  */
 public final class RxCache {
-    public static final long CACHE_NEVER_EXPIRE = -1;//永久不过期
+    /**
+     * 永久不过期
+     */
+    public static final long CACHE_NEVER_EXPIRE = -1;
 
     private boolean isDiskCache;
-    //构建内存缓存需要的属性
+    /**
+     * 构建内存缓存需要的属性
+     */
     private int memoryMaxSize;
 
     private final Context context;
-    private final CacheCore cacheCore;                                  //缓存的核心管理类
-    private final String cacheKey;                                      //缓存的key
-    private final long cacheTime;                                       //缓存的时间 单位:秒
-    private final IDiskConverter diskConverter;                         //缓存的转换器
-    private final File diskDir;                                         //缓存的磁盘目录，默认是缓存目录
-    private final int appVersion;                                       //缓存的版本
-    private final long diskMaxSize;                                     //缓存的磁盘大小
+    /**
+     * 缓存的核心管理类
+     */
+    private final CacheCore cacheCore;
+    /**
+     * 缓存的key
+     */
+    private final String cacheKey;
+    /**
+     * 缓存的时间 单位:秒
+     */
+    private final long cacheTime;
+    /**
+     * 缓存的转换器
+     */
+    private final IDiskConverter diskConverter;
+    /**
+     * 缓存的磁盘目录，默认是缓存目录
+     */
+    private final File diskDir;
+    /**
+     * 缓存的版本
+     */
+    private final int appVersion;
+    /**
+     * 缓存的磁盘大小
+     */
+    private final long diskMaxSize;
 
     public RxCache() {
         this(new Builder());
@@ -121,11 +149,12 @@ public final class RxCache {
      */
     @SuppressWarnings(value = {"unchecked"})
     public <T> ObservableTransformer<T, CacheResult<T>> transformer(final CacheMode cacheMode, final Type type) {
-        final IStrategy strategy = loadStrategy(cacheMode);//获取缓存策略
+        //获取缓存策略
+        final IStrategy strategy = loadStrategy(cacheMode);
         return new ObservableTransformer<T, CacheResult<T>>() {
             @Override
             public ObservableSource<CacheResult<T>> apply(@NonNull Observable<T> upstream) {
-                HttpLog.i("cacheMode=" + cacheMode + ", cacheKey=" + RxCache.this.cacheKey);
+                HttpLog.i("cacheMode=" + cacheMode + ", cacheKey=" + RxCache.this.cacheKey + ", cacheTime=" + RxCache.this.cacheTime + "(s)");
                 Type tempType = type;
                 if (type instanceof ParameterizedType) {//自定义ApiResult
                     Class<T> cls = (Class) ((ParameterizedType) type).getRawType();
@@ -425,5 +454,28 @@ public final class RxCache {
             }
             return Math.max(Math.min(size, MAX_DISK_CACHE_SIZE), MIN_DISK_CACHE_SIZE);
         }
+    }
+
+    //============缓存Key的生成器=============//
+
+    /**
+     * 缓存Key的生成器
+     */
+    private static ICacheKeyCreator sICacheKeyCreator;
+
+    /**
+     * 设置缓存Key的生成器
+     *
+     * @param sICacheKeyCreator 缓存Key的生成器
+     */
+    public static void setICacheKeyCreator(@NonNull ICacheKeyCreator sICacheKeyCreator) {
+        RxCache.sICacheKeyCreator = sICacheKeyCreator;
+    }
+
+    public static ICacheKeyCreator getICacheKeyCreator() {
+        if (sICacheKeyCreator == null) {
+            sICacheKeyCreator = new DefaultCacheKeyCreator();
+        }
+        return sICacheKeyCreator;
     }
 }

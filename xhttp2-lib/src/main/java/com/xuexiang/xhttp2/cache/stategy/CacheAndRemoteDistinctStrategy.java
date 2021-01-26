@@ -16,9 +16,9 @@
 
 package com.xuexiang.xhttp2.cache.stategy;
 
-import com.google.gson.Gson;
 import com.xuexiang.xhttp2.cache.RxCache;
 import com.xuexiang.xhttp2.cache.model.CacheResult;
+import com.xuexiang.xhttp2.utils.HttpUtils;
 
 import java.lang.reflect.Type;
 
@@ -54,7 +54,7 @@ public final class CacheAndRemoteDistinctStrategy extends BaseStrategy {
                 }).distinct(new Function<CacheResult<T>, String>() {
                     @Override
                     public String apply(@NonNull CacheResult<T> tCacheResult) throws Exception {
-                        return ByteString.encodeUtf8(new Gson().toJson(tCacheResult.data)).md5().hex();
+                        return ByteString.encodeUtf8(HttpUtils.toJson(tCacheResult.data)).md5().hex();
                     }
                 });
     }
