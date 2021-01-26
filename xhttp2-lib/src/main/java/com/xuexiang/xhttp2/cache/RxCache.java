@@ -154,7 +154,7 @@ public final class RxCache {
         return new ObservableTransformer<T, CacheResult<T>>() {
             @Override
             public ObservableSource<CacheResult<T>> apply(@NonNull Observable<T> upstream) {
-                HttpLog.i("cacheMode=" + cacheMode + ", cacheKey=" + RxCache.this.cacheKey + ", cacheTime=" + RxCache.this.cacheTime + "(s)");
+                logCacheInfo(cacheMode);
                 Type tempType = type;
                 if (type instanceof ParameterizedType) {//自定义ApiResult
                     Class<T> cls = (Class) ((ParameterizedType) type).getRawType();
@@ -162,9 +162,17 @@ public final class RxCache {
                         tempType = TypeUtils.getParameterizedType(type, 0);
                     }
                 }
-                return strategy.execute(RxCache.this, RxCache.this.cacheKey, RxCache.this.cacheTime, upstream, tempType);
+                return strategy.execute(RxCache.this, cacheKey, cacheTime, upstream, tempType);
             }
         };
+    }
+
+    private void logCacheInfo(CacheMode cacheMode) {
+        if (cacheMode != CacheMode.NO_CACHE) {
+            HttpLog.i("cacheMode=" + cacheMode + ", cacheKey=" + cacheKey + ", cacheTime=" + cacheTime + "(s)");
+        } else {
+            HttpLog.i("cacheMode=" + cacheMode);
+        }
     }
 
     private static abstract class SimpleSubscribe<T> implements ObservableOnSubscribe<T> {

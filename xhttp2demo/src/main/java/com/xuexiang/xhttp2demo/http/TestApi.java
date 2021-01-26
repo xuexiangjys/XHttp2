@@ -109,7 +109,7 @@ public class TestApi {
         /**
          * 获取所有图书
          */
-        @NetMethod(action = GET, url = "/book/getAllBook", accessToken = false)
+        @NetMethod(action = GET, url = "/book/getAllBook", cacheMode = CacheMode.FIRST_CACHE, accessToken = false)
         Observable<List<Book>> getAllBooks();
     }
 
