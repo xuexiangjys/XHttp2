@@ -25,7 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +51,10 @@ import okhttp3.Response;
  * @since 2018/6/20 上午1:35
  */
 public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> implements Interceptor {
+
+    private static final String ACTION_GET = "GET";
+    private static final String ACTION_POST = "POST";
+
     private HttpUrl mHttpUrl;
 
     /**
@@ -99,12 +103,14 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        if ("GET".equals(request.method())) {
+        if (ACTION_GET.equals(request.method())) {
             mHttpUrl = HttpUrl.parse(HttpUtils.parseUrl(request.url().toString()));
             request = addGetParamsSign(request);
-        } else if ("POST".equals(request.method())) {
+        } else if (ACTION_POST.equals(request.method())) {
             mHttpUrl = request.url();
             request = addPostParamsSign(request);
+        } else {
+            request = createNewRequest(request.newBuilder());
         }
         return chain.proceed(request);
     }
@@ -116,9 +122,8 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
     /**
      * 为get请求 添加签名和公共动态参数
      *
-     * @param request
-     * @return
-     * @throws UnsupportedEncodingException
+     * @param request 旧请求
+     * @return 新请求
      */
     private Request addGetParamsSign(Request request) throws UnsupportedEncodingException {
         HttpUrl httpUrl = request.url();
@@ -126,36 +131,34 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
 
         //获取原有的参数
         Set<String> nameSet = httpUrl.queryParameterNames();
-        ArrayList<String> nameList = new ArrayList<>();
-        nameList.addAll(nameSet);
+        List<String> nameList = new ArrayList<>(nameSet);
         TreeMap<String, Object> oldParams = new TreeMap<>();
         for (int i = 0; i < nameList.size(); i++) {
-            String value = httpUrl.queryParameterValues(nameList.get(i)) != null && httpUrl.queryParameterValues(nameList.get(i)).size() > 0 ? httpUrl.queryParameterValues(nameList.get(i)).get(0) : "";
+            List<String> values = httpUrl.queryParameterValues(nameList.get(i));
+            String value = values.size() > 0 ? values.get(0) : "";
             oldParams.put(nameList.get(i), value);
         }
-        String nameKeys = Arrays.asList(nameList).toString();
+        String nameKeys = Collections.singletonList(nameList).toString();
         //拼装新的参数
         TreeMap<String, Object> newParams = updateDynamicParams(oldParams);
         Utils.checkNotNull(newParams, "newParams==null");
         for (Map.Entry<String, Object> entry : newParams.entrySet()) {
             String urlValue = URLEncoder.encode(String.valueOf(entry.getValue()), HttpUtils.UTF8.name());
             //原来的URl: https://xxx.xxx.xxx/app/chairdressing/skinAnalyzePower/skinTestResult?appId=10101
-            if (!nameKeys.contains(entry.getKey())) {//避免重复添加
+            //避免重复添加
+            if (!nameKeys.contains(entry.getKey())) {
                 newBuilder.addQueryParameter(entry.getKey(), urlValue);
             }
         }
-
         httpUrl = newBuilder.build();
-        request = request.newBuilder().url(httpUrl).build();
-        return request;
+        return createNewRequest(request.newBuilder().url(httpUrl));
     }
 
     /**
      * 为post请求 添加签名和公共动态参数
      *
-     * @param request
-     * @return
-     * @throws UnsupportedEncodingException
+     * @param request 旧请求
+     * @return 新请求
      */
     private Request addPostParamsSign(Request request) throws UnsupportedEncodingException {
         if (request.body() instanceof FormBody) {
@@ -178,15 +181,14 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
             String url = HttpUtils.createUrlFromParams(HttpUtils.parseUrl(mHttpUrl.url().toString()), newParams);
             HttpLog.i(url);
             formBody = bodyBuilder.build();
-            request = request.newBuilder().post(formBody).build();
+            request = createNewRequest(request.newBuilder().post(formBody));
         } else if (request.body() instanceof MultipartBody) {
             MultipartBody multipartBody = (MultipartBody) request.body();
             MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             List<MultipartBody.Part> oldParts = multipartBody.parts();
 
             //拼装新的参数
-            List<MultipartBody.Part> newParts = new ArrayList<>();
-            newParts.addAll(oldParts);
+            List<MultipartBody.Part> newParts = new ArrayList<>(oldParts);
             TreeMap<String, Object> oldParams = new TreeMap<>();
             TreeMap<String, Object> newParams = updateDynamicParams(oldParams);
             for (Map.Entry<String, Object> paramEntry : newParams.entrySet()) {
@@ -197,20 +199,41 @@ public abstract class BaseDynamicInterceptor<R extends BaseDynamicInterceptor> i
                 bodyBuilder.addPart(part);
             }
             multipartBody = bodyBuilder.build();
-            request = request.newBuilder().post(multipartBody).build();
+            request = createNewRequest(request.newBuilder().post(multipartBody));
         } else if (request.body() instanceof RequestBody) {
             TreeMap<String, Object> params = updateDynamicParams(new TreeMap<String, Object>());
             String url = HttpUtils.createUrlFromParams(HttpUtils.parseUrl(mHttpUrl.url().toString()), params);
-            request = request.newBuilder().url(url).build();
+            request = createNewRequest(request.newBuilder().url(url));
         }
         return request;
     }
 
     /**
-     * 更新请求的动态参数
+     * 动态更新请求体的参数
      *
-     * @param dynamicMap
+     * @param dynamicMap 动态参数
      * @return 返回新的参数集合
      */
     protected abstract TreeMap<String, Object> updateDynamicParams(TreeMap<String, Object> dynamicMap);
+
+    /**
+     * 动态更新请求头
+     *
+     * @param builder 请求构建者
+     * @return 返回新的请求构建者
+     */
+    protected Request.Builder updateHeaders(Request.Builder builder) {
+        return builder;
+    }
+
+    /**
+     * 构建新的请求
+     *
+     * @param builder 请求构建者
+     * @return 新的请求
+     */
+    private Request createNewRequest(Request.Builder builder) {
+        return updateHeaders(builder).build();
+    }
+
 }

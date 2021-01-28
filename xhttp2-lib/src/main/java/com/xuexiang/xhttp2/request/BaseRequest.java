@@ -881,6 +881,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
                             .cacheTime(mCacheTime);
                     return cacheBuilder;
                 }
+            default:
+                break;
         }
         return rxCacheBuilder;
     }

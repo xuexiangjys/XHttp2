@@ -22,6 +22,8 @@ import com.xuexiang.xutil.data.DateUtils;
 
 import java.util.TreeMap;
 
+import okhttp3.Request;
+
 /**
  * 自定义动态添加请求参数的拦截器
  *
@@ -30,17 +32,43 @@ import java.util.TreeMap;
  */
 public class CustomDynamicInterceptor extends BaseDynamicInterceptor<CustomDynamicInterceptor> {
 
+    //================下面是动态更新请求参数,按需求添加======================//
+
     @Override
     protected TreeMap<String, Object> updateDynamicParams(TreeMap<String, Object> dynamicMap) {
-        if (isAccessToken()) {//是否添加token
+        if (isAccessToken()) {
+            //是否添加token
             dynamicMap.put("token", TokenManager.getInstance().getToken());
         }
-        if (isSign()) {//是否添加签名
+        if (isSign()) {
+            //是否添加签名
             dynamicMap.put("sign", TokenManager.getInstance().getSign());
         }
-        if (isTimeStamp()) {//是否添加请求时间戳
+        if (isTimeStamp()) {
+            //是否添加请求时间戳
             dynamicMap.put("timeStamp", DateUtils.getNowMills());
         }
-        return dynamicMap;//dynamicMap:是原有的全局参数+局部参数+新增的动态参数
+        //dynamicMap:是原有的全局参数+局部参数+新增的动态参数
+        return dynamicMap;
+    }
+
+
+    //================下面是动态更新请求头,按需求添加======================//
+
+    @Override
+    protected Request.Builder updateHeaders(Request.Builder builder) {
+        if (isAccessToken()) {
+            //是否添加token
+            builder.addHeader("token", TokenManager.getInstance().getToken());
+        }
+        if (isSign()) {
+            //是否添加签名
+            builder.addHeader("sign", TokenManager.getInstance().getSign());
+        }
+        if (isTimeStamp()) {
+            //是否添加请求时间戳
+            builder.addHeader("timeStamp", String.valueOf(DateUtils.getNowMills()));
+        }
+        return builder;
     }
 }
