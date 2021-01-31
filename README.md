@@ -389,6 +389,7 @@ keepJson | boolean | false | 是否保存json
 accessToken | boolean | true | 设置是否需要验证token
 cacheMode | CacheMode | CacheMode.NO_CACHE | 设置请求的缓存模式
 cacheTime | long | -2(使用全局设置） | 设置缓存有效时间
+cacheKeyIndex | int | -1(所有参数） | 作为缓存key的请求参数索引
 
 2.使用XHttpProxy进行请求。
 
