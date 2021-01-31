@@ -98,7 +98,7 @@ allprojects {
 ```
 dependencies {
   ...
-  implementation 'com.github.xuexiangjys:XHttp2:2.0.2'
+  implementation 'com.github.xuexiangjys:XHttp2:2.0.3'
 
   implementation 'com.google.code.gson:gson:2.8.5'
   implementation 'com.squareup.okhttp3:okhttp:3.10.0'
