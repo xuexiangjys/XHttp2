@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface NetMethod {
     /**
-     * JSON
+     * JSON Map({"key1": value1, "key2": value2})
      */
     int JSON = 1;
     /**
@@ -44,9 +44,13 @@ public @interface NetMethod {
      */
     int FORM_BODY = 2;
     /**
-     * 直接拼接到get的url后面（URL/appId）,只有get有效，且只有第一个参数为有效路径
+     * 直接拼接到get的url后面（URL/appId）,只有get有效，且只有第一个参数为有效路径。
      */
     int URL_GET = 3;
+    /**
+     * JSON Object(请求参数必须是Object，也可以是Object Array)，但是请求接口的方法参数有且只能有一个，不需要设置parameterNames。
+     */
+    int JSON_OBJECT = 4;
 
     String POST = "post";
     String GET = "get";
@@ -64,6 +68,8 @@ public @interface NetMethod {
     int ALL_PARAMS_INDEX = -1;
 
     /**
+     * 参数名集合, 当paramType为 JSON_OBJECT 时不起作用
+     *
      * @return 参数名集合
      */
     String[] parameterNames() default {};

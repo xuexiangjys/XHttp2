@@ -52,6 +52,11 @@ import static com.xuexiang.xhttp2.annotation.NetMethod.PUT;
 public class XHttpProxy implements InvocationHandler {
 
     /**
+     * paramType为JSON_OBJECT时，参数有且只能有一个
+     */
+    public static final int JSON_OBJECT_METHOD_PARAM_NUMBER = 1;
+
+    /**
      * 网络请求代理
      *
      * @param cls 代理的请求接口
@@ -105,18 +110,26 @@ public class XHttpProxy implements InvocationHandler {
         NetMethod netMethod = method.getAnnotation(NetMethod.class);
         if (netMethod == null) {
             throw new ApiException(method.getName() + "方法无NetMethod注释", ApiException.ERROR.NET_METHOD_ANNOTATION_ERROR);
-        } else if (netMethod.parameterNames().length != method.getGenericParameterTypes().length) {
-            throw new ApiException(method.getName() + "方法NetMethod注释与实际参数个数不对应", ApiException.ERROR.NET_METHOD_ANNOTATION_ERROR);
+        }
+        if (netMethod.paramType() == NetMethod.JSON_OBJECT) {
+            if (method.getGenericParameterTypes().length != JSON_OBJECT_METHOD_PARAM_NUMBER) {
+                throw new ApiException(method.getName() + "方法NetMethod的paramType为JSON_OBJECT时，接口的方法参数必须是一个", ApiException.ERROR.NET_METHOD_ANNOTATION_ERROR);
+            }
+        } else {
+            if (netMethod.parameterNames().length != method.getGenericParameterTypes().length) {
+                throw new ApiException(method.getName() + "方法NetMethod注释与实际参数个数不对应", ApiException.ERROR.NET_METHOD_ANNOTATION_ERROR);
+            }
         }
 
-        Map<String, Object> params = getParamsMap(method, args, netMethod);
-        Type type = getReturnType(method);
         BaseRequest request = getHttpRequest(method, args, netMethod);
         if (request instanceof BaseBodyRequest) {
             if (netMethod.paramType() == NetMethod.JSON) {
-                ((BaseBodyRequest) request).upJson(HttpUtils.toJson(params));
+                ((BaseBodyRequest) request).upJson(HttpUtils.toJson(getParamsMap(method, args, netMethod)));
+            } else if (netMethod.paramType() == NetMethod.JSON_OBJECT) {
+                // JSON_OBJECT直接取第一个参数进行序列化
+                ((BaseBodyRequest) request).upJson(HttpUtils.toJson(args[0]));
             } else {
-                request.params(params);
+                request.params(getParamsMap(method, args, netMethod));
             }
         } else {
             if (netMethod.paramType() == NetMethod.URL_GET) {
@@ -125,10 +138,10 @@ public class XHttpProxy implements InvocationHandler {
                     request.params(getParamsMap(method, args, netMethod, 1));
                 }
             } else {
-                request.params(params);
+                request.params(getParamsMap(method, args, netMethod));
             }
         }
-        return request.execute(type);
+        return request.execute(getReturnType(method));
     }
 
     /**
@@ -209,12 +222,7 @@ public class XHttpProxy implements InvocationHandler {
      */
     @NonNull
     private Map<String, Object> getParamsMap(Method method, Object[] args, NetMethod apiMethod) {
-        Map<String, Object> params = new TreeMap<>();
-        Type[] parameters = method.getGenericParameterTypes();
-        for (int i = 0; i < parameters.length; i++) {
-            params.put(apiMethod.parameterNames()[i], args[i]);
-        }
-        return params;
+        return getParamsMap(method, args, apiMethod, 0);
     }
 
     /**

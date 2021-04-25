@@ -86,4 +86,17 @@ public class User {
     public void setPhone(String phone) {
         this.phone = phone == null ? null : phone.trim();
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", loginName='" + loginName + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", gender=" + gender +
+                ", age=" + age +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
 }

@@ -36,19 +36,24 @@ public class DefaultCacheKeyCreator implements ICacheKeyCreator {
         StringBuilder keyBuilder = new StringBuilder();
         keyBuilder.append(apiMethod.url()).append("-").append(method.getName()).append('(');
         Type[] parameters = method.getGenericParameterTypes();
-        if (apiMethod.cacheKeyIndex() == NetMethod.ALL_PARAMS_INDEX) {
-            for (int i = 0; i < parameters.length; i++) {
-                if (i > 0) {
-                    keyBuilder.append("|");
-                }
-                keyBuilder.append(apiMethod.parameterNames()[i]).append('=');
-                keyBuilder.append(Strings.toString(args[i]));
-            }
+        if (apiMethod.paramType() == NetMethod.JSON_OBJECT) {
+            keyBuilder.append("JSON_OBJECT").append('=')
+                    .append(Strings.toString(args[0]));
         } else {
-            int index = apiMethod.cacheKeyIndex();
-            if (index >= 0 && index < parameters.length) {
-                keyBuilder.append(apiMethod.parameterNames()[index]).append('=');
-                keyBuilder.append(Strings.toString(args[index]));
+            if (apiMethod.cacheKeyIndex() == NetMethod.ALL_PARAMS_INDEX) {
+                for (int i = 0; i < parameters.length; i++) {
+                    if (i > 0) {
+                        keyBuilder.append("|");
+                    }
+                    keyBuilder.append(apiMethod.parameterNames()[i]).append('=')
+                            .append(Strings.toString(args[i]));
+                }
+            } else {
+                int index = apiMethod.cacheKeyIndex();
+                if (index >= 0 && index < parameters.length) {
+                    keyBuilder.append(apiMethod.parameterNames()[index]).append('=')
+                            .append(Strings.toString(args[index]));
+                }
             }
         }
         keyBuilder.append(')');

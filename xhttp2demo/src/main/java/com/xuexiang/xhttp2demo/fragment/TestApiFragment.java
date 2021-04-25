@@ -37,9 +37,11 @@ import com.xuexiang.xhttp2demo.http.callback.TipRequestCallBack;
 import com.xuexiang.xhttp2demo.http.subscriber.TipRequestSubscriber;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageFragment;
+import com.xuexiang.xutil.common.RandomUtils;
 import com.xuexiang.xutil.net.JsonUtil;
 import com.xuexiang.xutil.tip.ToastUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -78,7 +80,7 @@ public class TestApiFragment extends XPageFragment {
 
     }
 
-    @OnClick({R.id.btn_test_list_1, R.id.btn_test_list_2, R.id.btn_test_keep_json, R.id.btn_test_data_null})
+    @OnClick({R.id.btn_test_list_1, R.id.btn_test_list_2, R.id.btn_test_keep_json, R.id.btn_test_json_object, R.id.btn_test_json_object_array, R.id.btn_test_data_null})
     public void onViewClicked(View view) {
         clearLog();
         switch (view.getId()) {
@@ -122,6 +124,28 @@ public class TestApiFragment extends XPageFragment {
                             }
                         });
                 break;
+            case R.id.btn_test_json_object:
+                XHttpProxy.proxy(TestApi.ITestService.class)
+                        .testJsonObject(getTestUser())
+                        .subscribeWith(new TipRequestSubscriber<User>() {
+                            @Override
+                            protected void onSuccess(User user) {
+                                ToastUtils.toast("查询成功！");
+                                showResult(JsonUtil.toJson(user));
+                            }
+                        });
+                break;
+            case R.id.btn_test_json_object_array:
+                XHttpProxy.proxy(TestApi.ITestService.class)
+                        .testJsonObjectArray(getTestUserList())
+                        .subscribeWith(new TipRequestSubscriber<List<User>>() {
+                            @Override
+                            protected void onSuccess(List<User> users) {
+                                ToastUtils.toast("查询成功！");
+                                showResult(JsonUtil.toJson(users));
+                            }
+                        });
+                break;
             case R.id.btn_test_data_null:
                 XHttp.get("/test/testDataNull")
                         .execute(new TipRequestCallBack<Void>() {
@@ -134,6 +158,28 @@ public class TestApiFragment extends XPageFragment {
             default:
                 break;
         }
+    }
+
+
+    private User getTestUser() {
+        User user = new User();
+        user.setLoginName("xuexiang");
+        user.setAge(27);
+        user.setPassword("123456");
+        return user;
+    }
+
+
+    private List<User> getTestUserList() {
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            User user = new User();
+            user.setLoginName("xuexiang" + (i + 1));
+            user.setAge(RandomUtils.getRandom(100));
+            user.setPassword("123456" + i);
+            list.add(user);
+        }
+        return list;
     }
 
     @MainThread

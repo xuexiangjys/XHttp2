@@ -37,6 +37,7 @@ import retrofit2.http.GET;
 
 import static com.xuexiang.xhttp2.annotation.NetMethod.FORM_BODY;
 import static com.xuexiang.xhttp2.annotation.NetMethod.GET;
+import static com.xuexiang.xhttp2.annotation.NetMethod.JSON_OBJECT;
 
 /**
  * 测试api协议
@@ -162,5 +163,22 @@ public class TestApi {
         Observable<CustomApiResult<Boolean>> testCustomResult();
     }
 
+
+    /**
+     * 测试接口
+     */
+    public interface ITestService {
+        /**
+         * 测试JsonObject
+         */
+        @NetMethod(url = "/test/testJsonObject/", paramType = JSON_OBJECT, cacheMode = CacheMode.FIRST_CACHE, accessToken = false)
+        Observable<User> testJsonObject(User user);
+
+        /**
+         * 测试JsonObject数组
+         */
+        @NetMethod(url = "/test/testJsonObjectArray/", paramType = JSON_OBJECT, cacheMode = CacheMode.FIRST_CACHE, accessToken = false)
+        Observable<List<User>> testJsonObjectArray(List<User> users);
+    }
 
 }

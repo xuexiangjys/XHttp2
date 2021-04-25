@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.xuexiang.xhttp2demo"
-        minSdkVersion 14
+        minSdkVersion 17
         targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
