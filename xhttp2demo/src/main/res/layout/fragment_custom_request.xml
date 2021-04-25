@@ -29,6 +29,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <Button
@@ -93,15 +94,15 @@
             android:id="@+id/tv_result_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:padding="10dp"
             android:background="@android:color/white"
             android:lineSpacingExtra="9dp"
-            android:singleLine="false"
-            android:scrollbars="vertical" />
+            android:padding="10dp"
+            android:scrollbars="vertical"
+            android:singleLine="false" />
 
 
     </LinearLayout>

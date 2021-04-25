@@ -80,7 +80,7 @@ public class CustomRequestFragment extends XPageFragment {
     @SuppressLint("CheckResult")
     @OnClick({R.id.btn_custom_request, R.id.btn_retrofit_1, R.id.btn_retrofit_2, R.id.btn_retrofit_3, R.id.btn_retrofit_4, R.id.btn_retrofit_5})
     public void onViewClicked(View view) {
-        CustomRequest request = XHttp.custom();
+        CustomRequest request = XHttp.custom().accessToken(true);
         switch (view.getId()) {
             case R.id.btn_custom_request:
                 new CustomGetRequest("/test/testCustomResult")
@@ -88,6 +88,7 @@ public class CustomRequestFragment extends XPageFragment {
                             @Override
                             public void onSuccess(Boolean response) throws Throwable {
                                 ToastUtils.toast("请求成功：" + response);
+                                showResult(JsonUtil.toJson(response));
                             }
                         });
 
@@ -134,8 +135,9 @@ public class CustomRequestFragment extends XPageFragment {
                         .registerUser(HttpUtils.getJsonRequestBody(UserManager.getInstance().getRandomUser())))
                         .subscribeWith(new TipRequestSubscriber<Boolean>() {
                             @Override
-                            protected void onSuccess(Boolean aBoolean) {
+                            protected void onSuccess(Boolean response) {
                                 ToastUtils.toast("添加用户成功!");
+                                showResult(JsonUtil.toJson(response));
                             }
                         });
                 break;
@@ -158,6 +160,7 @@ public class CustomRequestFragment extends XPageFragment {
                     @Override
                     public void onSuccess(Boolean response) throws Throwable {
                         ToastUtils.toast("添加用户成功!");
+                        showResult(JsonUtil.toJson(response));
                     }
 
                     @Override

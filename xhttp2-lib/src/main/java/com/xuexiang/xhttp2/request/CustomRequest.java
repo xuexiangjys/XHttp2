@@ -26,7 +26,6 @@ import com.xuexiang.xhttp2.transform.HttpResultTransformer;
 import com.xuexiang.xhttp2.transform.HttpSchedulersTransformer;
 import com.xuexiang.xhttp2.transform.func.CacheResultFunc;
 import com.xuexiang.xhttp2.transform.func.RetryExceptionFunc;
-import com.xuexiang.xhttp2.utils.Utils;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -37,12 +36,12 @@ import io.reactivex.disposables.Disposable;
 import okhttp3.ResponseBody;
 
 /**
- *  <p>描述：自定义请求，例如你有自己的ApiService</p>
+ * <p>描述：自定义请求，例如你有自己的ApiService</p>
  *
  * @author xuexiang
  * @since 2018/6/25 下午8:16
  */
-@SuppressWarnings(value={"unchecked"})
+@SuppressWarnings(value = {"unchecked"})
 public class CustomRequest extends BaseRequest<CustomRequest> {
 
     public CustomRequest() {
@@ -65,15 +64,16 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
     }
 
     private void checkValidate() {
-        Utils.checkNotNull(mRetrofit, "请先在调用build()才能使用");
+        if (mRetrofit == null) {
+            build();
+        }
     }
-
 
     //=================apiCall====================//
 
     /**
      * 针对retrofit定义的接口，返回的是Observable<ApiResult<T>>的情况<br>
-     *
+     * <p>
      * 对ApiResult进行拆包，直接获取数据
      *
      * @param observable retrofit定义接口返回的类型
@@ -88,19 +88,21 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
 
     /**
      * 针对retrofit定义的接口，返回的是Observable<ApiResult<T>>的情况<br>
-     *
+     * <p>
      * 对ApiResult进行拆包，直接获取数据
      *
      * @param observable retrofit定义接口返回的类型
      */
     public <T> Disposable apiCall(Observable observable, CallBack<T> callBack) {
-        return call(observable, new CallBackProxy<ApiResult<T>, T>(callBack){});
+        return call(observable, new CallBackProxy<ApiResult<T>, T>(callBack) {
+        });
     }
 
     //=================call====================//
+
     /**
      * 针对retrofit定义的接口，返回的是Observable<T>的情况<br>
-     *
+     * <p>
      * 不对ApiResult进行拆包，返回服务端响应的ApiResult
      *
      * @param observable retrofit定义接口返回的类型
@@ -115,26 +117,30 @@ public class CustomRequest extends BaseRequest<CustomRequest> {
 
     /**
      * 针对retrofit定义的接口，返回的是Observable<T>的情况<br>
-     *
+     * <p>
      * 不对ApiResult进行拆包，返回服务端响应的ApiResult
      *
      * @param observable retrofit定义接口返回的类型
+     * @param callBack   网络请求回调
      */
     public <T> void call(Observable<T> observable, CallBack<T> callBack) {
         call(observable, new CallBackSubscriber(callBack));
     }
 
-    public <R> void call(Observable observable, Observer<R> subscriber) {
+    /**
+     * 针对retrofit定义的接口，返回的是Observable<T>的情况<br>
+     * <p>
+     * 不对ApiResult进行拆包，返回服务端响应的ApiResult
+     *
+     * @param observable retrofit定义接口返回的类型
+     * @param subscriber 请求订阅
+     * @param <R>
+     */
+    public <R> void call(Observable<R> observable, Observer<R> subscriber) {
         call(observable).subscribe(subscriber);
     }
 
-    /**
-     * @param observable
-     * @param proxy
-     * @param <T>
-     * @return
-     */
-    public <T> Disposable call(Observable<T> observable, CallBackProxy<? extends ApiResult<T>, T> proxy) {
+    private <T> Disposable call(Observable<T> observable, CallBackProxy<? extends ApiResult<T>, T> proxy) {
         Observable<CacheResult<T>> cacheObservable = build().toObservable(observable, proxy);
         if (CacheResult.class != proxy.getRawType()) {
             return cacheObservable.compose(new ObservableTransformer<CacheResult<T>, T>() {

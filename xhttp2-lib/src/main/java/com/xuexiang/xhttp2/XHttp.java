@@ -751,8 +751,7 @@ public final class XHttp {
      */
     public static CustomRequest custom() {
         return new CustomRequest()
-                .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                .build();
+                .addConverterFactory(GsonConverterFactory.create(new Gson()));
     }
 
     /**
