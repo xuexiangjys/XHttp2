@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xuexiang.xhttp2.XHttp;
 import com.xuexiang.xhttp2.model.ApiResult;
+import com.xuexiang.xhttp2.utils.ApiUtils;
 import com.xuexiang.xhttp2.utils.TypeUtils;
 
 import org.json.JSONException;
@@ -94,7 +95,7 @@ public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
                 String json = responseBody.string();
                 if (mKeepJson && !List.class.isAssignableFrom(rawType) && String.class.equals(clazz)) {
                     apiResult.setData((T) (json == null ? "" : json));
-                    apiResult.setCode(0);
+                    apiResult.setCode(ApiUtils.getSuccessCode());
                 } else {
                     ApiResult result = mGson.fromJson(json, mType);
                     if (result != null) {
@@ -149,7 +150,7 @@ public class ApiResultFunc<T> implements Function<ResponseBody, ApiResult<T>> {
             final Class<T> clazz = TypeUtils.getClass(mType, 0);
             if (mKeepJson && String.class.equals(clazz)) {
                 apiResult.setData((T) (json == null ? "" : json));
-                apiResult.setCode(0);
+                apiResult.setCode(ApiUtils.getSuccessCode());
             } else {
                 final ApiResult result = parseApiResult(json, apiResult);
                 if (result != null) {
