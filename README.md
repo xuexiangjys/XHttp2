@@ -990,7 +990,7 @@ https://github.com/zhou-you/RxEasyHttp
 
 > 你的打赏是我维护的动力，我将会列出所有打赏人员的清单在下方作为凭证，打赏前请留下打赏项目的备注！
 
-![pay.png](https://img.rruu.net/image/5f871d00045da)
+![pay.png](https://ss.im5i.com/2021/06/14/6twG6.png)
 
 感谢下面小伙伴的打赏：
 
@@ -1005,9 +1005,9 @@ https://github.com/zhou-you/RxEasyHttp
 
 > 更多资讯内容，欢迎扫描关注我的个人微信公众号:【我的Android开源之旅】
 
-![gzh_weixin.jpg](https://img.rruu.net/image/5f871cfff3194)
+![gzh_weixin.jpg](https://ss.im5i.com/2021/06/14/65yoL.jpg)
 
-[demo-gif]: https://img.rruu.net/image/5f7dc798ea8d9
+[demo-gif]: https://ss.im5i.com/2021/06/14/6TWkS.gif
 [download-svg]: https://img.shields.io/badge/downloads-2.61M-blue.svg
 [download-url]: https://github.com/xuexiangjys/XHttp2/blob/master/apk/xhttp2_demo_1.0.apk?raw=true
-[download-img]: https://img.rruu.net/image/5f7dc792910c3
+[download-img]: https://ss.im5i.com/2021/06/14/6TT3j.png
