@@ -56,6 +56,10 @@
 
 点击查看[项目设计类图](https://github.com/xuexiangjys/XHttp2/blob/master/img/xhttp_uml.png)。
 
+## Star趋势图
+
+[![Stargazers over time](https://starchart.cc/xuexiangjys/XHttp2.svg)](https://starchart.cc/xuexiangjys/XHttp2)
+
 ---
 
 ## 1、演示（请star支持）
