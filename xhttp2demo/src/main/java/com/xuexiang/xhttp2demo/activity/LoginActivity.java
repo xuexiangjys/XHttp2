@@ -111,6 +111,8 @@ public class LoginActivity extends Activity {
                 mEtLoginName.setText("");
                 mEtPassword.setText("");
                 break;
+            default:
+                break;
         }
     }
 

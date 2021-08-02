@@ -87,7 +87,7 @@ dependencies {
     implementation 'com.github.xuexiangjys.XUtil:xutil-sub:2.0.0'
     //rxutil2
     implementation deps.rxbinding
-    implementation 'com.github.xuexiangjys:rxutil2:1.2.0'
+    implementation 'com.github.xuexiangjys:rxutil2:1.2.1'
     //XAOP
     implementation 'com.github.xuexiangjys.XAOP:xaop-runtime:1.1.0'
     //XRouter
@@ -103,7 +103,7 @@ dependencies {
     //XHttp
     implementation project(':xhttp2-lib')
 
-//    implementation 'com.github.xuexiangjys:XHttp2:2.0.1'
+//    implementation 'com.github.xuexiangjys:XHttp2:2.0.4'
 
     //RxJava
     implementation deps.rxjava2
