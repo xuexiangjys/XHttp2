@@ -20,21 +20,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.xuexiang.xhttp2.annotation.ParamKey;
 import com.xuexiang.xhttp2.logs.HttpLog;
 import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.model.XHttpRequest;
+import com.xuexiang.xhttp2.reflect.TypeBuilder;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -56,7 +60,7 @@ public final class HttpUtils {
 
     public static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private static Gson sGson = new Gson();
+    private static final Gson sGson = new Gson();
 
     private HttpUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
@@ -70,6 +74,60 @@ public final class HttpUtils {
      */
     public static String toJson(Object src) {
         return sGson.toJson(src);
+    }
+
+    /**
+     * 把 JSON 字符串 转换为 单个指定类型的对象
+     *
+     * @param json     包含了单个对象数据的JSON字符串
+     * @param classOfT 指定类型对象的Class
+     * @return 指定类型对象
+     */
+    public static <T> T fromJson(String json, Class<T> classOfT) {
+        try {
+            return sGson.fromJson(json, classOfT);
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 解析Json字符串
+     *
+     * @param json    Json字符串
+     * @param typeOfT 泛型类
+     * @param <T>
+     * @return 指定类型对象
+     */
+    public static <T> T fromJson(String json, Type typeOfT) {
+        try {
+            return sGson.fromJson(json, typeOfT);
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 解析Json数组字符串
+     *
+     * @param json     Json字符串
+     * @param classOfT 指定类型对象的Class
+     * @param <T>
+     * @return 指定类型对象
+     */
+    public static <T> List<T> fromJsonArray(String json, Class<T> classOfT) {
+        try {
+            Type type = TypeBuilder
+                    .newInstance(List.class)
+                    .addTypeParam(classOfT)
+                    .build();
+            return fromJson(json, type);
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
