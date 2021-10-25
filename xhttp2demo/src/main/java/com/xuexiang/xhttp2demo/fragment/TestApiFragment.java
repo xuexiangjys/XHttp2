@@ -30,6 +30,8 @@ import com.xuexiang.xhttp2.subsciber.ProgressDialogLoader;
 import com.xuexiang.xhttp2.subsciber.impl.IProgressLoader;
 import com.xuexiang.xhttp2demo.R;
 import com.xuexiang.xhttp2demo.entity.Book;
+import com.xuexiang.xhttp2demo.entity.PageQuery;
+import com.xuexiang.xhttp2demo.entity.QueryResult;
 import com.xuexiang.xhttp2demo.entity.User;
 import com.xuexiang.xhttp2demo.http.ApiProvider;
 import com.xuexiang.xhttp2demo.http.TestApi;
@@ -37,6 +39,7 @@ import com.xuexiang.xhttp2demo.http.callback.TipRequestCallBack;
 import com.xuexiang.xhttp2demo.http.subscriber.TipRequestSubscriber;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageFragment;
+import com.xuexiang.xutil.common.CollectionUtils;
 import com.xuexiang.xutil.common.RandomUtils;
 import com.xuexiang.xutil.net.JsonUtil;
 import com.xuexiang.xutil.tip.ToastUtils;
@@ -80,7 +83,7 @@ public class TestApiFragment extends XPageFragment {
 
     }
 
-    @OnClick({R.id.btn_test_list_1, R.id.btn_test_list_2, R.id.btn_test_keep_json, R.id.btn_test_json_object, R.id.btn_test_json_object_array, R.id.btn_test_data_null})
+    @OnClick({R.id.btn_test_list_1, R.id.btn_test_list_2, R.id.btn_test_keep_json, R.id.btn_test_json_object, R.id.btn_test_json_object_array, R.id.btn_test_result, R.id.btn_test_data_null})
     public void onViewClicked(View view) {
         clearLog();
         switch (view.getId()) {
@@ -146,6 +149,16 @@ public class TestApiFragment extends XPageFragment {
                             }
                         });
                 break;
+            case R.id.btn_test_result:
+                XHttpProxy.proxy(TestApi.ITestService.class)
+                        .findBooksByQueryParam(new PageQuery(1, 5))
+                        .subscribeWith(new TipRequestSubscriber<QueryResult<Book>>() {
+                            @Override
+                            protected void onSuccess(QueryResult<Book> response) {
+                                ToastUtils.toast("请求成功, 请求数量：" + CollectionUtils.getSize(response.result));
+                            }
+                        });
+                break;
             case R.id.btn_test_data_null:
                 XHttp.get("/test/testDataNull")
                         .execute(new TipRequestCallBack<Void>() {
@@ -159,7 +172,6 @@ public class TestApiFragment extends XPageFragment {
                 break;
         }
     }
-
 
     private User getTestUser() {
         User user = new User();

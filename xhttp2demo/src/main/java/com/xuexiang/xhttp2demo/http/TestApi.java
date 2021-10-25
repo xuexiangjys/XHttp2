@@ -23,6 +23,8 @@ import com.xuexiang.xhttp2.model.ApiResult;
 import com.xuexiang.xhttp2.model.XHttpRequest;
 import com.xuexiang.xhttp2demo.entity.Book;
 import com.xuexiang.xhttp2demo.entity.LoginInfo;
+import com.xuexiang.xhttp2demo.entity.PageQuery;
+import com.xuexiang.xhttp2demo.entity.QueryResult;
 import com.xuexiang.xhttp2demo.entity.User;
 import com.xuexiang.xhttp2demo.http.request.CustomApiResult;
 
@@ -179,6 +181,13 @@ public class TestApi {
          */
         @NetMethod(url = "/test/testJsonObjectArray/", paramType = JSON_OBJECT, cacheMode = CacheMode.FIRST_CACHE, accessToken = false)
         Observable<List<User>> testJsonObjectArray(List<User> users);
+
+
+        /**
+         * 测试范型返回
+         */
+        @NetMethod(url = "/book/findBooksByQueryParam", paramType = JSON_OBJECT, accessToken = false)
+        Observable<QueryResult<Book>> findBooksByQueryParam(PageQuery pageQuery);
     }
 
 }
