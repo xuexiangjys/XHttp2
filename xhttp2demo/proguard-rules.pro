@@ -167,6 +167,7 @@
 
 # xpage
 -keep class com.xuexiang.xpage.annotation.** { *; }
+-keep class com.xuexiang.xpage.config.** { *; }
 
 # xaop
 -keep @com.xuexiang.xaop.annotation.* class * {*;}
@@ -186,49 +187,6 @@
 -keep class * implements com.xuexiang.xrouter.facade.template.IProvider
 
 #######################################################
-
-#XHttp2
--keep class com.xuexiang.xhttp2.model.** { *; }
--keep class com.xuexiang.xhttp2.cache.model.** { *; }
--keep class com.xuexiang.xhttp2.cache.stategy.**{*;}
--keep class com.xuexiang.xhttp2.annotation.** { *; }
-
-#okhttp
--dontwarn com.squareup.okhttp3.**
--keep class com.squareup.okhttp3.** { *;}
--dontwarn okio.**
--dontwarn javax.annotation.Nullable
--dontwarn javax.annotation.ParametersAreNonnullByDefault
--dontwarn javax.annotation.**
-
-# Retrofit
--dontwarn retrofit2.**
--keep class retrofit2.** { *; }
--keepattributes Exceptions
-
-# RxJava RxAndroid
--dontwarn sun.misc.**
--keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
-    long producerIndex;
-    long consumerIndex;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
-    rx.internal.util.atomic.LinkedQueueNode producerNode;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
-    rx.internal.util.atomic.LinkedQueueNode consumerNode;
-}
-
-#如果用到Gson解析包的，直接添加下面这几行就能成功混淆，不然会报错
--keepattributes Signature
--keep class com.google.gson.stream.** { *; }
--keepattributes EnclosingMethod
--keep class org.xz_sale.entity.**{*;}
--keep class com.google.gson.** {*;}
--keep class com.google.**{*;}
--keep class sun.misc.Unsafe { *; }
--keep class com.google.gson.stream.** { *; }
--keep class com.google.gson.examples.android.model.** { *; }
 
 ## 演示demo中使用了gson序列化的对象
 -keep class com.xuexiang.xhttp2demo.entity.** { *; }
