@@ -95,7 +95,7 @@ allprojects {
 }
 ```
 
-2.然后在dependencies添加:
+2.然后在应用项目(一般是app)的 `build.gradle` 的 dependencies 添加:
 
 以下是版本说明，选择一个即可。
 
