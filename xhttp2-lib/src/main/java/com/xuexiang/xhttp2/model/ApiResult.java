@@ -25,7 +25,7 @@ import com.xuexiang.xhttp2.utils.ApiUtils;
  * @author xuexiang
  * @since 2018/5/22 下午4:22
  */
-public class ApiResult<T> {
+public class ApiResult<T> implements IApiResult<T> {
     public final static String CODE = "Code";
     public final static String MSG = "Msg";
     public final static String DATA = "Data";
@@ -37,6 +37,7 @@ public class ApiResult<T> {
     @SerializedName(value = DATA, alternate = {"data"})
     private T Data;
 
+    @Override
     public int getCode() {
         return Code;
     }
@@ -46,6 +47,7 @@ public class ApiResult<T> {
         return this;
     }
 
+    @Override
     public String getMsg() {
         return Msg;
     }
@@ -55,16 +57,22 @@ public class ApiResult<T> {
         return this;
     }
 
-    public ApiResult setData(T data) {
+    /**
+     * 设置请求响应的数据，非严格模式下需要使用【很关键】
+     *
+     * @param data 请求响应的数据
+     */
+    @Override
+    public void setData(T data) {
         Data = data;
-        return this;
     }
 
     /**
      * 获取请求响应的数据，自定义api的时候需要重写【很关键】
      *
-     * @return
+     * @return 请求响应的数据
      */
+    @Override
     public T getData() {
         return Data;
     }
@@ -74,6 +82,7 @@ public class ApiResult<T> {
      *
      * @return true: 请求成功；false：请求失败
      */
+    @Override
     public boolean isSuccess() {
         return getCode() == ApiUtils.getSuccessCode();
     }

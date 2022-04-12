@@ -686,7 +686,7 @@ private T result; //请求的结果
 private long timeStamp; //服务端返回的时间戳
 ```
 
-(1)首先，继承`ApiResult`实体，重写其`getCode`、`getMsg`、`isSuccess`和`getData`方法。
+(1)首先，继承`ApiResult`实体，重写其`getCode`、`getMsg`、`isSuccess`、`getData`和`setData`方法。
 
 ```
 public class CustomApiResult<T> extends ApiResult<T> {
@@ -745,6 +745,11 @@ public class CustomApiResult<T> extends ApiResult<T> {
     @Override
     public boolean isSuccess() {
         return errorCode == 0;
+    }
+
+    @Override
+    public void setData(T data) {
+        result = data;
     }
 
     @Override

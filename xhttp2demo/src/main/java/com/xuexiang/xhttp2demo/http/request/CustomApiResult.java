@@ -76,6 +76,11 @@ public class CustomApiResult<T> extends ApiResult<T> {
     }
 
     @Override
+    public void setData(T data) {
+        result = data;
+    }
+
+    @Override
     public boolean isSuccess() {
         return errorCode == 0;
     }

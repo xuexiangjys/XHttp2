@@ -36,6 +36,7 @@ import com.xuexiang.xhttp2demo.entity.User;
 import com.xuexiang.xhttp2demo.http.ApiProvider;
 import com.xuexiang.xhttp2demo.http.TestApi;
 import com.xuexiang.xhttp2demo.http.callback.TipRequestCallBack;
+import com.xuexiang.xhttp2demo.http.request.CustomGetRequest;
 import com.xuexiang.xhttp2demo.http.subscriber.TipRequestSubscriber;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.base.XPageFragment;
@@ -167,6 +168,21 @@ public class TestApiFragment extends XPageFragment {
                                 ToastUtils.toast("请求成功:" + response);
                             }
                         });
+//                XHttpProxy.proxy(TestApi.ITestService.class)
+//                        .testDataNull()
+//                        .subscribeWith(new TipRequestSubscriber<Void>() {
+//                            @Override
+//                            protected void onSuccess(Void response) {
+//                                ToastUtils.toast("请求成功:" + response);
+//                            }
+//                        });
+//                new CustomGetRequest("/test/testCustomApiDataNull")
+//                        .execute(new TipRequestCallBack<Void>() {
+//                            @Override
+//                            public void onSuccess(Void response) throws Throwable {
+//                                ToastUtils.toast("请求成功:" + response);
+//                            }
+//                        });
                 break;
             default:
                 break;

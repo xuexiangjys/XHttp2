@@ -188,6 +188,12 @@ public class TestApi {
          */
         @NetMethod(url = "/book/findBooksByQueryParam", paramType = JSON_OBJECT, accessToken = false)
         Observable<QueryResult<Book>> findBooksByQueryParam(PageQuery pageQuery);
+
+        /**
+         * 测试返回为null
+         */
+        @NetMethod(url = "/test/testDataNull", action = GET, accessToken = false)
+        Observable<Void> testDataNull();
     }
 
 }
