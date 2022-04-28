@@ -19,7 +19,7 @@
 
 | 公众号   | 掘金     |  知乎    |  CSDN   |   简书   |   思否  |   哔哩哔哩  |   今日头条
 |---------|---------|--------- |---------|---------|---------|---------|---------|
-| [我的Android开源之旅](https://ss.im5i.com/2021/06/14/6tqAU.png)  |  [点我](https://juejin.im/user/598feef55188257d592e56ed/posts)    |   [点我](https://www.zhihu.com/people/xuexiangjys/posts)       |   [点我](https://xuexiangjys.blog.csdn.net/)  |   [点我](https://www.jianshu.com/u/6bf605575337)  |   [点我](https://segmentfault.com/u/xuexiangjys)  |   [点我](https://space.bilibili.com/483850585)  |   [点我](https://img.rruu.net/image/5ff34ff7b02dd)
+| [我的Android开源之旅](https://t.1yb.co/Irse)  |  [点我](https://juejin.im/user/598feef55188257d592e56ed/posts)    |   [点我](https://www.zhihu.com/people/xuexiangjys/posts)       |   [点我](https://xuexiangjys.blog.csdn.net/)  |   [点我](https://www.jianshu.com/u/6bf605575337)  |   [点我](https://segmentfault.com/u/xuexiangjys)  |   [点我](https://space.bilibili.com/483850585)  |   [点我](https://img.rruu.net/image/5ff34ff7b02dd)
 
 ## X系列库快速集成
 
@@ -1001,7 +1001,7 @@ https://github.com/zhou-you/RxEasyHttp
 
 > 你的打赏是我维护的动力，我将会列出所有打赏人员的清单在下方作为凭证，打赏前请留下打赏项目的备注！
 
-![pay.png](https://ss.im5i.com/2021/06/14/6twG6.png)
+![pay.png](https://raw.githubusercontent.com/xuexiangjys/Resource/master/img/pay/pay.png)
 
 感谢下面小伙伴的打赏：
 
@@ -1016,9 +1016,9 @@ https://github.com/zhou-you/RxEasyHttp
 
 > 更多资讯内容，欢迎扫描关注我的个人微信公众号:【我的Android开源之旅】
 
-![gzh_weixin.jpg](https://ss.im5i.com/2021/06/14/65yoL.jpg)
+![](https://s1.ax1x.com/2022/04/27/LbGMJH.jpg)
 
-[demo-gif]: https://ss.im5i.com/2021/06/14/6TWkS.gif
+[demo-gif]: ./img/demo.gif
 [download-svg]: https://img.shields.io/badge/downloads-2.61M-blue.svg
 [download-url]: https://github.com/xuexiangjys/XHttp2/blob/master/apk/xhttp2_demo_1.0.apk?raw=true
-[download-img]: https://ss.im5i.com/2021/06/14/6TT3j.png
+[download-img]: ./img/download.png
